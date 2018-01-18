@@ -10,6 +10,13 @@
 #include "Texture2D.h"
 #include <math.h>
 
+
+#ifdef _WIN32
+#define ASSETS_FOLDER "../assets"
+#else
+#define ASSETS_FOLDER "assets"
+#endif
+
 using namespace std;
 Renderer* renderer;
 
@@ -219,7 +226,7 @@ int initialiseTestbench()
 
 	// create texture
 	Texture2D* fatboy = renderer->makeTexture2D();
-	fatboy->loadFromFile("../assets/textures/fatboy.png");
+	fatboy->loadFromFile(ASSETS_FOLDER "/textures/fatboy.png");
 	Sampler2D* sampler = renderer->makeSampler2D();
 	sampler->setWrap(WRAPPING::REPEAT, WRAPPING::REPEAT);
 	fatboy->sampler = sampler;

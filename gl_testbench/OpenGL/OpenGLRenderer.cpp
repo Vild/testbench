@@ -11,6 +11,12 @@
 #include "ConstantBufferGL.h"
 #include "Texture2DGL.h"
 
+#ifdef _WIN32
+#define ASSETS_FOLDER "../assets"
+#else
+#define ASSETS_FOLDER "assets"
+#endif
+
 OpenGLRenderer::OpenGLRenderer()
 {
 }
@@ -45,7 +51,7 @@ ConstantBuffer* OpenGLRenderer::makeConstantBuffer(std::string NAME, unsigned in
 }
 
 std::string OpenGLRenderer::getShaderPath() {
-	return std::string("..\\assets\\GL45\\");
+	return std::string(ASSETS_FOLDER "/GL45/");
 }
 
 std::string OpenGLRenderer::getShaderExtension() {

@@ -3,21 +3,31 @@
 #include <GL/glew.h>
 #include <vector>
 #include "ConstantBufferGL.h"
+#include <sstream>
+#include <iostream>
 
 class OpenGLRenderer;
 
-#define DBOUTW( s )\
-{\
-std::wostringstream os_;\
-os_ << s;\
-OutputDebugStringW( os_.str().c_str() );\
+template <typename T>
+inline void DBOUTW(T&& s) {
+  std::wostringstream os_;
+  os_ << s;
+  #ifdef _WIN32
+  OutputDebugStringW(os_.str().c_str());
+  #else
+	std::wcerr << os_.str() << std::endl;
+  #endif
 }
 
-#define DBOUT( s )\
-{\
-std::ostringstream os_;\
-os_ << s;\
-OutputDebugString( os_.str().c_str() );\
+template <typename T>
+inline void DBOUT(T&& s) {
+  std::ostringstream os_;
+  os_ << s;
+  #ifdef _WIN32
+  OutputDebugString(os_.str().c_str());
+  #else
+	std::cerr << os_.str() << std::endl;
+  #endif
 }
 
 // use X = {Program or Shader}

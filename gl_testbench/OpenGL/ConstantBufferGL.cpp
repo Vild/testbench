@@ -1,6 +1,8 @@
 #include "ConstantBufferGL.h"
 #include "MaterialGL.h"
 
+#include <cstring>
+
 ConstantBufferGL::ConstantBufferGL(std::string NAME, unsigned int location) 
 {
 	name = NAME;

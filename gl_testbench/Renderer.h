@@ -1,7 +1,9 @@
 #pragma once
 
 #include <unordered_map>
+#ifdef _WIN32
 #include <Windows.h>
+#endif
 
 #include "RenderState.h"
 #include "Technique.h"

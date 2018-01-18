@@ -1,4 +1,6 @@
+#ifdef _WIN32
 #include <windows.h>
+#endif
 #include <streambuf>
 #include <sstream>
 #include <istream>
@@ -6,6 +8,7 @@
 #include <vector>
 #include <set>
 #include <assert.h>
+#include <cstring>
 
 #include "MaterialGL.h"
 
@@ -180,10 +183,12 @@ int MaterialGL::compileMaterial(std::string& errString)
 	std::string err;
 	if (compileShader(ShaderType::VS, err) < 0) {
 		errString = err;
+		std::cerr << errString << std::endl;
 		exit(-1);
 	};
 	if (compileShader(ShaderType::PS, err) < 0) {
 		errString = err;
+		std::cerr << errString << std::endl;
 		exit(-1);
 	};
 	

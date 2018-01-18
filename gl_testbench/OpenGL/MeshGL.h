@@ -1,6 +1,6 @@
 #pragma once
 #include <unordered_map>
-#include <gl\glew.h>
+#include <GL/glew.h>
 #include "../Mesh.h"
 
 class MeshGL :
