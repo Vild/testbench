@@ -3,7 +3,7 @@ class RenderState
 {
 public:
 	RenderState();
-	~RenderState();
+	virtual ~RenderState();
 
 	virtual void setWireFrame(bool) = 0;
 

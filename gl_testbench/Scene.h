@@ -6,7 +6,7 @@ class Scene
 {
 public:
 	Scene();
-	~Scene();
+	virtual ~Scene();
 
 	// add a mesh to the scene, when the scene is traversed for rendering
 	// this mesh will be rendered.

@@ -43,7 +43,8 @@ public:
 	virtual ConstantBuffer* makeConstantBuffer(std::string NAME, unsigned int location) = 0;
 	virtual Technique* makeTechnique(Material*, RenderState*) = 0;
 
-	Renderer() { /*InitializeCriticalSection(&protectHere);*/ };
+	Renderer() { /*InitializeCriticalSection(&protectHere);*/ }
+	virtual ~Renderer() {}
 	virtual int initialize(unsigned int width = 800, unsigned int height = 600) = 0;
 	virtual void setWinTitle(const char* title) = 0;
 	virtual void present() = 0;

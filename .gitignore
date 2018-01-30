@@ -10,3 +10,5 @@ Debug*
 x64*
 *.opendb
 /uml.png
+obj
+testbench

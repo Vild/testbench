@@ -11,7 +11,7 @@ class Mesh
 {
 public:
 	Mesh();
-	~Mesh();
+	virtual ~Mesh();
 
 	// technique has: Material, RenderState, Attachments (color, depth, etc)
 	Technique* technique; 

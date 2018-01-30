@@ -3,6 +3,6 @@ class Camera
 {
 public:
 	Camera();
-	~Camera();
+	virtual ~Camera();
 };
 
