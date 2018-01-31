@@ -132,7 +132,7 @@ void renderScene()
 	renderer->frame();
 	renderer->present();
 	updateDelta();
-	sprintf(gTitleBuff, "OpenGL - %3.0lf", gLastDelta);
+	sprintf(gTitleBuff, "Vulkan - %3.0lfms", gLastDelta);
 	renderer->setWinTitle(gTitleBuff);
 }
 
@@ -307,9 +307,10 @@ void shutdown() {
 
 int main(int argc, char *argv[])
 {
-	renderer = Renderer::makeRenderer(Renderer::BACKEND::GL45);
-	renderer->initialize(800,600);
-	renderer->setWinTitle("OpenGL");
+	renderer = Renderer::makeRenderer(Renderer::BACKEND::VULKAN);
+	if (renderer->initialize(800,600))
+		return -1;;
+	renderer->setWinTitle("Vulkan");
 	renderer->setClearColor(0.0, 0.1, 0.1, 1.0);
 	initialiseTestbench();
 	run();

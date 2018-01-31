@@ -1,24 +1,23 @@
 #pragma once
-#include <GL/glew.h>
+
 #include "../VertexBuffer.h"
 
-class VertexBufferVK :
-	public VertexBuffer
-{
-public:
-	
-	VertexBufferVK(size_t size, VertexBuffer::DATA_USAGE usage);
-	~VertexBufferVK();
-	
-	void setData(const void* data, size_t size, size_t offset);
-	void bind(size_t offset, size_t size, unsigned int location);
-	void unbind();
-	size_t getSize();
+#include <cstdint>
 
-	static VKuint usageMapping[3];
+class VertexBufferVK : public VertexBuffer {
+public:
+	static uint32_t usageMapping[3];
+
+	VertexBufferVK(size_t size, VertexBuffer::DATA_USAGE usage);
+	virtual ~VertexBufferVK();
+
+	void setData(const void* data, size_t size, size_t offset) final;
+	void bind(size_t offset, size_t size, unsigned int location) final;
+	void unbind() final;
+	size_t getSize() final;
 
 private:
 	size_t totalSize;
-	VKuint _handle;
+	uint32_t _handle;
 };
 

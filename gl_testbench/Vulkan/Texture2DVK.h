@@ -1,22 +1,18 @@
 #pragma once
 
-#include <GL/glew.h>
-
 #include "../Texture2D.h"
 #include "Sampler2DVK.h"
 
+#include <cstdint>
 
-class Texture2DVK :
-	public Texture2D
-{
+class Texture2DVK : public Texture2D {
 public:
 	Texture2DVK();
-	~Texture2DVK();
+	virtual ~Texture2DVK();
 
-	int loadFromFile(std::string filename);
-	void bind(unsigned int slot);
+	int loadFromFile(std::string filename) final;
+	void bind(unsigned int slot) final;
 
-	// OPENVK HANDLE
-	VKuint textureHandle = 0;
+	uint32_t textureHandle = 0;
 };
 

@@ -1,7 +1,7 @@
 CC := gcc
 CXX := g++
-CFLAGS := -Iinclude -std=gnu11 -ggdb $(shell pkg-config --cflags gl glew sdl2 vulkan)
-CXXFLAGS := -Iinclude -std=c++1z -ggdb $(shell pkg-config --cflags gl glew sdl2 vulkan)
+CFLAGS := -Wall -Iinclude -DDEBUG -std=gnu11 -ggdb $(shell pkg-config --cflags gl glew sdl2 vulkan)
+CXXFLAGS := -Wall -Iinclude -DDEBUG -std=c++1z -ggdb $(shell pkg-config --cflags gl glew sdl2 vulkan)
 LFLAGS := $(shell pkg-config --libs gl glew sdl2 vulkan)
 
 SRC := gl_testbench
