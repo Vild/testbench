@@ -48,8 +48,14 @@ public:
 private:
 	struct QueueInformation {
 		uint32_t graphics = -1;
+		uint32_t present = -1;
 
-		inline bool completed() { return graphics != -1UL; }
+		inline bool completed() { return graphics != -1UL && present != -1UL; }
+	};
+	struct SwapChainInformation {
+		vk::SurfaceCapabilitiesKHR capabilities;
+    std::vector<vk::SurfaceFormatKHR> formats;
+    std::vector<vk::PresentModeKHR> presentModes;
 	};
 
 	uint32_t _width;
@@ -60,8 +66,11 @@ private:
 	vk::SurfaceKHR _surface;
 	vk::PhysicalDevice _physicalDevice;
 	QueueInformation _queueInformation;
+	SwapChainInformation _swapChainInformation;
 	vk::Device _device;
 	vk::Queue _graphicsQueue;
+	vk::Queue _presentQueue;
+	vk::SwapchainKHR _swapChain;
 
 	std::vector<Mesh*> _drawList;
 	std::unordered_map<Technique*, std::vector<Mesh*>> _drawList2;
@@ -72,17 +81,19 @@ private:
 	float _clearColor[4] = { 0,0,0,0 };
 
 	bool _initSDL();
-	bool _initVulkanInstance();
-	bool _initSDLSurface();
-	bool _initVulkanPhysicalDevice();
-	bool _initVulkanLogicalDevice();
+	bool _createVulkanInstance();
+	bool _createSDLSurface();
+	bool _createVulkanPhysicalDevice();
+	bool _createVulkanLogicalDevice();
+	bool _createVulkanSwapChain();
 
 	inline static const auto _inits = {
 		&VulkanRenderer::_initSDL,
-		&VulkanRenderer::_initVulkanInstance,
-		&VulkanRenderer::_initSDLSurface,
-		&VulkanRenderer::_initVulkanPhysicalDevice,
-		&VulkanRenderer::_initVulkanLogicalDevice,
+		&VulkanRenderer::_createVulkanInstance,
+		&VulkanRenderer::_createSDLSurface,
+		&VulkanRenderer::_createVulkanPhysicalDevice,
+		&VulkanRenderer::_createVulkanLogicalDevice,
+		&VulkanRenderer::_createVulkanSwapChain,
 	};
 };
 

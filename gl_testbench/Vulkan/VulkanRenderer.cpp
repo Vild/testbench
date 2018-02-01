@@ -3,7 +3,6 @@
 #include "ConstantBufferVK.h"
 #include "MaterialVK.h"
 #include "RenderStateVK.h"
-#include "ResourceBindingVK.h"
 #include "Sampler2DVK.h"
 #include "Texture2DVK.h"
 #include "TransformVK.h"
@@ -95,6 +94,7 @@ void VulkanRenderer::setWinTitle(const char* title) {
 	SDL_SetWindowTitle(_window, title);
 }
 int VulkanRenderer::shutdown() {
+	_device.destroySwapchainKHR(_swapChain);
 	_device.destroy();
 	DestroyDebugReportCallbackEXT(_instance, _debugCallback, nullptr);
 	_instance.destroy();
@@ -125,7 +125,7 @@ bool VulkanRenderer::_initSDL() {
 	return true;
 }
 
-bool VulkanRenderer::_initVulkanInstance() {
+bool VulkanRenderer::_createVulkanInstance() {
 	printf("Available Extensions:\n");
 	auto availableExtensions = vk::enumerateInstanceExtensionProperties();
 	for (const vk::ExtensionProperties& e : availableExtensions)
@@ -183,42 +183,56 @@ bool VulkanRenderer::_initVulkanInstance() {
 	return true;
 }
 
-bool VulkanRenderer::_initSDLSurface() {
+bool VulkanRenderer::_createSDLSurface() {
 	VkSurfaceKHR surface;
 	bool r = !SDL_Vulkan_CreateSurface(_window, _instance, &surface);
 	_surface = surface;
 	return r;
 }
 
-bool VulkanRenderer::_initVulkanPhysicalDevice() {
+bool VulkanRenderer::_createVulkanPhysicalDevice() {
 	auto physicalDevices = _instance.enumeratePhysicalDevices();
 
-	auto isDeviceSuitable = [](vk::PhysicalDevice device, QueueInformation & qi) -> bool {
-		vk::PhysicalDeviceProperties deviceProperties = device.getProperties();
-		vk::PhysicalDeviceFeatures deviceFeatures = device.getFeatures();
+	auto isDeviceSuitable = [this](vk::PhysicalDevice device, QueueInformation & qi, SwapChainInformation& sci) -> bool {
+		{
+			vk::PhysicalDeviceProperties deviceProperties = device.getProperties();
+			vk::PhysicalDeviceFeatures deviceFeatures = device.getFeatures();
 
-		if (deviceProperties.deviceType != vk::PhysicalDeviceType::eDiscreteGpu || deviceFeatures.geometryShader)
-			return false;
+			if (deviceProperties.deviceType != vk::PhysicalDeviceType::eDiscreteGpu || deviceFeatures.geometryShader)
+				return false;
 
-		auto queueFamilies = device.getQueueFamilyProperties();
+			auto queueFamilies = device.getQueueFamilyProperties();
 
-		for (uint32_t i = 0; i < queueFamilies.size(); i++) {
-			// TODO: Rate queues
-			const vk::QueueFamilyProperties & q = queueFamilies[i];
-			if (!q.queueCount)
-				continue;
-			if (q.queueFlags & vk::QueueFlagBits::eGraphics)
-				qi.graphics = i;
+			for (uint32_t i = 0; i < queueFamilies.size(); i++) {
+				// TODO: Rate queues
+				const vk::QueueFamilyProperties & q = queueFamilies[i];
+				vk::Bool32 hasPresent;
+				device.getSurfaceSupportKHR(i, _surface, &hasPresent);
+				if (!q.queueCount)
+					continue;
+				if (q.queueFlags & vk::QueueFlagBits::eGraphics)
+					qi.graphics = i;
+				if (hasPresent)
+					qi.present = i;
+			}
 		}
 
-		return qi.completed();
+		{
+			sci.capabilities = device.getSurfaceCapabilitiesKHR(_surface);
+			sci.formats = device.getSurfaceFormatsKHR(_surface);
+			sci.presentModes = device.getSurfacePresentModesKHR(_surface);
+		}
+
+		return qi.completed() && !sci.formats.empty() && !sci.presentModes.empty();
 	};
 
 	for (auto& device : physicalDevices) {
 		QueueInformation qi;
-		if (isDeviceSuitable(device, qi)) {
+		SwapChainInformation sci;
+		if (isDeviceSuitable(device, qi, sci)) {
 			_physicalDevice = device;
 			_queueInformation = qi;
+			_swapChainInformation = sci;
 			break;
 		}
 	}
@@ -226,17 +240,91 @@ bool VulkanRenderer::_initVulkanPhysicalDevice() {
 	return true;
 }
 
-bool VulkanRenderer::_initVulkanLogicalDevice() {
-	vk::DeviceQueueCreateInfo queueCreateInfo{ vk::DeviceQueueCreateFlags(), _queueInformation.graphics, 1 };
+bool VulkanRenderer::_createVulkanLogicalDevice() {
+	std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos {
+		{ vk::DeviceQueueCreateFlags(), _queueInformation.graphics, 1 },
+		{ vk::DeviceQueueCreateFlags(), _queueInformation.present, 1 },
+	};
 	std::vector<const char *> layers{
 		DEBUG_LAYER
 	};
-	std::vector<const char *> extensions{};
+	std::vector<const char *> extensions{
+		VK_KHR_SWAPCHAIN_EXTENSION_NAME
+	};
 
-	vk::DeviceCreateInfo deviceCreateInfo{ vk::DeviceCreateFlags(), 1, &queueCreateInfo, (uint32_t)layers.size(), layers.data(), (uint32_t)extensions.size(), extensions.data() };
+	vk::DeviceCreateInfo deviceCreateInfo{ vk::DeviceCreateFlags(), (uint32_t)queueCreateInfos.size(), queueCreateInfos.data(), (uint32_t)layers.size(), layers.data(), (uint32_t)extensions.size(), extensions.data() };
 
 	_device = _physicalDevice.createDevice(deviceCreateInfo);
+	assert(_device);
 	_graphicsQueue =	_device.getQueue(_queueInformation.graphics, 0);
+	_presentQueue =	_device.getQueue(_queueInformation.present, 0);
 
 	return true;
+}
+
+bool VulkanRenderer::_createVulkanSwapChain() {
+	vk::SurfaceFormatKHR surfaceFormat = [](const std::vector<vk::SurfaceFormatKHR>& formats) {
+		if (formats.size() == 1 && formats[0].format == vk::Format::eUndefined) {
+			vk::SurfaceFormatKHR iHateYouVulkanHPPWhyDontYouHaveAConstructorForThis;
+			iHateYouVulkanHPPWhyDontYouHaveAConstructorForThis.format = vk::Format::eB8G8R8Unorm;
+			iHateYouVulkanHPPWhyDontYouHaveAConstructorForThis.colorSpace = vk::ColorSpaceKHR::eSrgbNonlinear;
+			return iHateYouVulkanHPPWhyDontYouHaveAConstructorForThis;
+		}
+
+    for (const vk::SurfaceFormatKHR& f : formats)
+			if (f.format == vk::Format::eB8G8R8A8Unorm && f.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear)
+				return f;
+
+    return formats[0];
+	}(_swapChainInformation.formats);
+
+	vk::PresentModeKHR presentMode = [](const std::vector<vk::PresentModeKHR>& presentModes) {
+		vk::PresentModeKHR bestMode = vk::PresentModeKHR::eFifo;
+		for (const vk::PresentModeKHR& pm : presentModes)
+			if (pm == vk::PresentModeKHR::eMailbox)
+				return pm;
+			else if (pm == vk::PresentModeKHR::eImmediate)
+				bestMode = pm;
+		return bestMode;
+	}(_swapChainInformation.presentModes);
+
+	vk::Extent2D extent = [this](const vk::SurfaceCapabilitiesKHR& capabilities) {
+		if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
+			return capabilities.currentExtent;
+    } else {
+			vk::Extent2D actualExtent = { _width, _height };
+
+			actualExtent.width = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, actualExtent.width));
+			actualExtent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, actualExtent.height));
+
+			return actualExtent;
+    }
+	}(_swapChainInformation.capabilities);
+
+
+	uint32_t imageCount = _swapChainInformation.capabilities.minImageCount + 1;
+	if (_swapChainInformation.capabilities.maxImageCount > 0 && imageCount > _swapChainInformation.capabilities.maxImageCount)
+    imageCount = _swapChainInformation.capabilities.maxImageCount;
+
+	vk::SwapchainCreateInfoKHR createInfo{ vk::SwapchainCreateFlagsKHR(), _surface, imageCount, surfaceFormat.format, surfaceFormat.colorSpace, extent, 1, vk::ImageUsageFlagBits::eColorAttachment };
+
+	uint32_t queueFamilyIndices[] = {_queueInformation.graphics, _queueInformation.present};
+
+	if (_queueInformation.graphics != _queueInformation.present) {
+    createInfo.imageSharingMode = vk::SharingMode::eConcurrent;
+    createInfo.queueFamilyIndexCount = 2;
+    createInfo.pQueueFamilyIndices = queueFamilyIndices;
+	} else {
+    createInfo.imageSharingMode = vk::SharingMode::eExclusive;
+    createInfo.queueFamilyIndexCount = 0; // Optional
+    createInfo.pQueueFamilyIndices = nullptr; // Optional
+	}
+
+	createInfo.preTransform = _swapChainInformation.capabilities.currentTransform;
+	createInfo.compositeAlpha = vk::CompositeAlphaFlagBitsKHR::eOpaque;
+	createInfo.presentMode = presentMode;
+	createInfo.clipped = true;
+	createInfo.oldSwapchain = vk::SwapchainKHR();
+
+	_swapChain = _device.createSwapchainKHR(createInfo, nullptr);
 }
