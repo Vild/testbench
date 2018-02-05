@@ -8,4 +8,4 @@ VertexBufferVK::~VertexBufferVK() {}
 void VertexBufferVK::setData(const void* data, size_t size, size_t offset) {}
 void VertexBufferVK::bind(size_t offset, size_t size, unsigned int location) {}
 void VertexBufferVK::unbind() {}
-size_t VertexBufferVK::getSize() {}
+size_t VertexBufferVK::getSize() { return 0;  }

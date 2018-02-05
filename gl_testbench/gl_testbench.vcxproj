@@ -75,8 +75,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\include;..\GLEW\include;..\SDL\include;$(IncludePath);..\;</IncludePath>
-    <LibraryPath>..\GLEW\lib\Release\x64;..\SDL\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\include;..\include-win;..\GLEW\include;..\SDL\include;C:\VulkanSDK\1.0.65.1\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\GLEW\lib\Release\x64;..\SDL\lib\x64;C:\VulkanSDK\1.0.65.1\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -84,8 +84,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\include;..\include-win;..\GLEW\include;..\SDL\include;$(IncludePath);..\;</IncludePath>
-    <LibraryPath>..\GLEW\lib\Release\x64;..\SDL\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\include;..\include-win;..\GLEW\include;..\SDL\include;C:\VulkanSDK\1.0.65.1\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\GLEW\lib\Release\x64;..\SDL\lib\x64;C:\VulkanSDK\1.0.65.1\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -107,7 +107,8 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\VulkanSDK\1.0.65.1\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -173,6 +174,14 @@
     <ClCompile Include="Technique.cpp" />
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="Vulkan\ConstantBufferVK.cpp" />
+    <ClCompile Include="Vulkan\MaterialVK.cpp" />
+    <ClCompile Include="Vulkan\MeshVK.cpp" />
+    <ClCompile Include="Vulkan\RenderStateVK.cpp" />
+    <ClCompile Include="Vulkan\Sampler2DVK.cpp" />
+    <ClCompile Include="Vulkan\Texture2DVK.cpp" />
+    <ClCompile Include="Vulkan\TransformVK.cpp" />
+    <ClCompile Include="Vulkan\VertexBufferVK.cpp" />
     <ClCompile Include="Vulkan\VulkanRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>

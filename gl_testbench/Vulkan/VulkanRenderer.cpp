@@ -21,7 +21,7 @@
 #define ASSETS_FOLDER "assets"
 #endif
 
-#ifdef DEBUG
+#ifndef NDEBUG
 #define VK_LAYER_LUNARG_standard_validation "VK_LAYER_LUNARG_standard_validation"
 
 #define DEBUG_LAYER VK_LAYER_LUNARG_standard_validation,
@@ -138,10 +138,17 @@ bool VulkanRenderer::_initSDL() {
 		fprintf(stderr, "%s\n", SDL_GetError());
 		return false;
 	}
-	SDL_Vulkan_LoadLibrary(nullptr);
+
+	if (SDL_Vulkan_LoadLibrary(nullptr) != 0) {
+		fprintf(stderr, "%s\n", SDL_GetError());
+		return false;
+	}
 
 	_window = SDL_CreateWindow("Vulkan", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, _width, _height, SDL_WINDOW_SHOWN | SDL_WINDOW_VULKAN);
-	assert(_window);
+	if (!_window) {
+		fprintf(stderr, "%s\n", SDL_GetError());
+		return false;
+	}
 
 	return true;
 }
@@ -194,7 +201,7 @@ bool VulkanRenderer::_createVulkanInstance() {
 	_instance = vk::createInstance(createInfo);
 	assert(_instance);
 
-#ifdef DEBUG
+#ifndef NDEBUG
 	// VK_LAYER_LUNARG_standard_validation HOOK callback
 	VkDebugReportCallbackCreateInfoEXT createInfo2 = {};
 	createInfo2.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
