@@ -17,14 +17,14 @@ static void split(const char* text, std::vector<std::string>* const temp, const 
 
 MaterialVK::MaterialVK(VulkanRenderer* renderer, const std::string& name) : _renderer(renderer), _name(name) {
 	isValid = false;
-	_mapShaderEnum[(uint)ShaderType::VS] = vk::ShaderStageFlagBits::eVertex;
-	_mapShaderEnum[(uint)ShaderType::PS] = vk::ShaderStageFlagBits::eFragment;
-	_mapShaderEnum[(uint)ShaderType::GS] = vk::ShaderStageFlagBits::eGeometry;
-	_mapShaderEnum[(uint)ShaderType::CS] = vk::ShaderStageFlagBits::eCompute;
-	_mapShaderExt[(uint)ShaderType::VS] = ".vert";
-	_mapShaderExt[(uint)ShaderType::PS] = ".frag";
-	_mapShaderExt[(uint)ShaderType::GS] = ".geom";
-	_mapShaderExt[(uint)ShaderType::CS] = ".comp";
+	_mapShaderEnum[(uint32_t)ShaderType::VS] = vk::ShaderStageFlagBits::eVertex;
+	_mapShaderEnum[(uint32_t)ShaderType::PS] = vk::ShaderStageFlagBits::eFragment;
+	_mapShaderEnum[(uint32_t)ShaderType::GS] = vk::ShaderStageFlagBits::eGeometry;
+	_mapShaderEnum[(uint32_t)ShaderType::CS] = vk::ShaderStageFlagBits::eCompute;
+	_mapShaderExt[(uint32_t)ShaderType::VS] = ".vert";
+	_mapShaderExt[(uint32_t)ShaderType::PS] = ".frag";
+	_mapShaderExt[(uint32_t)ShaderType::GS] = ".geom";
+	_mapShaderExt[(uint32_t)ShaderType::CS] = ".comp";
 }
 MaterialVK::~MaterialVK() {
 	for (auto& module : _shaderModules)
