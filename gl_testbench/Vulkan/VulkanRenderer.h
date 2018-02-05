@@ -94,21 +94,5 @@ private:
 	bool _createVulkanLogicalDevice();
 	bool _createVulkanSwapChain();
 	bool _createVulkanImageViews();
-
-	struct InitFunction {
-		typedef bool(VulkanRenderer::*initFunction)();
-		std::string name;
-		initFunction function;
-	};
-
-	inline static const std::vector<InitFunction> _inits = {
-		{"initSDL", &VulkanRenderer::_initSDL},
-		{"createVulkanInstance", &VulkanRenderer::_createVulkanInstance},
-		{"createSDLSurface", &VulkanRenderer::_createSDLSurface},
-		{"createVulkanPhysicalDevice", &VulkanRenderer::_createVulkanPhysicalDevice},
-		{"createVulkanLogicalDevice", &VulkanRenderer::_createVulkanLogicalDevice},
-		{"createVulkanSwapChain", &VulkanRenderer::_createVulkanSwapChain},
-		{"createVulkanImageViews", &VulkanRenderer::_createVulkanImageViews},
-	};
 };
 

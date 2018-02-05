@@ -79,8 +79,25 @@ std::string VulkanRenderer::getShaderPath() { return ASSETS_FOLDER "/VK/"; }
 std::string VulkanRenderer::getShaderExtension() { return ".glsl"; }
 
 int VulkanRenderer::initialize(unsigned int width, unsigned int height) {
+	struct InitFunction {
+		typedef bool(VulkanRenderer::*initFunction)();
+		std::string name;
+		initFunction function;
+	};
+
+	static const std::vector<InitFunction> _inits = {
+		{"initSDL", &VulkanRenderer::_initSDL},
+		{"createVulkanInstance", &VulkanRenderer::_createVulkanInstance},
+		{"createSDLSurface", &VulkanRenderer::_createSDLSurface},
+		{"createVulkanPhysicalDevice", &VulkanRenderer::_createVulkanPhysicalDevice},
+		{"createVulkanLogicalDevice", &VulkanRenderer::_createVulkanLogicalDevice},
+		{"createVulkanSwapChain", &VulkanRenderer::_createVulkanSwapChain},
+		{"createVulkanImageViews", &VulkanRenderer::_createVulkanImageViews},
+	};
+
 	_width = width;
 	_height = height;
+
 	for (auto init : _inits) {
 		printf("Running %s():\n", init.name.c_str());
 		const auto r = (this->*(init.function))();
