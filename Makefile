@@ -16,19 +16,19 @@ OBJECTS := $(patsubst $(SRC)%.cpp, $(OBJ)%.o, $(SOURCES))
 all: new
 
 new:
-	$(MAKE) clean
-	$(MAKE) $(TARGET)
+	@$(MAKE) clean
+	@bear $(MAKE) $(TARGET)
 
 run: all
 	@./$(TARGET)
 
 $(OBJ)%.o: $(SRC)%.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) -c $< -o $@ $(CXXFLAGS)
+	@$(CXX) -c $< -o $@ $(CXXFLAGS)
 
 $(TARGET): $(OBJECTS)
 	@mkdir -p $(dir $@)
-	$(CXX) $(OBJECTS) -o $(TARGET) $(LFLAGS)
+	@$(CXX) $(OBJECTS) -o $(TARGET) $(LFLAGS)
 
 clean:
-	$(RM) -rf $(TARGET) $(OBJ)
+	@$(RM) -rf $(TARGET) $(OBJ)

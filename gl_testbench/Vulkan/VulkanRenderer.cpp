@@ -21,10 +21,6 @@
 #define ASSETS_FOLDER "assets"
 #endif
 
-#ifdef NDEBUG
-#define DEBUG
-#endif
-
 #ifdef DEBUG
 #define VK_LAYER_LUNARG_standard_validation "VK_LAYER_LUNARG_standard_validation"
 
@@ -69,7 +65,7 @@ VulkanRenderer::VulkanRenderer() {
 VulkanRenderer::~VulkanRenderer() {
 }
 
-Material* VulkanRenderer::makeMaterial(const std::string& name) { return new MaterialVK(name); }
+Material* VulkanRenderer::makeMaterial(const std::string& name) { return new MaterialVK(this, name); }
 Mesh* VulkanRenderer::makeMesh() { return new MeshVK(); }
 //VertexBuffer* VulkanRenderer::makeVertexBuffer();
 VertexBuffer* VulkanRenderer::makeVertexBuffer(size_t size, VertexBuffer::DATA_USAGE usage) { return new VertexBufferVK(size, usage); }
@@ -80,20 +76,27 @@ Technique* VulkanRenderer::makeTechnique(Material* m, RenderState* r) { return n
 Texture2D* VulkanRenderer::makeTexture2D() { return new Texture2DVK(); }
 Sampler2D* VulkanRenderer::makeSampler2D() { return new Sampler2DVK(); }
 std::string VulkanRenderer::getShaderPath() { return ASSETS_FOLDER "/VK/"; }
-std::string VulkanRenderer::getShaderExtension() { return ".spv"; }
+std::string VulkanRenderer::getShaderExtension() { return ".glsl"; }
 
 int VulkanRenderer::initialize(unsigned int width, unsigned int height) {
 	_width = width;
 	_height = height;
-	for (auto init : _inits)
-		if (!(this->*init)())
+	for (auto init : _inits) {
+		printf("Running %s():\n", init.name.c_str());
+		const auto r = (this->*(init.function))();
+		assert(r);
+		if (!r)
 			return false;
+	}
 	return true;
 }
 void VulkanRenderer::setWinTitle(const char* title) {
 	SDL_SetWindowTitle(_window, title);
 }
 int VulkanRenderer::shutdown() {
+	for (vk::ImageView& iv : _swapChainImageViews)
+		_device.destroyImageView(iv);
+
 	_device.destroySwapchainKHR(_swapChain);
 	_device.destroy();
 	DestroyDebugReportCallbackEXT(_instance, _debugCallback, nullptr);
@@ -115,12 +118,13 @@ void VulkanRenderer::present() {}
 
 bool VulkanRenderer::_initSDL() {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-		fprintf(stderr, "%s", SDL_GetError());
-		exit(-1);
+		fprintf(stderr, "%s\n", SDL_GetError());
+		return false;
 	}
 	SDL_Vulkan_LoadLibrary(nullptr);
 
-	_window = SDL_CreateWindow("Vulkan", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, _width, _height, SDL_WINDOW_SHOWN);
+	_window = SDL_CreateWindow("Vulkan", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, _width, _height, SDL_WINDOW_SHOWN | SDL_WINDOW_VULKAN);
+	assert(_window);
 
 	return true;
 }
@@ -154,19 +158,24 @@ bool VulkanRenderer::_createVulkanInstance() {
 	};
 	{
 		uint32_t count;
-		if (!SDL_Vulkan_GetInstanceExtensions(_window, &count, nullptr))
+		if (!SDL_Vulkan_GetInstanceExtensions(_window, &count, nullptr)) {
+			fprintf(stderr, "%s\n", SDL_GetError());
 			return false;
+		}
 
 		extensions.resize(count + extensions.size());
 
-		if (!SDL_Vulkan_GetInstanceExtensions(_window, &count, &extensions[1]))
+		if (!SDL_Vulkan_GetInstanceExtensions(_window, &count, &extensions[1])) {
+			fprintf(stderr, "%s\n", SDL_GetError());
 			return false;
+		}
 	}
 
 	vk::ApplicationInfo appinfo{ "Bogdan", VK_MAKE_VERSION(1, 0, 0), "Nilsong", VK_MAKE_VERSION(1, 33, 7), VK_API_VERSION_1_0 };
 	vk::InstanceCreateInfo createInfo{ vk::InstanceCreateFlags(), &appinfo, (uint32_t)layers.size(), layers.data(), (uint32_t)extensions.size(), extensions.data() };
 
 	_instance = vk::createInstance(createInfo);
+	assert(_instance);
 
 #ifdef DEBUG
 	// VK_LAYER_LUNARG_standard_validation HOOK callback
@@ -185,7 +194,7 @@ bool VulkanRenderer::_createVulkanInstance() {
 
 bool VulkanRenderer::_createSDLSurface() {
 	VkSurfaceKHR surface;
-	bool r = !SDL_Vulkan_CreateSurface(_window, _instance, &surface);
+	bool r = SDL_Vulkan_CreateSurface(_window, _instance, &surface);
 	_surface = surface;
 	return r;
 }
@@ -193,12 +202,12 @@ bool VulkanRenderer::_createSDLSurface() {
 bool VulkanRenderer::_createVulkanPhysicalDevice() {
 	auto physicalDevices = _instance.enumeratePhysicalDevices();
 
-	auto isDeviceSuitable = [this](vk::PhysicalDevice device, QueueInformation & qi, SwapChainInformation& sci) -> bool {
+	auto isDeviceSuitable = [this](vk::PhysicalDevice device, QueueInformation& qi, SwapChainInformation& sci) -> bool {
 		{
 			vk::PhysicalDeviceProperties deviceProperties = device.getProperties();
 			vk::PhysicalDeviceFeatures deviceFeatures = device.getFeatures();
 
-			if (deviceProperties.deviceType != vk::PhysicalDeviceType::eDiscreteGpu || deviceFeatures.geometryShader)
+			if (deviceProperties.deviceType != vk::PhysicalDeviceType::eDiscreteGpu || !deviceFeatures.geometryShader)
 				return false;
 
 			auto queueFamilies = device.getQueueFamilyProperties();
@@ -241,9 +250,12 @@ bool VulkanRenderer::_createVulkanPhysicalDevice() {
 }
 
 bool VulkanRenderer::_createVulkanLogicalDevice() {
+	float queuePriority = 1.0f;
+
+	// TODO: if queue index is same, only create one CreateInfo with count of two
 	std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos {
-		{ vk::DeviceQueueCreateFlags(), _queueInformation.graphics, 1 },
-		{ vk::DeviceQueueCreateFlags(), _queueInformation.present, 1 },
+		{ vk::DeviceQueueCreateFlags(), _queueInformation.graphics, 1, &queuePriority },
+		{ vk::DeviceQueueCreateFlags(), _queueInformation.present, 1, &queuePriority },
 	};
 	std::vector<const char *> layers{
 		DEBUG_LAYER
@@ -257,7 +269,9 @@ bool VulkanRenderer::_createVulkanLogicalDevice() {
 	_device = _physicalDevice.createDevice(deviceCreateInfo);
 	assert(_device);
 	_graphicsQueue =	_device.getQueue(_queueInformation.graphics, 0);
+	assert(_graphicsQueue);
 	_presentQueue =	_device.getQueue(_queueInformation.present, 0);
+	assert(_presentQueue);
 
 	return true;
 }
@@ -277,6 +291,7 @@ bool VulkanRenderer::_createVulkanSwapChain() {
 
     return formats[0];
 	}(_swapChainInformation.formats);
+	_swapChainImageFormat = surfaceFormat.format;
 
 	vk::PresentModeKHR presentMode = [](const std::vector<vk::PresentModeKHR>& presentModes) {
 		vk::PresentModeKHR bestMode = vk::PresentModeKHR::eFifo;
@@ -300,7 +315,7 @@ bool VulkanRenderer::_createVulkanSwapChain() {
 			return actualExtent;
     }
 	}(_swapChainInformation.capabilities);
-
+	_swapChainExtent = extent;
 
 	uint32_t imageCount = _swapChainInformation.capabilities.minImageCount + 1;
 	if (_swapChainInformation.capabilities.maxImageCount > 0 && imageCount > _swapChainInformation.capabilities.maxImageCount)
@@ -327,4 +342,19 @@ bool VulkanRenderer::_createVulkanSwapChain() {
 	createInfo.oldSwapchain = vk::SwapchainKHR();
 
 	_swapChain = _device.createSwapchainKHR(createInfo, nullptr);
+	assert(_swapChain);
+
+	_swapChainImages = _device.getSwapchainImagesKHR(_swapChain);
+
+	return true;
+}
+
+bool VulkanRenderer::_createVulkanImageViews() {
+	_swapChainImageViews.resize(_swapChainImages.size());
+
+	for (size_t i = 0; i < _swapChainImages.size(); i++) {
+		vk::ImageViewCreateInfo createInfo{vk::ImageViewCreateFlags(), _swapChainImages[i], vk::ImageViewType::e2D, _swapChainImageFormat, vk::ComponentMapping{}, vk::ImageSubresourceRange{vk::ImageAspectFlags(vk::ImageAspectFlagBits::eColor), 0, 1, 0, 1}};
+		_swapChainImageViews[i] = _device.createImageView(createInfo);
+	}
+	return true;
 }

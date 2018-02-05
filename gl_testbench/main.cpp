@@ -80,7 +80,6 @@ typedef union {
 
 
 void run() {
-
 	SDL_Event windowEvent;
 	while (true)
 	{
@@ -110,7 +109,7 @@ void updateScene()
 			const float4 trans { 
 				xt[(int)(float)(i + shift) % (TOTAL_PLACES)], 
 				yt[(int)(float)(i + shift) % (TOTAL_PLACES)], 
-				i * (-1.0 / TOTAL_PLACES),
+				i * (-1.0f / TOTAL_PLACES),
 				0.0
 			};
 			scene[i]->txBuffer->setData(&trans, sizeof(trans), scene[i]->technique->getMaterial(), TRANSLATION);
@@ -191,7 +190,7 @@ int initialiseTestbench()
 		1.0,0.0,0.0,1.0
 	};
 
-	for (int i = 0; i < materialDefs.size(); i++)
+	for (size_t i = 0; i < materialDefs.size(); i++)
 	{
 		// set material name from text file?
 		Material* m = renderer->makeMaterial("material_" + std::to_string(i));
@@ -308,12 +307,11 @@ void shutdown() {
 int main(int argc, char *argv[])
 {
 	renderer = Renderer::makeRenderer(Renderer::BACKEND::VULKAN);
-	if (renderer->initialize(800,600))
-		return -1;;
+	renderer->initialize(800,600);
 	renderer->setWinTitle("Vulkan");
 	renderer->setClearColor(0.0, 0.1, 0.1, 1.0);
 	initialiseTestbench();
-	run();
+	//run();
 	shutdown();
 	return 0;
 };

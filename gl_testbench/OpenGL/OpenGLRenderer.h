@@ -6,11 +6,12 @@
 #include <GL/glew.h>
 //#include <SDL_opengl.h>
 
+#ifdef _WIN32
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib,"glew32.lib")
 #pragma comment(lib,"SDL2.lib")
 #pragma comment(lib,"SDL2main.lib")
-
+#endif
 
 
 class OpenGLRenderer : public Renderer

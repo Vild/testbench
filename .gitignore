@@ -6,9 +6,12 @@
 *.db
 *.*~
 \.*
+*.preprocessed*
+*.spv
 Debug*
 x64*
 *.opendb
 /uml.png
 obj
 testbench
+compile_commands.json

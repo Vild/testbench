@@ -15,7 +15,10 @@
 #include <SDL.h>
 #include <vulkan/vulkan.hpp>
 
+class MaterialVK;
+
 class VulkanRenderer : public Renderer {
+	friend MaterialVK;
 public:
 	VulkanRenderer();
 	virtual ~VulkanRenderer();
@@ -71,6 +74,10 @@ private:
 	vk::Queue _graphicsQueue;
 	vk::Queue _presentQueue;
 	vk::SwapchainKHR _swapChain;
+	vk::Format _swapChainImageFormat;
+	vk::Extent2D _swapChainExtent;
+	std::vector<vk::Image> _swapChainImages;
+	std::vector<vk::ImageView> _swapChainImageViews;
 
 	std::vector<Mesh*> _drawList;
 	std::unordered_map<Technique*, std::vector<Mesh*>> _drawList2;
@@ -86,14 +93,22 @@ private:
 	bool _createVulkanPhysicalDevice();
 	bool _createVulkanLogicalDevice();
 	bool _createVulkanSwapChain();
+	bool _createVulkanImageViews();
 
-	inline static const auto _inits = {
-		&VulkanRenderer::_initSDL,
-		&VulkanRenderer::_createVulkanInstance,
-		&VulkanRenderer::_createSDLSurface,
-		&VulkanRenderer::_createVulkanPhysicalDevice,
-		&VulkanRenderer::_createVulkanLogicalDevice,
-		&VulkanRenderer::_createVulkanSwapChain,
+	struct InitFunction {
+		typedef bool(VulkanRenderer::*initFunction)();
+		std::string name;
+		initFunction function;
+	};
+
+	inline static const std::vector<InitFunction> _inits = {
+		{"initSDL", &VulkanRenderer::_initSDL},
+		{"createVulkanInstance", &VulkanRenderer::_createVulkanInstance},
+		{"createSDLSurface", &VulkanRenderer::_createSDLSurface},
+		{"createVulkanPhysicalDevice", &VulkanRenderer::_createVulkanPhysicalDevice},
+		{"createVulkanLogicalDevice", &VulkanRenderer::_createVulkanLogicalDevice},
+		{"createVulkanSwapChain", &VulkanRenderer::_createVulkanSwapChain},
+		{"createVulkanImageViews", &VulkanRenderer::_createVulkanImageViews},
 	};
 };
 
