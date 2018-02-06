@@ -4,11 +4,13 @@
 
 #include <cstdint>
 
+class VulkanRenderer;
+
 class VertexBufferVK : public VertexBuffer {
 public:
 	static uint32_t usageMapping[3];
 
-	VertexBufferVK(size_t size, VertexBuffer::DATA_USAGE usage);
+	VertexBufferVK(VulkanRenderer* renderer, size_t size, VertexBuffer::DATA_USAGE usage);
 	virtual ~VertexBufferVK();
 
 	void setData(const void* data, size_t size, size_t offset) final;

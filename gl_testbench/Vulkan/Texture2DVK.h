@@ -5,9 +5,11 @@
 
 #include <cstdint>
 
+class VulkanRenderer;
+
 class Texture2DVK : public Texture2D {
 public:
-	Texture2DVK();
+	Texture2DVK(VulkanRenderer* renderer);
 	virtual ~Texture2DVK();
 
 	int loadFromFile(std::string filename) final;

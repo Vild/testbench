@@ -85,9 +85,8 @@ void MaterialVK::updateConstantBuffer(const void* data, size_t size, unsigned in
 	constantBuffers[location]->setData(data, size, this, location);
 }
 void MaterialVK::addConstantBuffer(std::string name, unsigned int location) {
-	constantBuffers[location] = new ConstantBufferVK(name, location);
+	constantBuffers[location] = new ConstantBufferVK(_renderer, name, location);
 }
-
 
 std::vector<std::string> MaterialVK::_expandShaderText(std::string& shaderSource, ShaderType type) {
 	std::vector<std::string> result{ "#version 450\n#extension GL_ARB_separate_shader_objects : enable\n\0" };

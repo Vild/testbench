@@ -1,6 +1,7 @@
 #include "TransformVK.h"
+#include "VulkanRenderer.h"
 
-TransformVK::TransformVK() {}
+TransformVK::TransformVK(VulkanRenderer* renderer) {}
 TransformVK::~TransformVK() {}
 
 void TransformVK::translate(float x, float y, float z) {}

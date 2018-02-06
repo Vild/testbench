@@ -31,6 +31,8 @@
 #define DEBUG_EXTENSION
 #endif
 
+#define EXPECT(b, msg) do { if (!(b)) { fprintf(stderr, "%s\n", msg); return false; } } while(0)
+
 static VkResult CreateDebugReportCallbackEXT(VkInstance instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugReportCallbackEXT* pCallback) {
 	auto func = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT");
 	if (func != nullptr)
@@ -68,13 +70,18 @@ VulkanRenderer::~VulkanRenderer() {
 Material* VulkanRenderer::makeMaterial(const std::string& name) { return new MaterialVK(this, name); }
 Mesh* VulkanRenderer::makeMesh() { return new MeshVK(); }
 //VertexBuffer* VulkanRenderer::makeVertexBuffer();
-VertexBuffer* VulkanRenderer::makeVertexBuffer(size_t size, VertexBuffer::DATA_USAGE usage) { return new VertexBufferVK(size, usage); }
-ConstantBuffer* VulkanRenderer::makeConstantBuffer(std::string NAME, unsigned int location) { return new ConstantBufferVK(NAME, location); }
+VertexBuffer* VulkanRenderer::makeVertexBuffer(size_t size, VertexBuffer::DATA_USAGE usage) { return new VertexBufferVK(this, size, usage); }
+ConstantBuffer* VulkanRenderer::makeConstantBuffer(std::string name, unsigned int location) { return new ConstantBufferVK(this, name, location); }
 //	ResourceBinding* VulkanRenderer::makeResourceBinding();
-RenderState* VulkanRenderer::makeRenderState() { return new RenderStateVK(); }
+RenderState* VulkanRenderer::makeRenderState() {
+	RenderStateVK* newRS = new RenderStateVK();
+	newRS->setGlobalWireFrame(&_globalWireframeMode);
+	newRS->setWireFrame(false);
+	return (RenderState*)newRS;
+}
 Technique* VulkanRenderer::makeTechnique(Material* m, RenderState* r) { return new Technique(m, r); }
-Texture2D* VulkanRenderer::makeTexture2D() { return new Texture2DVK(); }
-Sampler2D* VulkanRenderer::makeSampler2D() { return new Sampler2DVK(); }
+Texture2D* VulkanRenderer::makeTexture2D() { return new Texture2DVK(this); }
+Sampler2D* VulkanRenderer::makeSampler2D() { return new Sampler2DVK(this); }
 std::string VulkanRenderer::getShaderPath() { return ASSETS_FOLDER "/VK/"; }
 std::string VulkanRenderer::getShaderExtension() { return ".glsl"; }
 
@@ -93,6 +100,8 @@ int VulkanRenderer::initialize(unsigned int width, unsigned int height) {
 		{"createVulkanLogicalDevice", &VulkanRenderer::_createVulkanLogicalDevice},
 		{"createVulkanSwapChain", &VulkanRenderer::_createVulkanSwapChain},
 		{"createVulkanImageViews", &VulkanRenderer::_createVulkanImageViews},
+		{"createVulkanRenderPass", &VulkanRenderer::_createVulkanRenderPass},
+		{"createVulkanPipeline", &VulkanRenderer::_createVulkanPipeline},
 	};
 
 	_width = width;
@@ -100,10 +109,8 @@ int VulkanRenderer::initialize(unsigned int width, unsigned int height) {
 
 	for (auto init : _inits) {
 		printf("Running %s():\n", init.name.c_str());
-		const auto r = (this->*(init.function))();
-		assert(r);
-		if (!r)
-			return false;
+		bool r = (this->*(init.function))();
+		EXPECT(r, "\tINIT FAILED!");
 	}
 	return true;
 }
@@ -111,6 +118,10 @@ void VulkanRenderer::setWinTitle(const char* title) {
 	SDL_SetWindowTitle(_window, title);
 }
 int VulkanRenderer::shutdown() {
+	_device.destroyPipeline(_graphicsPipeline);
+	_device.destroyPipelineLayout(_pipelineLayout);
+	_device.destroyRenderPass(_renderPass);
+
 	for (vk::ImageView& iv : _swapChainImageViews)
 		_device.destroyImageView(iv);
 
@@ -124,31 +135,34 @@ int VulkanRenderer::shutdown() {
 	return 0;
 }
 
-void VulkanRenderer::setClearColor(float, float, float, float) {}
-void VulkanRenderer::clearBuffer(unsigned int) {}
-//	void VulkanRenderer::setRenderTarget(RenderTarget* rt); // complete parameters
-void VulkanRenderer::setRenderState(RenderState* ps) {}
-void VulkanRenderer::submit(Mesh* mesh) {}
-void VulkanRenderer::frame() {}
-void VulkanRenderer::present() {}
+void VulkanRenderer::setClearColor(float r, float g, float b, float a) {
+	_clearColor[0] = r;
+	_clearColor[1] = g;
+	_clearColor[2] = b;
+	_clearColor[3] = a;
+}
 
+void VulkanRenderer::clearBuffer(unsigned int) {
+	// TODO: NOP?
+}
+//	void VulkanRenderer::setRenderTarget(RenderTarget* rt); // complete parameters
+void VulkanRenderer::setRenderState(RenderState* ps) {
+	ps->set();
+}
+void VulkanRenderer::submit(Mesh* mesh) { _drawList[mesh->technique].push_back(mesh); }
+void VulkanRenderer::frame() {
+	// TODO: Create queues, if needed
+}
+void VulkanRenderer::present() {
+	// TODO: Submit queues
+}
 
 bool VulkanRenderer::_initSDL() {
-	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-		fprintf(stderr, "%s\n", SDL_GetError());
-		return false;
-	}
-
-	if (SDL_Vulkan_LoadLibrary(nullptr) != 0) {
-		fprintf(stderr, "%s\n", SDL_GetError());
-		return false;
-	}
+	EXPECT(!SDL_Init(SDL_INIT_EVERYTHING), SDL_GetError());
+	EXPECT(!SDL_Vulkan_LoadLibrary(nullptr), SDL_GetError());
 
 	_window = SDL_CreateWindow("Vulkan", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, _width, _height, SDL_WINDOW_SHOWN | SDL_WINDOW_VULKAN);
-	if (!_window) {
-		fprintf(stderr, "%s\n", SDL_GetError());
-		return false;
-	}
+	EXPECT(_window, SDL_GetError());
 
 	return true;
 }
@@ -182,24 +196,18 @@ bool VulkanRenderer::_createVulkanInstance() {
 	};
 	{
 		uint32_t count;
-		if (!SDL_Vulkan_GetInstanceExtensions(_window, &count, nullptr)) {
-			fprintf(stderr, "%s\n", SDL_GetError());
-			return false;
-		}
+		EXPECT(SDL_Vulkan_GetInstanceExtensions(_window, &count, nullptr), SDL_GetError());
 
 		extensions.resize(count + extensions.size());
 
-		if (!SDL_Vulkan_GetInstanceExtensions(_window, &count, &extensions[1])) {
-			fprintf(stderr, "%s\n", SDL_GetError());
-			return false;
-		}
+		EXPECT(SDL_Vulkan_GetInstanceExtensions(_window, &count, &extensions[1]), SDL_GetError());
 	}
 
 	vk::ApplicationInfo appinfo{ "Bogdan", VK_MAKE_VERSION(1, 0, 0), "Nilsong", VK_MAKE_VERSION(1, 33, 7), VK_API_VERSION_1_0 };
 	vk::InstanceCreateInfo createInfo{ vk::InstanceCreateFlags(), &appinfo, (uint32_t)layers.size(), layers.data(), (uint32_t)extensions.size(), extensions.data() };
 
 	_instance = vk::createInstance(createInfo);
-	assert(_instance);
+	EXPECT(_instance, "Failed to create instance!");
 
 #ifndef NDEBUG
 	// VK_LAYER_LUNARG_standard_validation HOOK callback
@@ -269,7 +277,7 @@ bool VulkanRenderer::_createVulkanPhysicalDevice() {
 			break;
 		}
 	}
-	assert(_physicalDevice);
+	EXPECT(_physicalDevice, "Failed to create physical device!");
 	return true;
 }
 
@@ -291,11 +299,11 @@ bool VulkanRenderer::_createVulkanLogicalDevice() {
 	vk::DeviceCreateInfo deviceCreateInfo{ vk::DeviceCreateFlags(), (uint32_t)queueCreateInfos.size(), queueCreateInfos.data(), (uint32_t)layers.size(), layers.data(), (uint32_t)extensions.size(), extensions.data() };
 
 	_device = _physicalDevice.createDevice(deviceCreateInfo);
-	assert(_device);
+	EXPECT(_device, "Create device failed!");
 	_graphicsQueue =	_device.getQueue(_queueInformation.graphics, 0);
-	assert(_graphicsQueue);
+	EXPECT(_graphicsQueue, "Graphic queue is null!");
 	_presentQueue =	_device.getQueue(_queueInformation.present, 0);
-	assert(_presentQueue);
+	EXPECT(_presentQueue, "Present queue is null!");
 
 	return true;
 }
@@ -366,7 +374,7 @@ bool VulkanRenderer::_createVulkanSwapChain() {
 	createInfo.oldSwapchain = vk::SwapchainKHR();
 
 	_swapChain = _device.createSwapchainKHR(createInfo, nullptr);
-	assert(_swapChain);
+	EXPECT(_swapChain, "Create swapchain failed!");
 
 	_swapChainImages = _device.getSwapchainImagesKHR(_swapChain);
 
@@ -380,5 +388,73 @@ bool VulkanRenderer::_createVulkanImageViews() {
 		vk::ImageViewCreateInfo createInfo{vk::ImageViewCreateFlags(), _swapChainImages[i], vk::ImageViewType::e2D, _swapChainImageFormat, vk::ComponentMapping{}, vk::ImageSubresourceRange{vk::ImageAspectFlags(vk::ImageAspectFlagBits::eColor), 0, 1, 0, 1}};
 		_swapChainImageViews[i] = _device.createImageView(createInfo);
 	}
+	return true;
+}
+
+bool VulkanRenderer::_createVulkanRenderPass() {
+	vk::AttachmentDescription colorAttachment{{}, _swapChainImageFormat, vk::SampleCountFlagBits::e1, vk::AttachmentLoadOp::eClear, vk::AttachmentStoreOp::eStore, vk::AttachmentLoadOp::eDontCare, vk::AttachmentStoreOp::eDontCare, vk::ImageLayout::eUndefined, vk::ImageLayout::ePresentSrcKHR };
+
+	vk::AttachmentReference colorAttachmentRef{0, vk::ImageLayout::eColorAttachmentOptimal};
+
+	vk::SubpassDescription subpass{{}, vk::PipelineBindPoint::eGraphics, 0, nullptr, 1, &colorAttachmentRef};
+
+	vk::RenderPassCreateInfo renderPassInfo{{}, 1, &colorAttachment, 1, &subpass};
+
+	_renderPass = _device.createRenderPass(renderPassInfo);
+	EXPECT(_renderPass, "Create renderpass failed!");
+	return true;
+}
+
+bool VulkanRenderer::_createVulkanPipeline() {
+	vk::PipelineVertexInputStateCreateInfo vertexInputInfo{{}, /* Binding */0, nullptr, /* Attribute */ 0, nullptr };
+
+	vk::PipelineInputAssemblyStateCreateInfo inputAssembly{{}, vk::PrimitiveTopology::eTriangleList, false };
+
+	vk::Viewport viewport{0, 0, _swapChainExtent.width, _swapChainExtent.height, 0, 1};
+  vk::Rect2D scissor{{0, 0}, _swapChainExtent};
+
+	vk::PipelineViewportStateCreateInfo viewportState{{}, 1, &viewport, 1, &scissor};
+
+	vk::PipelineRasterizationStateCreateInfo rasterizer{{}, false, false, vk::PolygonMode::eFill, vk::CullModeFlagBits::eBack, vk::FrontFace::eCounterClockwise, false, 0, 0, 0, 1};
+
+	vk::PipelineMultisampleStateCreateInfo multisampling{{}, vk::SampleCountFlagBits::e1, false};
+
+	vk::PipelineColorBlendAttachmentState colorBlendAttachment{};
+	colorBlendAttachment.setColorWriteMask(vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG | vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA);
+
+	vk::PipelineColorBlendStateCreateInfo colorBlending{{}, false, vk::LogicOp::eCopy, 1, &colorBlendAttachment, {{0, 0, 0, 0}}};
+
+	vk::PipelineLayoutCreateInfo pipelineLayoutInfo{{}, 0, nullptr, 0, nullptr};
+
+	_pipelineLayout = _device.createPipelineLayout(pipelineLayoutInfo);
+	EXPECT(_pipelineLayout, "Pipeline Layout is null!");
+
+	MaterialVK m{this, "Test"};
+	m.setShader(getShaderPath() + "VertexShader.glsl", Material::ShaderType::VS);
+	m.setShader(getShaderPath() + "FragmentShader.glsl", Material::ShaderType::PS);
+
+	std::string definePos = "#define POSITION " + std::to_string(POSITION) + "\n";
+	std::string defineNor = "#define NORMAL " + std::to_string(NORMAL) + "\n";
+	std::string defineUV = "#define TEXTCOORD " + std::to_string(TEXTCOORD) + "\n";
+
+	std::string defineTX = "#define TRANSLATION " + std::to_string(TRANSLATION) + "\n";
+	std::string defineTXName = "#define TRANSLATION_NAME " + std::string(TRANSLATION_NAME) + "\n";
+
+	std::string defineDiffCol = "#define DIFFUSE_TINT " + std::to_string(DIFFUSE_TINT) + "\n";
+	std::string defineDiffColName = "#define DIFFUSE_TINT_NAME " + std::string(DIFFUSE_TINT_NAME) + "\n";
+
+	std::string defineDiffuse = "#define DIFFUSE_SLOT " + std::to_string(DIFFUSE_SLOT) + "\n";
+	m.addDefine(definePos + defineNor + defineUV + defineTX + defineTXName + defineDiffCol + defineDiffColName, Material::ShaderType::VS);
+	m.addDefine(definePos + defineNor + defineUV + defineTX + defineTXName + defineDiffCol + defineDiffColName, Material::ShaderType::PS);
+
+	std::string err;
+	m.compileMaterial(err);
+
+	vk::GraphicsPipelineCreateInfo pipelineInfo{{}, (uint32_t)m._program.size(), m._program.data(), &vertexInputInfo, &inputAssembly, nullptr, &viewportState, &rasterizer, &multisampling, nullptr, &colorBlending, nullptr, _pipelineLayout, _renderPass, 0, vk::Pipeline(), -1};
+
+	_graphicsPipeline = _device.createGraphicsPipeline(vk::PipelineCache(), pipelineInfo);
+	EXPECT(_graphicsPipeline, "Can't create Graphics pipeline!");
+
+
 	return true;
 }

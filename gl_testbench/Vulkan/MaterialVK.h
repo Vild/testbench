@@ -14,7 +14,7 @@ class MaterialVK : public Material {
 	friend VulkanRenderer;
 
 public:
-	MaterialVK(VulkanRenderer* device, const std::string& name);
+	MaterialVK(VulkanRenderer* renderer, const std::string& name);
 	virtual ~MaterialVK();
 
 	void setShader(const std::string& shaderFileName, ShaderType type) final;

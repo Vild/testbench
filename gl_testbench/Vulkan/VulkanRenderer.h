@@ -27,7 +27,7 @@ public:
 	Mesh* makeMesh() final;
 	//VertexBuffer* makeVertexBuffer();
 	VertexBuffer* makeVertexBuffer(size_t size, VertexBuffer::DATA_USAGE usage) final;
-	ConstantBuffer* makeConstantBuffer(std::string NAME, unsigned int location) final;
+	ConstantBuffer* makeConstantBuffer(std::string name, unsigned int location) final;
 //	ResourceBinding* makeResourceBinding();
 	RenderState* makeRenderState() final;
 	Technique* makeTechnique(Material* m, RenderState* r) final;
@@ -79,12 +79,15 @@ private:
 	std::vector<vk::Image> _swapChainImages;
 	std::vector<vk::ImageView> _swapChainImageViews;
 
-	std::vector<Mesh*> _drawList;
-	std::unordered_map<Technique*, std::vector<Mesh*>> _drawList2;
+	vk::RenderPass _renderPass;
+	vk::PipelineLayout _pipelineLayout;
+	vk::Pipeline _graphicsPipeline;
+
+	std::vector<>
+
+	std::unordered_map<Technique*, std::vector<Mesh*>> _drawList;
 
 	bool _globalWireframeMode = false;
-
-	//int initializeVulkan(int major, int minor, unsigned int width, unsigned int height);
 	float _clearColor[4] = { 0,0,0,0 };
 
 	bool _initSDL();
@@ -94,5 +97,7 @@ private:
 	bool _createVulkanLogicalDevice();
 	bool _createVulkanSwapChain();
 	bool _createVulkanImageViews();
+	bool _createVulkanRenderPass();
+	bool _createVulkanPipeline();
 };
 

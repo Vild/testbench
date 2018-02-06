@@ -6,13 +6,15 @@ class RenderStateVK : public RenderState {
 public:
 	RenderStateVK();
 	virtual ~RenderStateVK();
-	void setWireFrame(bool wireframe) final;
+	void setWireFrame(bool wireFrame) final;
 	void set() final;
 
 	void setGlobalWireFrame(bool* global);
 
+	inline bool get() const { return _wireFrame || (_globalWireFrame? *_globalWireFrame : false); }
+
 private:
-	bool _wireframe;
-	bool* globalWireFrame;
+	bool _wireFrame;
+	bool* _globalWireFrame;
 };
 
