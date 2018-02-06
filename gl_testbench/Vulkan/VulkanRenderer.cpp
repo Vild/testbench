@@ -102,6 +102,10 @@ int VulkanRenderer::initialize(unsigned int width, unsigned int height) {
 		{"createVulkanImageViews", &VulkanRenderer::_createVulkanImageViews},
 		{"createVulkanRenderPass", &VulkanRenderer::_createVulkanRenderPass},
 		{"createVulkanPipeline", &VulkanRenderer::_createVulkanPipeline},
+		{"createVulkanFramebuffers", &VulkanRenderer::_createVulkanFramebuffers},
+		{"createVulkanCommandPool", &VulkanRenderer::_createVulkanCommandPool},
+		{"createVulkanCommandBuffers", &VulkanRenderer::_createVulkanCommandBuffers},
+		{"createVulkanSemaphores", &VulkanRenderer::_createVulkanSemaphores},
 	};
 
 	_width = width;
@@ -118,6 +122,15 @@ void VulkanRenderer::setWinTitle(const char* title) {
 	SDL_SetWindowTitle(_window, title);
 }
 int VulkanRenderer::shutdown() {
+	_device.waitIdle();
+	_device.destroySemaphore(_renderFinishedSemaphore);
+	_device.destroySemaphore(_imageAvailableSemaphore);
+
+	_device.destroyCommandPool(_commandPool);
+
+	for (auto framebuffer : _swapChainFramebuffers)
+		_device.destroyFramebuffer(framebuffer);
+
 	_device.destroyPipeline(_graphicsPipeline);
 	_device.destroyPipelineLayout(_pipelineLayout);
 	_device.destroyRenderPass(_renderPass);
@@ -151,10 +164,20 @@ void VulkanRenderer::setRenderState(RenderState* ps) {
 }
 void VulkanRenderer::submit(Mesh* mesh) { _drawList[mesh->technique].push_back(mesh); }
 void VulkanRenderer::frame() {
-	// TODO: Create queues, if needed
+	_currentImageIndex = _device.acquireNextImageKHR(_swapChain, std::numeric_limits<uint64_t>::max(), _imageAvailableSemaphore, vk::Fence()).value;
+
+	vk::Semaphore waitSemaphores[] = {_imageAvailableSemaphore};
+	vk::PipelineStageFlags waitStages[] = {vk::PipelineStageFlagBits::eColorAttachmentOutput};
+	vk::Semaphore signalSemaphores[] = {_renderFinishedSemaphore};
+	vk::SubmitInfo submitInfo{1, waitSemaphores, waitStages, 1, &_commandBuffers[_currentImageIndex], 1, signalSemaphores};
+	_graphicsQueue.submit(1, &submitInfo, vk::Fence());
 }
 void VulkanRenderer::present() {
-	// TODO: Submit queues
+	_presentQueue.waitIdle();
+	vk::Semaphore signalSemaphores[] = {_renderFinishedSemaphore};
+	vk::SwapchainKHR swapChains[] = {_swapChain};
+	vk::PresentInfoKHR presentInfo{1, signalSemaphores, 1, swapChains, &_currentImageIndex};
+	_presentQueue.presentKHR(presentInfo);
 }
 
 bool VulkanRenderer::_initSDL() {
@@ -398,7 +421,9 @@ bool VulkanRenderer::_createVulkanRenderPass() {
 
 	vk::SubpassDescription subpass{{}, vk::PipelineBindPoint::eGraphics, 0, nullptr, 1, &colorAttachmentRef};
 
-	vk::RenderPassCreateInfo renderPassInfo{{}, 1, &colorAttachment, 1, &subpass};
+	vk::SubpassDependency dependency{VK_SUBPASS_EXTERNAL, 0, vk::PipelineStageFlagBits::eColorAttachmentOutput, vk::PipelineStageFlagBits::eColorAttachmentOutput, vk::AccessFlags(), vk::AccessFlagBits::eColorAttachmentRead | vk::AccessFlagBits::eColorAttachmentWrite};
+
+	vk::RenderPassCreateInfo renderPassInfo{{}, 1, &colorAttachment, 1, &subpass, 1, &dependency};
 
 	_renderPass = _device.createRenderPass(renderPassInfo);
 	EXPECT(_renderPass, "Create renderpass failed!");
@@ -410,7 +435,7 @@ bool VulkanRenderer::_createVulkanPipeline() {
 
 	vk::PipelineInputAssemblyStateCreateInfo inputAssembly{{}, vk::PrimitiveTopology::eTriangleList, false };
 
-	vk::Viewport viewport{0, 0, _swapChainExtent.width, _swapChainExtent.height, 0, 1};
+	vk::Viewport viewport{0, 0, (float)_swapChainExtent.width, (float)_swapChainExtent.height, 0, 1};
   vk::Rect2D scissor{{0, 0}, _swapChainExtent};
 
 	vk::PipelineViewportStateCreateInfo viewportState{{}, 1, &viewport, 1, &scissor};
@@ -455,6 +480,60 @@ bool VulkanRenderer::_createVulkanPipeline() {
 	_graphicsPipeline = _device.createGraphicsPipeline(vk::PipelineCache(), pipelineInfo);
 	EXPECT(_graphicsPipeline, "Can't create Graphics pipeline!");
 
+	return true;
+}
 
+bool VulkanRenderer::_createVulkanFramebuffers() {
+	_swapChainFramebuffers.resize(_swapChainImageViews.size());
+	for (size_t i = 0; i < _swapChainImageViews.size(); i++) {
+    vk::ImageView attachments[] = {
+        _swapChainImageViews[i]
+    };
+
+    vk::FramebufferCreateInfo framebufferInfo = {{}, _renderPass, 1, attachments, _swapChainExtent.width, _swapChainExtent.height, 1};
+
+		_swapChainFramebuffers[i] = _device.createFramebuffer(framebufferInfo);
+		EXPECT(_swapChainFramebuffers[i], "Failed to create framebuffer!");
+	}
+	return true;
+}
+
+bool VulkanRenderer::_createVulkanCommandPool() {
+	vk::CommandPoolCreateInfo createInfo{{}, _queueInformation.graphics};
+	_commandPool = _device.createCommandPool(createInfo);
+	EXPECT(_commandPool, "Failed to create command pool!");
+	return true;
+}
+
+bool VulkanRenderer::_createVulkanCommandBuffers() {
+	vk::CommandBufferAllocateInfo allocInfo{_commandPool, vk::CommandBufferLevel::ePrimary, (uint32_t)_swapChainFramebuffers.size()};
+
+	_commandBuffers = _device.allocateCommandBuffers(allocInfo);
+	EXPECT(_commandBuffers.size(), "Failed to allocate command buffers");
+
+	for (size_t i = 0; i < _commandBuffers.size(); i++) {
+    vk::CommandBufferBeginInfo beginInfo{vk::CommandBufferUsageFlagBits::eSimultaneousUse};
+
+		_commandBuffers[i].begin(beginInfo);
+
+		vk::ClearColorValue c = vk::ClearColorValue{std::array<float,4>{{0.0f, 0.0f, 0.0f, 1.0f}}};
+		vk::ClearValue clearColor{c};
+		vk::RenderPassBeginInfo renderPassInfo = {_renderPass, _swapChainFramebuffers[i], {{0, 0}, _swapChainExtent}, 1, &clearColor};
+		_commandBuffers[i].beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
+
+		_commandBuffers[i].bindPipeline(vk::PipelineBindPoint::eGraphics, _graphicsPipeline);
+		_commandBuffers[i].draw(3, 1, 0, 0);
+		_commandBuffers[i].endRenderPass();
+		_commandBuffers[i].end();
+	}
+	return true;
+}
+
+bool VulkanRenderer::_createVulkanSemaphores() {
+	vk::SemaphoreCreateInfo semaphoreInfo{};
+	_imageAvailableSemaphore = _device.createSemaphore(semaphoreInfo);
+	EXPECT(_imageAvailableSemaphore, "Failed to create semaphore!");
+	_renderFinishedSemaphore = _device.createSemaphore(semaphoreInfo);
+	EXPECT(_renderFinishedSemaphore, "Failed to create semaphore!");
 	return true;
 }

@@ -307,11 +307,12 @@ void shutdown() {
 int main(int argc, char *argv[])
 {
 	renderer = Renderer::makeRenderer(Renderer::BACKEND::VULKAN);
-	renderer->initialize(800,600);
+	if (!renderer->initialize(800,600))
+		return -1;
 	renderer->setWinTitle("Vulkan");
 	renderer->setClearColor(0.0, 0.1, 0.1, 1.0);
 	initialiseTestbench();
-	//run();
+	run();
 	shutdown();
 	return 0;
 };

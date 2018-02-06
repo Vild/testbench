@@ -83,7 +83,13 @@ private:
 	vk::PipelineLayout _pipelineLayout;
 	vk::Pipeline _graphicsPipeline;
 
-	std::vector<>
+	std::vector<vk::Framebuffer> _swapChainFramebuffers;
+	vk::CommandPool _commandPool;
+	std::vector<vk::CommandBuffer> _commandBuffers;
+
+	uint32_t _currentImageIndex;
+	vk::Semaphore _imageAvailableSemaphore;
+	vk::Semaphore _renderFinishedSemaphore;
 
 	std::unordered_map<Technique*, std::vector<Mesh*>> _drawList;
 
@@ -99,5 +105,9 @@ private:
 	bool _createVulkanImageViews();
 	bool _createVulkanRenderPass();
 	bool _createVulkanPipeline();
+	bool _createVulkanFramebuffers();
+	bool _createVulkanCommandPool();
+	bool _createVulkanCommandBuffers();
+	bool _createVulkanSemaphores();
 };
 
