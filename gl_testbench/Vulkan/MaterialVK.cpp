@@ -128,7 +128,8 @@ int MaterialVK::_compileShader(ShaderType type, std::string& errString) {
 				tmpStream.write(text.data(), text.size());
 			tmpStream.close();
 
-			if (system((std::string("glslangValidator -V -e \"main\" -o ") + file + ".spv " + tmpFile).c_str())) {
+			auto r = system((std::string("glslangValidator -V -e \"main\" -o ") + file + ".spv " + tmpFile).c_str());
+			if (r) {
 				errString = "glslangValidator status wasn't 0";
 				return -1;
 			}

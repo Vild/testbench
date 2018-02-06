@@ -113,8 +113,14 @@ int VulkanRenderer::initialize(unsigned int width, unsigned int height) {
 
 	for (auto init : _inits) {
 		printf("Running %s():\n", init.name.c_str());
-		bool r = (this->*(init.function))();
-		EXPECT(r, "\tINIT FAILED!");
+		try {
+			bool r = (this->*(init.function))();
+			EXPECT(r, "\tINIT FAILED!");
+		}
+		catch (const std::exception&)
+		{
+			EXPECT(0, "\tINIT FAILED!");
+		}
 	}
 	return true;
 }
@@ -226,8 +232,18 @@ bool VulkanRenderer::_createVulkanInstance() {
 		EXPECT(SDL_Vulkan_GetInstanceExtensions(_window, &count, &extensions[1]), SDL_GetError());
 	}
 
-	vk::ApplicationInfo appinfo{ "Bogdan", VK_MAKE_VERSION(1, 0, 0), "Nilsong", VK_MAKE_VERSION(1, 33, 7), VK_API_VERSION_1_0 };
-	vk::InstanceCreateInfo createInfo{ vk::InstanceCreateFlags(), &appinfo, (uint32_t)layers.size(), layers.data(), (uint32_t)extensions.size(), extensions.data() };
+	vk::ApplicationInfo appInfo;
+	appInfo.pApplicationName = "Bogdan das game";
+	appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
+	appInfo.pEngineName = "Nilsong the motor";
+	appInfo.engineVersion = VK_MAKE_VERSION(1, 33, 7);
+	appInfo.apiVersion = VK_API_VERSION_1_0;
+	vk::InstanceCreateInfo createInfo;
+	createInfo.pApplicationInfo = &appInfo;
+	createInfo.enabledLayerCount = (uint32_t)layers.size();
+	createInfo.ppEnabledLayerNames = layers.data();
+	createInfo.enabledExtensionCount = (uint32_t)extensions.size();
+	createInfo.ppEnabledExtensionNames = extensions.data();
 
 	_instance = vk::createInstance(createInfo);
 	EXPECT(_instance, "Failed to create instance!");
@@ -309,8 +325,8 @@ bool VulkanRenderer::_createVulkanLogicalDevice() {
 
 	// TODO: if queue index is same, only create one CreateInfo with count of two
 	std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos {
-		{ vk::DeviceQueueCreateFlags(), _queueInformation.graphics, 1, &queuePriority },
-		{ vk::DeviceQueueCreateFlags(), _queueInformation.present, 1, &queuePriority },
+		vk::DeviceQueueCreateInfo{ vk::DeviceQueueCreateFlags(), _queueInformation.graphics, 1, &queuePriority },
+		vk::DeviceQueueCreateInfo{ vk::DeviceQueueCreateFlags(), _queueInformation.present, 1, &queuePriority },
 	};
 	std::vector<const char *> layers{
 		DEBUG_LAYER
@@ -319,7 +335,15 @@ bool VulkanRenderer::_createVulkanLogicalDevice() {
 		VK_KHR_SWAPCHAIN_EXTENSION_NAME
 	};
 
-	vk::DeviceCreateInfo deviceCreateInfo{ vk::DeviceCreateFlags(), (uint32_t)queueCreateInfos.size(), queueCreateInfos.data(), (uint32_t)layers.size(), layers.data(), (uint32_t)extensions.size(), extensions.data() };
+	vk::PhysicalDeviceFeatures deviceFeatures;
+	vk::DeviceCreateInfo deviceCreateInfo;
+	deviceCreateInfo.queueCreateInfoCount = (uint32_t)queueCreateInfos.size();
+	deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
+	deviceCreateInfo.enabledLayerCount = (uint32_t)layers.size();
+	deviceCreateInfo.ppEnabledLayerNames = layers.data();
+	deviceCreateInfo.enabledExtensionCount = (uint32_t)extensions.size();
+	deviceCreateInfo.ppEnabledExtensionNames = extensions.data();
+	deviceCreateInfo.pEnabledFeatures = &deviceFeatures;
 
 	_device = _physicalDevice.createDevice(deviceCreateInfo);
 	EXPECT(_device, "Create device failed!");
@@ -341,10 +365,10 @@ bool VulkanRenderer::_createVulkanSwapChain() {
 		}
 
     for (const vk::SurfaceFormatKHR& f : formats)
-			if (f.format == vk::Format::eB8G8R8A8Unorm && f.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear)
-				return f;
+		if (f.format == vk::Format::eB8G8R8A8Unorm && f.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear)
+			return f;
 
-    return formats[0];
+		return formats[0];
 	}(_swapChainInformation.formats);
 	_swapChainImageFormat = surfaceFormat.format;
 
@@ -361,33 +385,40 @@ bool VulkanRenderer::_createVulkanSwapChain() {
 	vk::Extent2D extent = [this](const vk::SurfaceCapabilitiesKHR& capabilities) {
 		if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
 			return capabilities.currentExtent;
-    } else {
+		} else {
 			vk::Extent2D actualExtent = { _width, _height };
 
 			actualExtent.width = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, actualExtent.width));
 			actualExtent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, actualExtent.height));
 
 			return actualExtent;
-    }
+		}
 	}(_swapChainInformation.capabilities);
 	_swapChainExtent = extent;
 
 	uint32_t imageCount = _swapChainInformation.capabilities.minImageCount + 1;
 	if (_swapChainInformation.capabilities.maxImageCount > 0 && imageCount > _swapChainInformation.capabilities.maxImageCount)
-    imageCount = _swapChainInformation.capabilities.maxImageCount;
+		imageCount = _swapChainInformation.capabilities.maxImageCount;
 
-	vk::SwapchainCreateInfoKHR createInfo{ vk::SwapchainCreateFlagsKHR(), _surface, imageCount, surfaceFormat.format, surfaceFormat.colorSpace, extent, 1, vk::ImageUsageFlagBits::eColorAttachment };
+	vk::SwapchainCreateInfoKHR createInfo;
+	createInfo.surface = _surface;
+	createInfo.minImageCount = imageCount;
+	createInfo.imageFormat = surfaceFormat.format;
+	createInfo.imageColorSpace = surfaceFormat.colorSpace;
+	createInfo.imageExtent = extent;
+	createInfo.imageArrayLayers = 1;
+	createInfo.imageUsage = vk::ImageUsageFlagBits::eColorAttachment;
 
 	uint32_t queueFamilyIndices[] = {_queueInformation.graphics, _queueInformation.present};
 
 	if (_queueInformation.graphics != _queueInformation.present) {
-    createInfo.imageSharingMode = vk::SharingMode::eConcurrent;
-    createInfo.queueFamilyIndexCount = 2;
-    createInfo.pQueueFamilyIndices = queueFamilyIndices;
+		createInfo.imageSharingMode = vk::SharingMode::eConcurrent;
+		createInfo.queueFamilyIndexCount = 2;
+		createInfo.pQueueFamilyIndices = queueFamilyIndices;
 	} else {
-    createInfo.imageSharingMode = vk::SharingMode::eExclusive;
-    createInfo.queueFamilyIndexCount = 0; // Optional
-    createInfo.pQueueFamilyIndices = nullptr; // Optional
+		createInfo.imageSharingMode = vk::SharingMode::eExclusive;
+		createInfo.queueFamilyIndexCount = 0; // Optional
+		createInfo.pQueueFamilyIndices = nullptr; // Optional
 	}
 
 	createInfo.preTransform = _swapChainInformation.capabilities.currentTransform;
@@ -401,6 +432,8 @@ bool VulkanRenderer::_createVulkanSwapChain() {
 
 	_swapChainImages = _device.getSwapchainImagesKHR(_swapChain);
 
+	_swapChainImageFormat = surfaceFormat.format;
+	_swapChainExtent = extent;
 	return true;
 }
 
@@ -408,22 +441,60 @@ bool VulkanRenderer::_createVulkanImageViews() {
 	_swapChainImageViews.resize(_swapChainImages.size());
 
 	for (size_t i = 0; i < _swapChainImages.size(); i++) {
-		vk::ImageViewCreateInfo createInfo{vk::ImageViewCreateFlags(), _swapChainImages[i], vk::ImageViewType::e2D, _swapChainImageFormat, vk::ComponentMapping{}, vk::ImageSubresourceRange{vk::ImageAspectFlags(vk::ImageAspectFlagBits::eColor), 0, 1, 0, 1}};
+		vk::ImageViewCreateInfo createInfo;
+		createInfo.image = _swapChainImages[i];
+		createInfo.viewType = vk::ImageViewType::e2D;
+		createInfo.format = _swapChainImageFormat;
+		createInfo.components.r = vk::ComponentSwizzle::eIdentity;
+		createInfo.components.g = vk::ComponentSwizzle::eIdentity;
+		createInfo.components.b = vk::ComponentSwizzle::eIdentity;
+		createInfo.components.a = vk::ComponentSwizzle::eIdentity;
+		createInfo.subresourceRange.aspectMask = vk::ImageAspectFlagBits::eColor;
+		createInfo.subresourceRange.baseMipLevel = 0;
+		createInfo.subresourceRange.levelCount = 1;
+		createInfo.subresourceRange.baseArrayLayer = 0;
+		createInfo.subresourceRange.layerCount = 1;
 		_swapChainImageViews[i] = _device.createImageView(createInfo);
 	}
 	return true;
 }
 
 bool VulkanRenderer::_createVulkanRenderPass() {
-	vk::AttachmentDescription colorAttachment{{}, _swapChainImageFormat, vk::SampleCountFlagBits::e1, vk::AttachmentLoadOp::eClear, vk::AttachmentStoreOp::eStore, vk::AttachmentLoadOp::eDontCare, vk::AttachmentStoreOp::eDontCare, vk::ImageLayout::eUndefined, vk::ImageLayout::ePresentSrcKHR };
+	vk::AttachmentDescription colorAttachment;
+	colorAttachment.format = _swapChainImageFormat;
+	colorAttachment.samples = vk::SampleCountFlagBits::e1;
+	colorAttachment.loadOp = vk::AttachmentLoadOp::eClear;
+	colorAttachment.storeOp = vk::AttachmentStoreOp::eStore;
+	colorAttachment.stencilLoadOp = vk::AttachmentLoadOp::eDontCare;
+	colorAttachment.stencilStoreOp = vk::AttachmentStoreOp::eDontCare;
+	colorAttachment.initialLayout = vk::ImageLayout::eUndefined;
+	colorAttachment.finalLayout = vk::ImageLayout::ePresentSrcKHR;
 
-	vk::AttachmentReference colorAttachmentRef{0, vk::ImageLayout::eColorAttachmentOptimal};
+	vk::AttachmentReference colorAttachmentRef;
+	colorAttachmentRef.attachment = 0;
+	colorAttachmentRef.layout = vk::ImageLayout::eColorAttachmentOptimal;
 
-	vk::SubpassDescription subpass{{}, vk::PipelineBindPoint::eGraphics, 0, nullptr, 1, &colorAttachmentRef};
+	vk::SubpassDescription subpass;
+	subpass.pipelineBindPoint = vk::PipelineBindPoint::eGraphics;
+	subpass.colorAttachmentCount = 1;
+	subpass.pColorAttachments = &colorAttachmentRef;
 
-	vk::SubpassDependency dependency{VK_SUBPASS_EXTERNAL, 0, vk::PipelineStageFlagBits::eColorAttachmentOutput, vk::PipelineStageFlagBits::eColorAttachmentOutput, vk::AccessFlags(), vk::AccessFlagBits::eColorAttachmentRead | vk::AccessFlagBits::eColorAttachmentWrite};
+	vk::SubpassDependency dependency;
+	dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+	//dependency.dstSubpass = vk::PipelineStageFlags();
+	dependency.srcStageMask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
+	//dependency.srcAccessMask = vk::PipelineStageFlags();
+	dependency.dstStageMask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
+	dependency.dstAccessMask = vk::AccessFlagBits::eColorAttachmentRead | vk::AccessFlagBits::eColorAttachmentWrite;
 
-	vk::RenderPassCreateInfo renderPassInfo{{}, 1, &colorAttachment, 1, &subpass, 1, &dependency};
+
+	vk::RenderPassCreateInfo renderPassInfo;
+	renderPassInfo.attachmentCount = 1;
+	renderPassInfo.pAttachments = &colorAttachment;
+	renderPassInfo.subpassCount = 1;
+	renderPassInfo.pSubpasses = &subpass;
+	renderPassInfo.dependencyCount = 1;
+	renderPassInfo.pDependencies = &dependency;
 
 	_renderPass = _device.createRenderPass(renderPassInfo);
 	EXPECT(_renderPass, "Create renderpass failed!");
@@ -431,16 +502,40 @@ bool VulkanRenderer::_createVulkanRenderPass() {
 }
 
 bool VulkanRenderer::_createVulkanPipeline() {
-	vk::PipelineVertexInputStateCreateInfo vertexInputInfo{{}, /* Binding */0, nullptr, /* Attribute */ 0, nullptr };
+	vk::PipelineVertexInputStateCreateInfo vertexInputInfo;
+	vertexInputInfo.vertexBindingDescriptionCount = 0;
+	vertexInputInfo.vertexAttributeDescriptionCount = 0;
 
-	vk::PipelineInputAssemblyStateCreateInfo inputAssembly{{}, vk::PrimitiveTopology::eTriangleList, false };
+	vk::PipelineInputAssemblyStateCreateInfo inputAssembly;
+	inputAssembly.topology = vk::PrimitiveTopology::eTriangleList;
+	inputAssembly.primitiveRestartEnable = false;
 
-	vk::Viewport viewport{0, 0, (float)_swapChainExtent.width, (float)_swapChainExtent.height, 0, 1};
-  vk::Rect2D scissor{{0, 0}, _swapChainExtent};
+	vk::Viewport viewport;
+	viewport.x = 0.0f;
+	viewport.y = 0.0f;
+	viewport.width = (float)_swapChainExtent.width;
+	viewport.height = (float)_swapChainExtent.height;
+	viewport.minDepth = 0.0f;
+	viewport.maxDepth = 1.0f;
 
-	vk::PipelineViewportStateCreateInfo viewportState{{}, 1, &viewport, 1, &scissor};
+	vk::Rect2D scissor;
+	scissor.offset = { 0, 0 };
+	scissor.extent = _swapChainExtent;
 
-	vk::PipelineRasterizationStateCreateInfo rasterizer{{}, false, false, vk::PolygonMode::eFill, vk::CullModeFlagBits::eBack, vk::FrontFace::eCounterClockwise, false, 0, 0, 0, 1};
+	vk::PipelineViewportStateCreateInfo viewportState;
+	viewportState.viewportCount = 1;
+	viewportState.pViewports = &viewport;
+	viewportState.scissorCount = 1;
+	viewportState.pScissors = &scissor;
+
+	vk::PipelineRasterizationStateCreateInfo rasterizer;
+	rasterizer.depthClampEnable = false;
+	rasterizer.rasterizerDiscardEnable = false;
+	rasterizer.polygonMode = vk::PolygonMode::eFill;
+	rasterizer.lineWidth = 1.0f;
+	rasterizer.cullMode = vk::CullModeFlagBits::eBack;
+	rasterizer.frontFace = vk::FrontFace::eCounterClockwise;
+	rasterizer.depthBiasEnable = false;
 
 	vk::PipelineMultisampleStateCreateInfo multisampling{{}, vk::SampleCountFlagBits::e1, false};
 
