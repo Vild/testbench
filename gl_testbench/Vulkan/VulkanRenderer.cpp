@@ -278,7 +278,7 @@ bool VulkanRenderer::_createVulkanPhysicalDevice() {
 			vk::PhysicalDeviceProperties deviceProperties = device.getProperties();
 			vk::PhysicalDeviceFeatures deviceFeatures = device.getFeatures();
 
-			if (deviceProperties.deviceType != vk::PhysicalDeviceType::eDiscreteGpu || !deviceFeatures.geometryShader)
+			if (!deviceFeatures.geometryShader)
 				return false;
 
 			auto queueFamilies = device.getQueueFamilyProperties();
@@ -364,9 +364,9 @@ bool VulkanRenderer::_createVulkanSwapChain() {
 			return iHateYouVulkanHPPWhyDontYouHaveAConstructorForThis;
 		}
 
-    for (const vk::SurfaceFormatKHR& f : formats)
-		if (f.format == vk::Format::eB8G8R8A8Unorm && f.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear)
-			return f;
+		for (const vk::SurfaceFormatKHR& f : formats)
+			if (f.format == vk::Format::eB8G8R8A8Unorm && f.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear)
+				return f;
 
 		return formats[0];
 	}(_swapChainInformation.formats);
@@ -519,7 +519,7 @@ bool VulkanRenderer::_createVulkanPipeline() {
 	viewport.maxDepth = 1.0f;
 
 	vk::Rect2D scissor;
-	scissor.offset = { 0, 0 };
+	scissor.offset = vk::Offset2D{ 0, 0 };
 	scissor.extent = _swapChainExtent;
 
 	vk::PipelineViewportStateCreateInfo viewportState;
