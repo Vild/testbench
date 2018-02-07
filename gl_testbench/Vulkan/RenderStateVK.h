@@ -11,10 +11,9 @@ public:
 
 	void setGlobalWireFrame(bool* global);
 
-	inline bool get() const { return _wireFrame || (_globalWireFrame? *_globalWireFrame : false); }
+	inline bool get() const { return _wireFrame || (_globalWireFrame ? *_globalWireFrame : false); }
 
 private:
 	bool _wireFrame;
 	bool* _globalWireFrame;
 };
-

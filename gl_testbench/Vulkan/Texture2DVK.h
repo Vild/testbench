@@ -17,4 +17,3 @@ public:
 
 	uint32_t textureHandle = 0;
 };
-

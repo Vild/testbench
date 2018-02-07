@@ -31,9 +31,18 @@
 #define DEBUG_EXTENSION
 #endif
 
-#define EXPECT(b, msg) do { if (!(b)) { fprintf(stderr, "%s\n", msg); return false; } } while(0)
+#define EXPECT(b, msg)              \
+	do {                              \
+		if (!(b)) {                     \
+			fprintf(stderr, "%s\n", msg); \
+			return false;                 \
+		}                               \
+	} while (0)
 
-static VkResult CreateDebugReportCallbackEXT(VkInstance instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugReportCallbackEXT* pCallback) {
+static VkResult CreateDebugReportCallbackEXT(VkInstance instance,
+                                             const VkDebugReportCallbackCreateInfoEXT* pCreateInfo,
+                                             const VkAllocationCallbacks* pAllocator,
+                                             VkDebugReportCallbackEXT* pCallback) {
 	auto func = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT");
 	if (func != nullptr)
 		return func(instance, pCreateInfo, pAllocator, pCallback);
@@ -47,31 +56,35 @@ static void DestroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCall
 		func(instance, callback, pAllocator);
 }
 
-static VKAPI_ATTR VkBool32 VKAPI_CALL vulkanDebugCallback(
-	VkDebugReportFlagsEXT flags,
-	VkDebugReportObjectTypeEXT objType,
-	uint64_t obj,
-	size_t location,
-	int32_t code,
-	const char* layerPrefix,
-	const char* msg,
-	void* userData) {
-
+static VKAPI_ATTR VkBool32 VKAPI_CALL vulkanDebugCallback(VkDebugReportFlagsEXT flags,
+                                                          VkDebugReportObjectTypeEXT objType,
+                                                          uint64_t obj,
+                                                          size_t location,
+                                                          int32_t code,
+                                                          const char* layerPrefix,
+                                                          const char* msg,
+                                                          void* userData) {
 	fprintf(stderr, "Validation layer: %s\n", msg);
 
 	return VK_FALSE;
 }
 
-VulkanRenderer::VulkanRenderer() {
-}
-VulkanRenderer::~VulkanRenderer() {
-}
+VulkanRenderer::VulkanRenderer() {}
+VulkanRenderer::~VulkanRenderer() {}
 
-Material* VulkanRenderer::makeMaterial(const std::string& name) { return new MaterialVK(this, name); }
-Mesh* VulkanRenderer::makeMesh() { return new MeshVK(); }
-//VertexBuffer* VulkanRenderer::makeVertexBuffer();
-VertexBuffer* VulkanRenderer::makeVertexBuffer(size_t size, VertexBuffer::DATA_USAGE usage) { return new VertexBufferVK(this, size, usage); }
-ConstantBuffer* VulkanRenderer::makeConstantBuffer(std::string name, unsigned int location) { return new ConstantBufferVK(this, name, location); }
+Material* VulkanRenderer::makeMaterial(const std::string& name) {
+	return new MaterialVK(this, name);
+}
+Mesh* VulkanRenderer::makeMesh() {
+	return new MeshVK();
+}
+// VertexBuffer* VulkanRenderer::makeVertexBuffer();
+VertexBuffer* VulkanRenderer::makeVertexBuffer(size_t size, VertexBuffer::DATA_USAGE usage) {
+	return new VertexBufferVK(this, size, usage);
+}
+ConstantBuffer* VulkanRenderer::makeConstantBuffer(std::string name, unsigned int location) {
+	return new ConstantBufferVK(this, name, location);
+}
 //	ResourceBinding* VulkanRenderer::makeResourceBinding();
 RenderState* VulkanRenderer::makeRenderState() {
 	RenderStateVK* newRS = new RenderStateVK();
@@ -79,33 +92,43 @@ RenderState* VulkanRenderer::makeRenderState() {
 	newRS->setWireFrame(false);
 	return (RenderState*)newRS;
 }
-Technique* VulkanRenderer::makeTechnique(Material* m, RenderState* r) { return new Technique(m, r); }
-Texture2D* VulkanRenderer::makeTexture2D() { return new Texture2DVK(this); }
-Sampler2D* VulkanRenderer::makeSampler2D() { return new Sampler2DVK(this); }
-std::string VulkanRenderer::getShaderPath() { return ASSETS_FOLDER "/VK/"; }
-std::string VulkanRenderer::getShaderExtension() { return ".glsl"; }
+Technique* VulkanRenderer::makeTechnique(Material* m, RenderState* r) {
+	return new Technique(m, r);
+}
+Texture2D* VulkanRenderer::makeTexture2D() {
+	return new Texture2DVK(this);
+}
+Sampler2D* VulkanRenderer::makeSampler2D() {
+	return new Sampler2DVK(this);
+}
+std::string VulkanRenderer::getShaderPath() {
+	return ASSETS_FOLDER "/VK/";
+}
+std::string VulkanRenderer::getShaderExtension() {
+	return ".glsl";
+}
 
 int VulkanRenderer::initialize(unsigned int width, unsigned int height) {
 	struct InitFunction {
-		typedef bool(VulkanRenderer::*initFunction)();
+		typedef bool (VulkanRenderer::*initFunction)();
 		std::string name;
 		initFunction function;
 	};
 
 	static const std::vector<InitFunction> _inits = {
-		{"initSDL", &VulkanRenderer::_initSDL},
-		{"createVulkanInstance", &VulkanRenderer::_createVulkanInstance},
-		{"createSDLSurface", &VulkanRenderer::_createSDLSurface},
-		{"createVulkanPhysicalDevice", &VulkanRenderer::_createVulkanPhysicalDevice},
-		{"createVulkanLogicalDevice", &VulkanRenderer::_createVulkanLogicalDevice},
-		{"createVulkanSwapChain", &VulkanRenderer::_createVulkanSwapChain},
-		{"createVulkanImageViews", &VulkanRenderer::_createVulkanImageViews},
-		{"createVulkanRenderPass", &VulkanRenderer::_createVulkanRenderPass},
-		{"createVulkanPipeline", &VulkanRenderer::_createVulkanPipeline},
-		{"createVulkanFramebuffers", &VulkanRenderer::_createVulkanFramebuffers},
-		{"createVulkanCommandPool", &VulkanRenderer::_createVulkanCommandPool},
-		{"createVulkanCommandBuffers", &VulkanRenderer::_createVulkanCommandBuffers},
-		{"createVulkanSemaphores", &VulkanRenderer::_createVulkanSemaphores},
+	  {"initSDL", &VulkanRenderer::_initSDL},
+	  {"createVulkanInstance", &VulkanRenderer::_createVulkanInstance},
+	  {"createSDLSurface", &VulkanRenderer::_createSDLSurface},
+	  {"createVulkanPhysicalDevice", &VulkanRenderer::_createVulkanPhysicalDevice},
+	  {"createVulkanLogicalDevice", &VulkanRenderer::_createVulkanLogicalDevice},
+	  {"createVulkanSwapChain", &VulkanRenderer::_createVulkanSwapChain},
+	  {"createVulkanImageViews", &VulkanRenderer::_createVulkanImageViews},
+	  {"createVulkanRenderPass", &VulkanRenderer::_createVulkanRenderPass},
+	  {"createVulkanPipeline", &VulkanRenderer::_createVulkanPipeline},
+	  {"createVulkanFramebuffers", &VulkanRenderer::_createVulkanFramebuffers},
+	  {"createVulkanCommandPool", &VulkanRenderer::_createVulkanCommandPool},
+	  {"createVulkanCommandBuffers", &VulkanRenderer::_createVulkanCommandBuffers},
+	  {"createVulkanSemaphores", &VulkanRenderer::_createVulkanSemaphores},
 	};
 
 	_width = width;
@@ -116,9 +139,7 @@ int VulkanRenderer::initialize(unsigned int width, unsigned int height) {
 		try {
 			bool r = (this->*(init.function))();
 			EXPECT(r, "\tINIT FAILED!");
-		}
-		catch (const std::exception&)
-		{
+		} catch (const std::exception&) {
 			EXPECT(0, "\tINIT FAILED!");
 		}
 	}
@@ -168,7 +189,9 @@ void VulkanRenderer::clearBuffer(unsigned int) {
 void VulkanRenderer::setRenderState(RenderState* ps) {
 	ps->set();
 }
-void VulkanRenderer::submit(Mesh* mesh) { _drawList[mesh->technique].push_back(mesh); }
+void VulkanRenderer::submit(Mesh* mesh) {
+	_drawList[mesh->technique].push_back(mesh);
+}
 void VulkanRenderer::frame() {
 	_currentImageIndex = _device.acquireNextImageKHR(_swapChain, std::numeric_limits<uint64_t>::max(), _imageAvailableSemaphore, vk::Fence()).value;
 
@@ -200,29 +223,17 @@ bool VulkanRenderer::_createVulkanInstance() {
 	printf("Available Extensions:\n");
 	auto availableExtensions = vk::enumerateInstanceExtensionProperties();
 	for (const vk::ExtensionProperties& e : availableExtensions)
-		printf("\t%s Version %d.%d.%d\n", e.extensionName,
-					 VK_VERSION_MAJOR(e.specVersion),
-					 VK_VERSION_MINOR(e.specVersion),
-					 VK_VERSION_PATCH(e.specVersion));
+		printf("\t%s Version %d.%d.%d\n", e.extensionName, VK_VERSION_MAJOR(e.specVersion), VK_VERSION_MINOR(e.specVersion), VK_VERSION_PATCH(e.specVersion));
 
 	printf("Available Layers:\n");
 	auto availableLayers = vk::enumerateInstanceLayerProperties();
 	for (const vk::LayerProperties& l : availableLayers)
-		printf("\t%s: Version %d.%d.%d, ImplVersion %d.%d.%d\n\t\t%s\n", l.layerName,
-					 VK_VERSION_MAJOR(l.specVersion),
-					 VK_VERSION_MINOR(l.specVersion),
-					 VK_VERSION_PATCH(l.specVersion),
-					 VK_VERSION_MAJOR(l.implementationVersion),
-					 VK_VERSION_MINOR(l.implementationVersion),
-					 VK_VERSION_PATCH(l.implementationVersion),
-					 l.description);
+		printf("\t%s: Version %d.%d.%d, ImplVersion %d.%d.%d\n\t\t%s\n", l.layerName, VK_VERSION_MAJOR(l.specVersion), VK_VERSION_MINOR(l.specVersion),
+		       VK_VERSION_PATCH(l.specVersion), VK_VERSION_MAJOR(l.implementationVersion), VK_VERSION_MINOR(l.implementationVersion),
+		       VK_VERSION_PATCH(l.implementationVersion), l.description);
 
-	std::vector<const char *> layers{
-		DEBUG_LAYER
-	};
-	std::vector<const char *> extensions{
-		DEBUG_EXTENSION
-	};
+	std::vector<const char*> layers{DEBUG_LAYER};
+	std::vector<const char*> extensions{DEBUG_EXTENSION};
 	{
 		uint32_t count;
 		EXPECT(SDL_Vulkan_GetInstanceExtensions(_window, &count, nullptr), SDL_GetError());
@@ -285,7 +296,7 @@ bool VulkanRenderer::_createVulkanPhysicalDevice() {
 
 			for (uint32_t i = 0; i < queueFamilies.size(); i++) {
 				// TODO: Rate queues
-				const vk::QueueFamilyProperties & q = queueFamilies[i];
+				const vk::QueueFamilyProperties& q = queueFamilies[i];
 				vk::Bool32 hasPresent;
 				device.getSurfaceSupportKHR(i, _surface, &hasPresent);
 				if (!q.queueCount)
@@ -324,16 +335,12 @@ bool VulkanRenderer::_createVulkanLogicalDevice() {
 	float queuePriority = 1.0f;
 
 	// TODO: if queue index is same, only create one CreateInfo with count of two
-	std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos {
-		vk::DeviceQueueCreateInfo{ vk::DeviceQueueCreateFlags(), _queueInformation.graphics, 1, &queuePriority },
-		vk::DeviceQueueCreateInfo{ vk::DeviceQueueCreateFlags(), _queueInformation.present, 1, &queuePriority },
+	std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos{
+	  vk::DeviceQueueCreateInfo{vk::DeviceQueueCreateFlags(), _queueInformation.graphics, 1, &queuePriority},
+	  vk::DeviceQueueCreateInfo{vk::DeviceQueueCreateFlags(), _queueInformation.present, 1, &queuePriority},
 	};
-	std::vector<const char *> layers{
-		DEBUG_LAYER
-	};
-	std::vector<const char *> extensions{
-		VK_KHR_SWAPCHAIN_EXTENSION_NAME
-	};
+	std::vector<const char*> layers{DEBUG_LAYER};
+	std::vector<const char*> extensions{VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 
 	vk::PhysicalDeviceFeatures deviceFeatures;
 	vk::DeviceCreateInfo deviceCreateInfo;
@@ -347,9 +354,9 @@ bool VulkanRenderer::_createVulkanLogicalDevice() {
 
 	_device = _physicalDevice.createDevice(deviceCreateInfo);
 	EXPECT(_device, "Create device failed!");
-	_graphicsQueue =	_device.getQueue(_queueInformation.graphics, 0);
+	_graphicsQueue = _device.getQueue(_queueInformation.graphics, 0);
 	EXPECT(_graphicsQueue, "Graphic queue is null!");
-	_presentQueue =	_device.getQueue(_queueInformation.present, 0);
+	_presentQueue = _device.getQueue(_queueInformation.present, 0);
 	EXPECT(_presentQueue, "Present queue is null!");
 
 	return true;
@@ -386,7 +393,7 @@ bool VulkanRenderer::_createVulkanSwapChain() {
 		if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
 			return capabilities.currentExtent;
 		} else {
-			vk::Extent2D actualExtent = { _width, _height };
+			vk::Extent2D actualExtent = {_width, _height};
 
 			actualExtent.width = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, actualExtent.width));
 			actualExtent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, actualExtent.height));
@@ -417,7 +424,7 @@ bool VulkanRenderer::_createVulkanSwapChain() {
 		createInfo.pQueueFamilyIndices = queueFamilyIndices;
 	} else {
 		createInfo.imageSharingMode = vk::SharingMode::eExclusive;
-		createInfo.queueFamilyIndexCount = 0; // Optional
+		createInfo.queueFamilyIndexCount = 0;     // Optional
 		createInfo.pQueueFamilyIndices = nullptr; // Optional
 	}
 
@@ -481,12 +488,11 @@ bool VulkanRenderer::_createVulkanRenderPass() {
 
 	vk::SubpassDependency dependency;
 	dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-	//dependency.dstSubpass = vk::PipelineStageFlags();
+	// dependency.dstSubpass = vk::PipelineStageFlags();
 	dependency.srcStageMask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
-	//dependency.srcAccessMask = vk::PipelineStageFlags();
+	// dependency.srcAccessMask = vk::PipelineStageFlags();
 	dependency.dstStageMask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
 	dependency.dstAccessMask = vk::AccessFlagBits::eColorAttachmentRead | vk::AccessFlagBits::eColorAttachmentWrite;
-
 
 	vk::RenderPassCreateInfo renderPassInfo;
 	renderPassInfo.attachmentCount = 1;
@@ -519,7 +525,7 @@ bool VulkanRenderer::_createVulkanPipeline() {
 	viewport.maxDepth = 1.0f;
 
 	vk::Rect2D scissor;
-	scissor.offset = vk::Offset2D{ 0, 0 };
+	scissor.offset = vk::Offset2D{0, 0};
 	scissor.extent = _swapChainExtent;
 
 	vk::PipelineViewportStateCreateInfo viewportState;
@@ -540,7 +546,8 @@ bool VulkanRenderer::_createVulkanPipeline() {
 	vk::PipelineMultisampleStateCreateInfo multisampling{{}, vk::SampleCountFlagBits::e1, false};
 
 	vk::PipelineColorBlendAttachmentState colorBlendAttachment{};
-	colorBlendAttachment.setColorWriteMask(vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG | vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA);
+	colorBlendAttachment.setColorWriteMask(vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG | vk::ColorComponentFlagBits::eB |
+	                                       vk::ColorComponentFlagBits::eA);
 
 	vk::PipelineColorBlendStateCreateInfo colorBlending{{}, false, vk::LogicOp::eCopy, 1, &colorBlendAttachment, {{0, 0, 0, 0}}};
 
@@ -570,7 +577,23 @@ bool VulkanRenderer::_createVulkanPipeline() {
 	std::string err;
 	m.compileMaterial(err);
 
-	vk::GraphicsPipelineCreateInfo pipelineInfo{{}, (uint32_t)m._program.size(), m._program.data(), &vertexInputInfo, &inputAssembly, nullptr, &viewportState, &rasterizer, &multisampling, nullptr, &colorBlending, nullptr, _pipelineLayout, _renderPass, 0, vk::Pipeline(), -1};
+	vk::GraphicsPipelineCreateInfo pipelineInfo{{},
+	                                            (uint32_t)m._program.size(),
+	                                            m._program.data(),
+	                                            &vertexInputInfo,
+	                                            &inputAssembly,
+	                                            nullptr,
+	                                            &viewportState,
+	                                            &rasterizer,
+	                                            &multisampling,
+	                                            nullptr,
+	                                            &colorBlending,
+	                                            nullptr,
+	                                            _pipelineLayout,
+	                                            _renderPass,
+	                                            0,
+	                                            vk::Pipeline(),
+	                                            -1};
 
 	_graphicsPipeline = _device.createGraphicsPipeline(vk::PipelineCache(), pipelineInfo);
 	EXPECT(_graphicsPipeline, "Can't create Graphics pipeline!");
@@ -581,11 +604,9 @@ bool VulkanRenderer::_createVulkanPipeline() {
 bool VulkanRenderer::_createVulkanFramebuffers() {
 	_swapChainFramebuffers.resize(_swapChainImageViews.size());
 	for (size_t i = 0; i < _swapChainImageViews.size(); i++) {
-    vk::ImageView attachments[] = {
-        _swapChainImageViews[i]
-    };
+		vk::ImageView attachments[] = {_swapChainImageViews[i]};
 
-    vk::FramebufferCreateInfo framebufferInfo = {{}, _renderPass, 1, attachments, _swapChainExtent.width, _swapChainExtent.height, 1};
+		vk::FramebufferCreateInfo framebufferInfo = {{}, _renderPass, 1, attachments, _swapChainExtent.width, _swapChainExtent.height, 1};
 
 		_swapChainFramebuffers[i] = _device.createFramebuffer(framebufferInfo);
 		EXPECT(_swapChainFramebuffers[i], "Failed to create framebuffer!");
@@ -607,11 +628,11 @@ bool VulkanRenderer::_createVulkanCommandBuffers() {
 	EXPECT(_commandBuffers.size(), "Failed to allocate command buffers");
 
 	for (size_t i = 0; i < _commandBuffers.size(); i++) {
-    vk::CommandBufferBeginInfo beginInfo{vk::CommandBufferUsageFlagBits::eSimultaneousUse};
+		vk::CommandBufferBeginInfo beginInfo{vk::CommandBufferUsageFlagBits::eSimultaneousUse};
 
 		_commandBuffers[i].begin(beginInfo);
 
-		vk::ClearColorValue c = vk::ClearColorValue{std::array<float,4>{{0.0f, 0.0f, 0.0f, 1.0f}}};
+		vk::ClearColorValue c = vk::ClearColorValue{std::array<float, 4>{{0.0f, 0.0f, 0.0f, 1.0f}}};
 		vk::ClearValue clearColor{c};
 		vk::RenderPassBeginInfo renderPassInfo = {_renderPass, _swapChainFramebuffers[i], {{0, 0}, _swapChainExtent}, 1, &clearColor};
 		_commandBuffers[i].beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);

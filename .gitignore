@@ -6,6 +6,7 @@
 *.db
 *.*~
 \.*
+!.clang-format
 *.preprocessed*
 *.spv
 Debug*

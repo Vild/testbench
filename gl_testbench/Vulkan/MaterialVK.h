@@ -43,4 +43,3 @@ private:
 	int _compileShader(ShaderType type, std::string& errString);
 	std::vector<std::string> _expandShaderText(std::string& shaderText, ShaderType type);
 };
-

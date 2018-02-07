@@ -14,7 +14,6 @@ static void split(const char* text, std::vector<std::string>* const temp, const 
 	}
 }
 
-
 MaterialVK::MaterialVK(VulkanRenderer* renderer, const std::string& name) : _renderer(renderer), _name(name) {
 	isValid = false;
 	_mapShaderEnum[(uint32_t)ShaderType::VS] = vk::ShaderStageFlagBits::eVertex;
@@ -60,8 +59,8 @@ int MaterialVK::compileMaterial(std::string& errString) {
 	};
 
 	_program.clear();
-	_program.push_back(vk::PipelineShaderStageCreateInfo().setStage(vk::ShaderStageFlagBits::eVertex).setModule(_shaderModules[ShaderType::VS]).setPName("main"));
-	_program.push_back(vk::PipelineShaderStageCreateInfo().setStage(vk::ShaderStageFlagBits::eFragment).setModule(_shaderModules[ShaderType::PS]).setPName("main"));
+	_program.push_back(vk::PipelineShaderStageCreateInfo{{}, vk::ShaderStageFlagBits::eVertex, _shaderModules[ShaderType::VS], "main"});
+	_program.push_back(vk::PipelineShaderStageCreateInfo{{}, vk::ShaderStageFlagBits::eFragment, _shaderModules[ShaderType::PS], "main"});
 
 	isValid = true;
 	return 0;
@@ -73,11 +72,11 @@ int MaterialVK::enable() {
 	for (auto cb : constantBuffers)
 		cb.second->bind(this);
 
-	//TODO: renderer.bindMaterial(this);
+	// TODO: renderer.bindMaterial(this);
 	return 0;
 }
 void MaterialVK::disable() {
-	//TODO: renderer.bindMaterial(nullptr);
+	// TODO: renderer.bindMaterial(nullptr);
 }
 void MaterialVK::setDiffuse(Color c) {}
 
@@ -89,7 +88,7 @@ void MaterialVK::addConstantBuffer(std::string name, unsigned int location) {
 }
 
 std::vector<std::string> MaterialVK::_expandShaderText(std::string& shaderSource, ShaderType type) {
-	std::vector<std::string> result{ "#version 450\n#extension GL_ARB_separate_shader_objects : enable\n\0" };
+	std::vector<std::string> result{"#version 450\n#extension GL_ARB_separate_shader_objects : enable\n\0"};
 	for (auto define : shaderDefines[type])
 		result.push_back(define);
 	result.push_back(shaderSource);
@@ -102,7 +101,7 @@ static std::vector<char> readFile(const std::string& filename) {
 	if (!file.is_open())
 		throw std::runtime_error("failed to open file: " + filename);
 
-	size_t fileSize = (size_t) file.tellg();
+	size_t fileSize = (size_t)file.tellg();
 	std::vector<char> buffer(fileSize);
 
 	file.seekg(0);
@@ -118,7 +117,8 @@ int MaterialVK::_compileShader(ShaderType type, std::string& errString) {
 
 	{
 		std::vector<char> data = readFile(file);
-		std::string shaderText = std::string(data.begin(), data.end());;
+		std::string shaderText = std::string(data.begin(), data.end());
+		;
 		std::vector<std::string> shaderLines = _expandShaderText(shaderText, type);
 
 		{ // Compile shader
@@ -133,7 +133,6 @@ int MaterialVK::_compileShader(ShaderType type, std::string& errString) {
 				errString = "glslangValidator status wasn't 0";
 				return -1;
 			}
-
 		}
 	}
 

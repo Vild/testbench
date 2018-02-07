@@ -8,4 +8,3 @@ public:
 	MeshVK();
 	virtual ~MeshVK();
 };
-

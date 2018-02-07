@@ -22,4 +22,3 @@ private:
 	size_t totalSize;
 	uint32_t _handle;
 };
-

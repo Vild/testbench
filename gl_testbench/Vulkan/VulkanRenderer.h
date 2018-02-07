@@ -19,16 +19,17 @@ class MaterialVK;
 
 class VulkanRenderer : public Renderer {
 	friend MaterialVK;
+
 public:
 	VulkanRenderer();
 	virtual ~VulkanRenderer();
 
 	Material* makeMaterial(const std::string& name) final;
 	Mesh* makeMesh() final;
-	//VertexBuffer* makeVertexBuffer();
+	// VertexBuffer* makeVertexBuffer();
 	VertexBuffer* makeVertexBuffer(size_t size, VertexBuffer::DATA_USAGE usage) final;
 	ConstantBuffer* makeConstantBuffer(std::string name, unsigned int location) final;
-//	ResourceBinding* makeResourceBinding();
+	// ResourceBinding* makeResourceBinding();
 	RenderState* makeRenderState() final;
 	Technique* makeTechnique(Material* m, RenderState* r) final;
 	Texture2D* makeTexture2D() final;
@@ -42,7 +43,7 @@ public:
 
 	void setClearColor(float, float, float, float) final;
 	void clearBuffer(unsigned int) final;
-//	void setRenderTarget(RenderTarget* rt); // complete parameters
+	// void setRenderTarget(RenderTarget* rt); // complete parameters
 	void setRenderState(RenderState* ps) final;
 	void submit(Mesh* mesh) final;
 	void frame() final;
@@ -57,8 +58,8 @@ private:
 	};
 	struct SwapChainInformation {
 		vk::SurfaceCapabilitiesKHR capabilities;
-    std::vector<vk::SurfaceFormatKHR> formats;
-    std::vector<vk::PresentModeKHR> presentModes;
+		std::vector<vk::SurfaceFormatKHR> formats;
+		std::vector<vk::PresentModeKHR> presentModes;
 	};
 
 	uint32_t _width;
@@ -94,7 +95,7 @@ private:
 	std::unordered_map<Technique*, std::vector<Mesh*>> _drawList;
 
 	bool _globalWireframeMode = false;
-	float _clearColor[4] = { 0,0,0,0 };
+	float _clearColor[4] = {0, 0, 0, 0};
 
 	bool _initSDL();
 	bool _createVulkanInstance();
@@ -110,4 +111,3 @@ private:
 	bool _createVulkanCommandBuffers();
 	bool _createVulkanSemaphores();
 };
-

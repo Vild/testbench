@@ -17,4 +17,3 @@ private:
 	void* buff = nullptr;
 	void* lastMat;
 };
-
