@@ -23,7 +23,7 @@ void main () {
 	#ifdef DIFFUSE_SLOT
     vec4 col = texture(myTex, uv_in);
 	#else
-	vec4 col = vec4(1.0,1.0,0.0, 1.0);
+	vec4 col = vec4(1.0,1.0,1.0, 1.0);
 	#endif
 
 	fragment_color = col * vec4(diffuseTint.rgb,1.0);
