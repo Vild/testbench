@@ -31,13 +31,45 @@
 #define DEBUG_EXTENSION
 #endif
 
-#define EXPECT(b, msg)              \
-	do {                              \
-		if (!(b)) {                     \
-			fprintf(stderr, "%s\n", msg); \
-			return false;                 \
-		}                               \
+#ifdef _WIN32
+#define COLOR_ERROR ""
+#define COLOR_RESET ""
+#else
+#define COLOR_ERROR "\x1b[93;41m"
+#define COLOR_RESET "\x1b[0m"
+#endif
+
+#define EXPECT(b, msg) \
+	do { \
+		if (!(b)) { \
+			fprintf(stderr, COLOR_ERROR "%s" COLOR_RESET "\n", msg); \
+			return false; \
+		} \
 	} while (0)
+
+#define EXPECT_ASSERT(b, msg) \
+	do { \
+		if (!(b)) { \
+			fprintf(stderr, COLOR_ERROR "%s" COLOR_RESET "\n", msg); \
+			assert(0); \
+		} \
+	} while (0)
+
+const std::vector<VulkanRenderer::InitFunction> VulkanRenderer::_inits = {
+  {"initSDL", &VulkanRenderer::_initSDL, false},
+  {"createVulkanInstance", &VulkanRenderer::_createVulkanInstance, false},
+  {"createSDLSurface", &VulkanRenderer::_createSDLSurface, false},
+  {"createVulkanPhysicalDevice", &VulkanRenderer::_createVulkanPhysicalDevice, false},
+  {"createVulkanLogicalDevice", &VulkanRenderer::_createVulkanLogicalDevice, false},
+  {"createVulkanSwapChain", &VulkanRenderer::_createVulkanSwapChain, true},
+  {"createVulkanImageViews", &VulkanRenderer::_createVulkanImageViews, true},
+  {"createVulkanRenderPass", &VulkanRenderer::_createVulkanRenderPass, true},
+  {"createVulkanPipeline", &VulkanRenderer::_createVulkanPipeline, true},
+  {"createVulkanFramebuffers", &VulkanRenderer::_createVulkanFramebuffers, true},
+  {"createVulkanCommandPool", &VulkanRenderer::_createVulkanCommandPool, false},
+  {"createVulkanCommandBuffers", &VulkanRenderer::_createVulkanCommandBuffers, true},
+  {"createVulkanSemaphores", &VulkanRenderer::_createVulkanSemaphores, false},
+};
 
 static VkResult CreateDebugReportCallbackEXT(VkInstance instance,
                                              const VkDebugReportCallbackCreateInfoEXT* pCreateInfo,
@@ -109,28 +141,6 @@ std::string VulkanRenderer::getShaderExtension() {
 }
 
 int VulkanRenderer::initialize(unsigned int width, unsigned int height) {
-	struct InitFunction {
-		typedef bool (VulkanRenderer::*initFunction)();
-		std::string name;
-		initFunction function;
-	};
-
-	static const std::vector<InitFunction> _inits = {
-	  {"initSDL", &VulkanRenderer::_initSDL},
-	  {"createVulkanInstance", &VulkanRenderer::_createVulkanInstance},
-	  {"createSDLSurface", &VulkanRenderer::_createSDLSurface},
-	  {"createVulkanPhysicalDevice", &VulkanRenderer::_createVulkanPhysicalDevice},
-	  {"createVulkanLogicalDevice", &VulkanRenderer::_createVulkanLogicalDevice},
-	  {"createVulkanSwapChain", &VulkanRenderer::_createVulkanSwapChain},
-	  {"createVulkanImageViews", &VulkanRenderer::_createVulkanImageViews},
-	  {"createVulkanRenderPass", &VulkanRenderer::_createVulkanRenderPass},
-	  {"createVulkanPipeline", &VulkanRenderer::_createVulkanPipeline},
-	  {"createVulkanFramebuffers", &VulkanRenderer::_createVulkanFramebuffers},
-	  {"createVulkanCommandPool", &VulkanRenderer::_createVulkanCommandPool},
-	  {"createVulkanCommandBuffers", &VulkanRenderer::_createVulkanCommandBuffers},
-	  {"createVulkanSemaphores", &VulkanRenderer::_createVulkanSemaphores},
-	};
-
 	_width = width;
 	_height = height;
 
@@ -150,20 +160,12 @@ void VulkanRenderer::setWinTitle(const char* title) {
 }
 int VulkanRenderer::shutdown() {
 	_device.waitIdle();
+	_cleanupSwapChain();
+
 	_device.destroySemaphore(_renderFinishedSemaphore);
 	_device.destroySemaphore(_imageAvailableSemaphore);
 
 	_device.destroyCommandPool(_commandPool);
-
-	for (auto framebuffer : _swapChainFramebuffers)
-		_device.destroyFramebuffer(framebuffer);
-
-	_device.destroyPipeline(_graphicsPipeline);
-	_device.destroyPipelineLayout(_pipelineLayout);
-	_device.destroyRenderPass(_renderPass);
-
-	for (vk::ImageView& iv : _swapChainImageViews)
-		_device.destroyImageView(iv);
 
 	_device.destroySwapchainKHR(_swapChain);
 	_device.destroy();
@@ -193,7 +195,13 @@ void VulkanRenderer::submit(Mesh* mesh) {
 	_drawList[mesh->technique].push_back(mesh);
 }
 void VulkanRenderer::frame() {
-	_currentImageIndex = _device.acquireNextImageKHR(_swapChain, std::numeric_limits<uint64_t>::max(), _imageAvailableSemaphore, vk::Fence()).value;
+	vk::ResultValue<uint32_t> rv = _device.acquireNextImageKHR(_swapChain, std::numeric_limits<uint64_t>::max(), _imageAvailableSemaphore, vk::Fence());
+	if (rv.result == vk::Result::eErrorOutOfDateKHR) {
+		_currentImageIndex = UINT32_MAX;
+		return _recreateSwapChain();
+	}
+	EXPECT_ASSERT(rv.result == vk::Result::eSuccess || rv.result == vk::Result::eSuboptimalKHR, "Failed to acquire new image");
+	_currentImageIndex = rv.value;
 
 	vk::Semaphore waitSemaphores[] = {_imageAvailableSemaphore};
 	vk::PipelineStageFlags waitStages[] = {vk::PipelineStageFlagBits::eColorAttachmentOutput};
@@ -202,11 +210,50 @@ void VulkanRenderer::frame() {
 	_graphicsQueue.submit(1, &submitInfo, vk::Fence());
 }
 void VulkanRenderer::present() {
+	if (_currentImageIndex == UINT32_MAX)
+		return;
 	_presentQueue.waitIdle();
 	vk::Semaphore signalSemaphores[] = {_renderFinishedSemaphore};
 	vk::SwapchainKHR swapChains[] = {_swapChain};
 	vk::PresentInfoKHR presentInfo{1, signalSemaphores, 1, swapChains, &_currentImageIndex};
-	_presentQueue.presentKHR(presentInfo);
+	vk::Result r = _presentQueue.presentKHR(presentInfo);
+	if (r == vk::Result::eErrorOutOfDateKHR || r == vk::Result::eSuboptimalKHR)
+		return _recreateSwapChain();
+
+	EXPECT_ASSERT(r == vk::Result::eSuccess, "Failed to present");
+}
+
+void VulkanRenderer::_cleanupSwapChain() {
+	for (auto framebuffer : _swapChainFramebuffers)
+		_device.destroyFramebuffer(framebuffer);
+
+	_device.freeCommandBuffers(_commandPool, (uint32_t)_commandBuffers.size(), _commandBuffers.data());
+
+	_device.destroyPipeline(_graphicsPipeline);
+	_device.destroyPipelineLayout(_pipelineLayout);
+	_device.destroyRenderPass(_renderPass);
+
+	for (vk::ImageView& iv : _swapChainImageViews)
+		_device.destroyImageView(iv);
+
+	_device.destroySwapchainKHR(_swapChain);
+}
+
+void VulkanRenderer::_recreateSwapChain() {
+	_device.waitIdle();
+	_cleanupSwapChain();
+
+	for (auto init : _inits) {
+		if (!init.rebuild)
+			continue;
+		printf("Running %s():\n", init.name.c_str());
+		try {
+			bool r = (this->*(init.function))();
+			EXPECT_ASSERT(r, "\tREBUILD FAILED!");
+		} catch (const std::exception&) {
+			EXPECT_ASSERT(0, "\tREBUILD FAILED!");
+		}
+	}
 }
 
 bool VulkanRenderer::_initSDL() {

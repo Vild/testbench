@@ -50,6 +50,13 @@ public:
 	void present() final;
 
 private:
+	struct InitFunction {
+		typedef bool (VulkanRenderer::*initFunction)();
+		std::string name;
+		initFunction function;
+		bool rebuild;
+	};
+
 	struct QueueInformation {
 		uint32_t graphics = -1;
 		uint32_t present = -1;
@@ -61,6 +68,8 @@ private:
 		std::vector<vk::SurfaceFormatKHR> formats;
 		std::vector<vk::PresentModeKHR> presentModes;
 	};
+
+	static const std::vector<InitFunction> _inits;
 
 	uint32_t _width;
 	uint32_t _height;
@@ -96,6 +105,9 @@ private:
 
 	bool _globalWireframeMode = false;
 	float _clearColor[4] = {0, 0, 0, 0};
+
+	void _cleanupSwapChain();
+	void _recreateSwapChain();
 
 	bool _initSDL();
 	bool _createVulkanInstance();
