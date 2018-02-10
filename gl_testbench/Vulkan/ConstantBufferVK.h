@@ -1,19 +1,24 @@
 #pragma once
 
 #include "../ConstantBuffer.h"
+#include <vulkan/vulkan.hpp>
+
+#include <cstdint>
 
 class VulkanRenderer;
 
 class ConstantBufferVK : public ConstantBuffer {
 public:
-	ConstantBufferVK(VulkanRenderer* renderer, const std::string& name, unsigned int location);
+	ConstantBufferVK(VulkanRenderer* renderer, uint32_t binding);
 	virtual ~ConstantBufferVK();
-	void setData(const void* data, size_t size, Material* m, unsigned int location) final;
+	void setData(const void* data, size_t size, Material* m, uint32_t binding) final;
 	void bind(Material* material) final;
 
 private:
-	std::string name;
+	VulkanRenderer* _renderer;
+	vk::Device _device;
 
-	void* buff = nullptr;
-	void* lastMat;
+	vk::DescriptorSetLayout _descriptorSetLayout;
+	vk::Buffer _buffer;
+	vk::DeviceMemory _bufferMemory;
 };

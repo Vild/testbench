@@ -1,10 +1,17 @@
 #include "Texture2DVK.h"
 #include "VulkanRenderer.h"
 
-Texture2DVK::Texture2DVK(VulkanRenderer* renderer) {}
-Texture2DVK::~Texture2DVK() {}
+Texture2DVK::Texture2DVK(VulkanRenderer* renderer) {
+	STUB();
+}
+Texture2DVK::~Texture2DVK() {
+	STUB();
+}
 
 int Texture2DVK::loadFromFile(std::string filename) {
+	STUB();
 	return 0;
 }
-void Texture2DVK::bind(unsigned int slot) {}
+void Texture2DVK::bind(unsigned int slot) {
+	STUB();
+}

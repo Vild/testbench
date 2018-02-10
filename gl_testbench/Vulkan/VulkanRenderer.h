@@ -15,10 +15,42 @@
 #include <SDL.h>
 #include <vulkan/vulkan.hpp>
 
+#include <cstdio>
+
+#ifdef _WIN32
+#define COLOR_ERROR ""
+#define COLOR_RESET ""
+#else
+#define COLOR_ERROR "\x1b[93;41m"
+#define COLOR_RESET "\x1b[0m"
+#endif
+
+#define EXPECT(b, msg) \
+	do { \
+		if (!(b)) { \
+			fprintf(stderr, COLOR_ERROR "%s" COLOR_RESET "\n", msg); \
+			return false; \
+		} \
+	} while (0)
+
+#define EXPECT_ASSERT(b, msg) \
+	do { \
+		if (!(b)) { \
+			fprintf(stderr, COLOR_ERROR "%s" COLOR_RESET "\n", msg); \
+			assert(0); \
+		} \
+	} while (0)
+
+#define STUB() printf("%s\n", __PRETTY_FUNCTION__)
+
 class MaterialVK;
+class ConstantBufferVK;
+class VertexBufferVK;
 
 class VulkanRenderer : public Renderer {
 	friend MaterialVK;
+	friend ConstantBufferVK;
+	friend VertexBufferVK;
 
 public:
 	VulkanRenderer();
@@ -48,6 +80,8 @@ public:
 	void submit(Mesh* mesh) final;
 	void frame() final;
 	void present() final;
+
+	void createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties, vk::Buffer& buffer, vk::DeviceMemory& bufferMemory);
 
 private:
 	struct InitFunction {
@@ -105,6 +139,8 @@ private:
 
 	bool _globalWireframeMode = false;
 	float _clearColor[4] = {0, 0, 0, 0};
+
+	uint32_t _findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties);
 
 	void _cleanupSwapChain();
 	void _recreateSwapChain();

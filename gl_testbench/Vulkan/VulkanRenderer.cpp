@@ -31,30 +31,6 @@
 #define DEBUG_EXTENSION
 #endif
 
-#ifdef _WIN32
-#define COLOR_ERROR ""
-#define COLOR_RESET ""
-#else
-#define COLOR_ERROR "\x1b[93;41m"
-#define COLOR_RESET "\x1b[0m"
-#endif
-
-#define EXPECT(b, msg) \
-	do { \
-		if (!(b)) { \
-			fprintf(stderr, COLOR_ERROR "%s" COLOR_RESET "\n", msg); \
-			return false; \
-		} \
-	} while (0)
-
-#define EXPECT_ASSERT(b, msg) \
-	do { \
-		if (!(b)) { \
-			fprintf(stderr, COLOR_ERROR "%s" COLOR_RESET "\n", msg); \
-			assert(0); \
-		} \
-	} while (0)
-
 const std::vector<VulkanRenderer::InitFunction> VulkanRenderer::_inits = {
   {"initSDL", &VulkanRenderer::_initSDL, false},
   {"createVulkanInstance", &VulkanRenderer::_createVulkanInstance, false},
@@ -112,10 +88,10 @@ Mesh* VulkanRenderer::makeMesh() {
 }
 // VertexBuffer* VulkanRenderer::makeVertexBuffer();
 VertexBuffer* VulkanRenderer::makeVertexBuffer(size_t size, VertexBuffer::DATA_USAGE usage) {
-	return new VertexBufferVK(this, size, usage);
+	return new VertexBufferVK(this, size /*, usage*/);
 }
 ConstantBuffer* VulkanRenderer::makeConstantBuffer(std::string name, unsigned int location) {
-	return new ConstantBufferVK(this, name, location);
+	return new ConstantBufferVK(this, /*name,*/ location);
 }
 //	ResourceBinding* VulkanRenderer::makeResourceBinding();
 RenderState* VulkanRenderer::makeRenderState() {
@@ -167,7 +143,6 @@ int VulkanRenderer::shutdown() {
 
 	_device.destroyCommandPool(_commandPool);
 
-	_device.destroySwapchainKHR(_swapChain);
 	_device.destroy();
 	DestroyDebugReportCallbackEXT(_instance, _debugCallback, nullptr);
 	_instance.destroy();
@@ -223,6 +198,40 @@ void VulkanRenderer::present() {
 	EXPECT_ASSERT(r == vk::Result::eSuccess, "Failed to present");
 }
 
+void VulkanRenderer::createBuffer(vk::DeviceSize size,
+                                  vk::BufferUsageFlags usage,
+                                  vk::MemoryPropertyFlags properties,
+                                  vk::Buffer& buffer,
+                                  vk::DeviceMemory& bufferMemory) {
+	vk::BufferCreateInfo bufferInfo;
+	bufferInfo.size = size;
+	bufferInfo.usage = usage;
+	bufferInfo.sharingMode = vk::SharingMode::eExclusive;
+
+	buffer = _device.createBuffer(bufferInfo);
+	EXPECT_ASSERT(buffer, "Failed to create buffer!");
+
+	vk::MemoryRequirements memRequirements = _device.getBufferMemoryRequirements(buffer);
+
+	vk::MemoryAllocateInfo allocInfo;
+	allocInfo.allocationSize = memRequirements.size;
+	allocInfo.memoryTypeIndex = _findMemoryType(memRequirements.memoryTypeBits, properties);
+
+	bufferMemory = _device.allocateMemory(allocInfo);
+	EXPECT_ASSERT(bufferMemory, "failed to allocate buffer memory!");
+
+	_device.bindBufferMemory(buffer, bufferMemory, 0);
+}
+
+uint32_t VulkanRenderer::_findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties) {
+	vk::PhysicalDeviceMemoryProperties memProperties = _physicalDevice.getMemoryProperties();
+	for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++)
+		if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties)
+			return i;
+
+	EXPECT_ASSERT(0, "Failed to find memory type!");
+}
+
 void VulkanRenderer::_cleanupSwapChain() {
 	for (auto framebuffer : _swapChainFramebuffers)
 		_device.destroyFramebuffer(framebuffer);
@@ -240,6 +249,7 @@ void VulkanRenderer::_cleanupSwapChain() {
 }
 
 void VulkanRenderer::_recreateSwapChain() {
+	printf("\n\n\nRECREATEING\n\n\n");
 	_device.waitIdle();
 	_cleanupSwapChain();
 
@@ -333,7 +343,7 @@ bool VulkanRenderer::_createVulkanPhysicalDevice() {
 
 	auto isDeviceSuitable = [this](vk::PhysicalDevice device, QueueInformation& qi, SwapChainInformation& sci) -> bool {
 		{
-			vk::PhysicalDeviceProperties deviceProperties = device.getProperties();
+			// vk::PhysicalDeviceProperties deviceProperties = device.getProperties();
 			vk::PhysicalDeviceFeatures deviceFeatures = device.getFeatures();
 
 			if (!deviceFeatures.geometryShader)

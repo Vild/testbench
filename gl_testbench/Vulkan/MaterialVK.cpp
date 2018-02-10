@@ -26,6 +26,9 @@ MaterialVK::MaterialVK(VulkanRenderer* renderer, const std::string& name) : _ren
 	_mapShaderExt[(uint32_t)ShaderType::CS] = ".comp";
 }
 MaterialVK::~MaterialVK() {
+	for (auto& cb : constantBuffers)
+		delete cb.second;
+
 	for (auto& module : _shaderModules)
 		_renderer->_device.destroyShaderModule(module.second);
 }
@@ -76,15 +79,18 @@ int MaterialVK::enable() {
 	return 0;
 }
 void MaterialVK::disable() {
+	STUB();
 	// TODO: renderer.bindMaterial(nullptr);
 }
-void MaterialVK::setDiffuse(Color c) {}
+void MaterialVK::setDiffuse(Color c) {
+	STUB();
+}
 
 void MaterialVK::updateConstantBuffer(const void* data, size_t size, unsigned int location) {
 	constantBuffers[location]->setData(data, size, this, location);
 }
 void MaterialVK::addConstantBuffer(std::string name, unsigned int location) {
-	constantBuffers[location] = new ConstantBufferVK(_renderer, name, location);
+	constantBuffers[location] = new ConstantBufferVK(_renderer /*, name*/, location);
 }
 
 std::vector<std::string> MaterialVK::_expandShaderText(std::string& shaderSource, ShaderType type) {
