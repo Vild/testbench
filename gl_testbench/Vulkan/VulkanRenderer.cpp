@@ -183,6 +183,8 @@ void VulkanRenderer::frame() {
 	vk::Semaphore signalSemaphores[] = {_renderFinishedSemaphore};
 	vk::SubmitInfo submitInfo{1, waitSemaphores, waitStages, 1, &_commandBuffers[_currentImageIndex], 1, signalSemaphores};
 	_graphicsQueue.submit(1, &submitInfo, vk::Fence());
+
+	_drawList.clear();
 }
 void VulkanRenderer::present() {
 	if (_currentImageIndex == UINT32_MAX)

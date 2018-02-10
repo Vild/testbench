@@ -124,7 +124,6 @@ int MaterialVK::_compileShader(ShaderType type, std::string& errString) {
 	{
 		std::vector<char> data = readFile(file);
 		std::string shaderText = std::string(data.begin(), data.end());
-		;
 		std::vector<std::string> shaderLines = _expandShaderText(shaderText, type);
 
 		{ // Compile shader
