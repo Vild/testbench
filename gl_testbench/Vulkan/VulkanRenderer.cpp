@@ -92,15 +92,6 @@ EasyCommandQueue::EasyCommandQueue(VulkanRenderer* renderer, vk::Queue queue) : 
 }
 
 EasyCommandQueue::~EasyCommandQueue() {
-	_commandBuffer.end();
-
-	vk::SubmitInfo submitInfo;
-	submitInfo.commandBufferCount = 1;
-	submitInfo.pCommandBuffers = &_commandBuffer;
-
-	_queue.submit(1, &submitInfo, vk::Fence());
-	_queue.waitIdle();
-
 	_device.freeCommandBuffers(_renderer->_commandPool, 1, &_commandBuffer);
 }
 
@@ -163,6 +154,17 @@ void EasyCommandQueue::copyBufferToImage(vk::Buffer buffer, vk::Image image, uin
 	_commandBuffer.copyBufferToImage(buffer, image, vk::ImageLayout::eTransferDstOptimal, 1, &region);
 }
 
+void EasyCommandQueue::run() {
+	_commandBuffer.end();
+
+	vk::SubmitInfo submitInfo;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = &_commandBuffer;
+
+	_queue.submit(1, &submitInfo, vk::Fence());
+	_queue.waitIdle();
+}
+
 VulkanRenderer::VulkanRenderer() {}
 VulkanRenderer::~VulkanRenderer() {}
 
@@ -215,7 +217,7 @@ int VulkanRenderer::initialize(unsigned int width, unsigned int height) {
 			EXPECT(0, "\tINIT FAILED!");
 		}
 	}
-	return true;
+	return 0;
 }
 void VulkanRenderer::setWinTitle(const char* title) {
 	SDL_SetWindowTitle(_window, title);

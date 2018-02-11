@@ -33,6 +33,7 @@ int Texture2DVK::loadFromFile(std::string filename) {
 		ecq.transitionImageLayout(_image, vk::Format::eR8G8B8A8Unorm, vk::ImageLayout::eUndefined, vk::ImageLayout::eTransferDstOptimal);
 		ecq.copyBufferToImage(stagingBuffer, _image, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
 		ecq.transitionImageLayout(_image, vk::Format::eR8G8B8A8Unorm, vk::ImageLayout::eTransferDstOptimal, vk::ImageLayout::eShaderReadOnlyOptimal);
+		ecq.run();
 	}
 
 	_device.destroyBuffer(stagingBuffer);

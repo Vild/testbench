@@ -43,6 +43,10 @@
 		} \
 	} while (0)
 
+#ifndef __PRETTY_FUNCTION__
+#define __PRETTY_FUNCTION__ __FUNCTION__
+#endif
+
 #define STUB() printf("%s\n", __PRETTY_FUNCTION__)
 
 class MaterialVK;
@@ -174,11 +178,14 @@ struct EasyCommandQueue {
 public:
 	EasyCommandQueue(VulkanRenderer* renderer, vk::Queue queue);
 	EasyCommandQueue(const EasyCommandQueue& that) = delete;
+	EasyCommandQueue(EasyCommandQueue&&) = default;
+	EasyCommandQueue& operator=(EasyCommandQueue&&) = default;
 	~EasyCommandQueue();
 
 	void transitionImageLayout(vk::Image image, vk::Format format, vk::ImageLayout oldLayout, vk::ImageLayout newLayout);
 	void copyBufferToImage(vk::Buffer buffer, vk::Image image, uint32_t width, uint32_t height);
 
+	void run();
 private:
 	VulkanRenderer* _renderer;
 	vk::Device _device;
