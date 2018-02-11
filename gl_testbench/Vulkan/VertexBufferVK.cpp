@@ -10,6 +10,7 @@ VertexBufferVK::~VertexBufferVK() {
 }
 
 void VertexBufferVK::setData(const void* data, size_t size, size_t offset) {
+	// TODO: Make a staging buffer and a final buffer
 	if (!_buffer) {
 		vk::DeviceSize bufferSize = _size;
 		_renderer->createBuffer(bufferSize, vk::BufferUsageFlagBits::eStorageBuffer,

@@ -2,6 +2,7 @@
 
 #include "../Texture2D.h"
 #include "Sampler2DVK.h"
+#include <vulkan/vulkan.hpp>
 
 #include <cstdint>
 
@@ -15,5 +16,10 @@ public:
 	int loadFromFile(std::string filename) final;
 	void bind(unsigned int slot) final;
 
-	uint32_t textureHandle = 0;
+private:
+	VulkanRenderer* _renderer;
+	vk::Device _device;
+
+	vk::DeviceMemory _imageMemory;
+	vk::Image _image;
 };

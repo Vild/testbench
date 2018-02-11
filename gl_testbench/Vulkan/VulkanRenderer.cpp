@@ -77,6 +77,92 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL vulkanDebugCallback(VkDebugReportFlagsEXT 
 	return VK_FALSE;
 }
 
+EasyCommandQueue::EasyCommandQueue(VulkanRenderer* renderer, vk::Queue queue) : _renderer(renderer), _device(renderer->_device), _queue(queue) {
+	vk::CommandBufferAllocateInfo allocInfo;
+	allocInfo.level = vk::CommandBufferLevel::ePrimary;
+	allocInfo.commandPool = renderer->_commandPool;
+	allocInfo.commandBufferCount = 1;
+
+	_commandBuffer = _device.allocateCommandBuffers(allocInfo)[0];
+
+	vk::CommandBufferBeginInfo beginInfo;
+	beginInfo.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit;
+
+	_commandBuffer.begin(beginInfo);
+}
+
+EasyCommandQueue::~EasyCommandQueue() {
+	_commandBuffer.end();
+
+	vk::SubmitInfo submitInfo;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = &_commandBuffer;
+
+	_queue.submit(1, &submitInfo, vk::Fence());
+	_queue.waitIdle();
+
+	_device.freeCommandBuffers(_renderer->_commandPool, 1, &_commandBuffer);
+}
+
+void EasyCommandQueue::transitionImageLayout(vk::Image image, vk::Format format, vk::ImageLayout oldLayout, vk::ImageLayout newLayout) {
+	vk::ImageMemoryBarrier barrier;
+	barrier.oldLayout = oldLayout;
+	barrier.newLayout = newLayout;
+	barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	barrier.image = image;
+	barrier.subresourceRange.aspectMask = vk::ImageAspectFlagBits::eColor;
+	barrier.subresourceRange.baseMipLevel = 0;
+	barrier.subresourceRange.levelCount = 1;
+	barrier.subresourceRange.baseArrayLayer = 0;
+	barrier.subresourceRange.layerCount = 1;
+
+	vk::PipelineStageFlags sourceStage;
+	vk::PipelineStageFlags destinationStage;
+
+	if (oldLayout == vk::ImageLayout::eUndefined && newLayout == vk::ImageLayout::eTransferDstOptimal) {
+		barrier.srcAccessMask = vk::AccessFlags();
+		barrier.dstAccessMask = vk::AccessFlagBits::eTransferWrite;
+
+		sourceStage = vk::PipelineStageFlagBits::eTopOfPipe;
+		destinationStage = vk::PipelineStageFlagBits::eTransfer;
+	} else if (oldLayout == vk::ImageLayout::eTransferDstOptimal && newLayout == vk::ImageLayout::eShaderReadOnlyOptimal) {
+		barrier.srcAccessMask = vk::AccessFlagBits::eTransferWrite;
+		barrier.dstAccessMask = vk::AccessFlagBits::eShaderRead;
+
+		sourceStage = vk::PipelineStageFlagBits::eTransfer;
+		destinationStage = vk::PipelineStageFlagBits::eFragmentShader;
+	} else
+		EXPECT_ASSERT(0, "unsupported layout transition!");
+
+	_commandBuffer.pipelineBarrier(
+		sourceStage, destinationStage,
+		vk::DependencyFlags(),
+		0, nullptr,
+		0, nullptr,
+		1, &barrier
+		);
+}
+
+void EasyCommandQueue::copyBufferToImage(vk::Buffer buffer, vk::Image image, uint32_t width, uint32_t height) {
+	vk::BufferImageCopy region;
+	region.bufferOffset = 0;
+	region.bufferRowLength = 0;
+	region.bufferImageHeight = 0;
+	region.imageSubresource.aspectMask = vk::ImageAspectFlagBits::eColor;
+	region.imageSubresource.mipLevel = 0;
+	region.imageSubresource.baseArrayLayer = 0;
+	region.imageSubresource.layerCount = 1;
+	region.imageOffset = vk::Offset3D{0, 0, 0};
+	region.imageExtent = vk::Extent3D{
+		width,
+		height,
+		1
+	};
+
+	_commandBuffer.copyBufferToImage(buffer, image, vk::ImageLayout::eTransferDstOptimal, 1, &region);
+}
+
 VulkanRenderer::VulkanRenderer() {}
 VulkanRenderer::~VulkanRenderer() {}
 
@@ -200,6 +286,10 @@ void VulkanRenderer::present() {
 	EXPECT_ASSERT(r == vk::Result::eSuccess, "Failed to present");
 }
 
+EasyCommandQueue VulkanRenderer::acquireEasyCommandQueue() {
+	return EasyCommandQueue(this, _graphicsQueue);
+}
+
 void VulkanRenderer::createBuffer(vk::DeviceSize size,
                                   vk::BufferUsageFlags usage,
                                   vk::MemoryPropertyFlags properties,
@@ -223,6 +313,37 @@ void VulkanRenderer::createBuffer(vk::DeviceSize size,
 	EXPECT_ASSERT(bufferMemory, "failed to allocate buffer memory!");
 
 	_device.bindBufferMemory(buffer, bufferMemory, 0);
+}
+
+void VulkanRenderer::createImage(uint32_t width, uint32_t height, vk::Format format, vk::ImageTiling tiling, vk::ImageUsageFlags usage, vk::MemoryPropertyFlags properties, vk::Image& image, vk::DeviceMemory& imageMemory) {
+	vk::ImageCreateInfo imageInfo;
+	imageInfo.imageType = vk::ImageType::e2D;
+	imageInfo.extent.width = width;
+	imageInfo.extent.height = height;
+	imageInfo.extent.depth = 1;
+	imageInfo.mipLevels = 1;
+	imageInfo.arrayLayers = 1;
+
+	imageInfo.format = format;
+	imageInfo.tiling = tiling;
+	imageInfo.initialLayout = vk::ImageLayout::eUndefined;
+	imageInfo.usage = usage;
+	imageInfo.sharingMode = vk::SharingMode::eExclusive;
+	imageInfo.samples = vk::SampleCountFlagBits::e1;
+	// imageInfo.flags = 0; // Optional
+
+	image = _device.createImage(imageInfo);
+	EXPECT_ASSERT(image, "Failed to create image!");
+
+	vk::MemoryRequirements memRequirements = _device.getImageMemoryRequirements(image);
+
+	vk::MemoryAllocateInfo allocInfo;
+	allocInfo.allocationSize = memRequirements.size;
+	allocInfo.memoryTypeIndex = _findMemoryType(memRequirements.memoryTypeBits, properties);
+
+	imageMemory = _device.allocateMemory(allocInfo);
+	EXPECT_ASSERT(imageMemory, "failed to allocate image memory!");
+	_device.bindImageMemory(image, imageMemory, 0);
 }
 
 uint32_t VulkanRenderer::_findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties) {
