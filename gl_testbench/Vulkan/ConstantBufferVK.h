@@ -17,8 +17,7 @@ public:
 private:
 	VulkanRenderer* _renderer;
 	vk::Device _device;
-
-	vk::DescriptorSetLayout _descriptorSetLayout;
 	vk::Buffer _buffer;
+	vk::WriteDescriptorSet _descriptorWrite;
 	vk::DeviceMemory _bufferMemory;
 };

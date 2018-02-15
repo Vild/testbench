@@ -54,10 +54,12 @@ int MaterialVK::compileMaterial(std::string& errString) {
 
 	if (_compileShader(ShaderType::VS, errString) < 0) {
 		std::cerr << errString << std::endl;
+		getchar();
 		exit(-1);
 	};
 	if (_compileShader(ShaderType::PS, errString) < 0) {
 		std::cerr << errString << std::endl;
+		getchar();
 		exit(-1);
 	};
 

@@ -139,6 +139,9 @@ private:
 
 	vk::RenderPass _renderPass;
 	vk::PipelineLayout _pipelineLayout;
+	std::vector<vk::DescriptorSetLayout> _descriptorSetLayouts;
+	vk::DescriptorPool _descriptorPool;
+	std::vector<vk::DescriptorSet> _descriptorSets;
 	vk::Pipeline _graphicsPipeline;
 
 	std::vector<vk::Framebuffer> _swapChainFramebuffers;
@@ -168,6 +171,8 @@ private:
 	bool _createVulkanImageViews();
 	bool _createVulkanRenderPass();
 	bool _createVulkanPipeline();
+	bool _createDescriptorPool();
+	bool _createDescriptorSets();
 	bool _createVulkanFramebuffers();
 	bool _createVulkanCommandPool();
 	bool _createVulkanCommandBuffers();

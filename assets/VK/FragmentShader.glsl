@@ -1,8 +1,18 @@
-layout(location = 0) in vec3 fragColor;
+#ifdef NORMAL
+	layout( location = NORMAL ) in vec4 normal_in;
+#endif
+
+#ifdef TEXTCOORD
+	layout (location = TEXTCOORD ) in vec2 uv_in;
+#endif
 
 layout(location = 0) out vec4 outColor;
 
-void main() {
-    outColor = vec4(fragColor, 1.0);
-}
+layout(set = 1, binding=DIFFUSE_TINT) uniform DIFFUSE_TINT_NAME
+{
+	vec4 diffuseTint;
+};
 
+void main() {
+    outColor = vec4(diffuseTint.rgb, 1.0);
+}

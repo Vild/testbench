@@ -31,6 +31,8 @@
 #define DEBUG_EXTENSION
 #endif
 
+#define NROFDESCRIPTORSETS 5
+
 const std::vector<VulkanRenderer::InitFunction> VulkanRenderer::_inits = {
   {"initSDL", &VulkanRenderer::_initSDL, false},
   {"createVulkanInstance", &VulkanRenderer::_createVulkanInstance, false},
@@ -45,6 +47,8 @@ const std::vector<VulkanRenderer::InitFunction> VulkanRenderer::_inits = {
   {"createVulkanCommandPool", &VulkanRenderer::_createVulkanCommandPool, false},
   {"createVulkanCommandBuffers", &VulkanRenderer::_createVulkanCommandBuffers, true},
   {"createVulkanSemaphores", &VulkanRenderer::_createVulkanSemaphores, false},
+  {"createDescriptorPool", &VulkanRenderer::_createDescriptorPool, true},
+  {"createDescriptorSets", &VulkanRenderer::_createDescriptorSets, true }
 };
 
 static VkResult CreateDebugReportCallbackEXT(VkInstance instance,
@@ -231,6 +235,12 @@ int VulkanRenderer::shutdown() {
 
 	_device.destroyCommandPool(_commandPool);
 
+	for (auto layout : _descriptorSetLayouts) {
+		_device.destroyDescriptorSetLayout(layout);
+	}
+	_device.destroyDescriptorPool(_descriptorPool);
+
+
 	_device.destroy();
 	DestroyDebugReportCallbackEXT(_instance, _debugCallback, nullptr);
 	_instance.destroy();
@@ -266,6 +276,31 @@ void VulkanRenderer::frame() {
 	EXPECT_ASSERT(rv.result == vk::Result::eSuccess || rv.result == vk::Result::eSuboptimalKHR, "Failed to acquire new image");
 	_currentImageIndex = rv.value;
 
+	vk::CommandBufferBeginInfo beginInfo{ vk::CommandBufferUsageFlagBits::eSimultaneousUse };
+	_commandBuffers[_currentImageIndex].begin(beginInfo);
+
+	vk::ClearColorValue c = vk::ClearColorValue{ std::array<float, 4>{ {0.0f, 0.0f, 0.0f, 1.0f}} };
+	vk::ClearValue clearColor{ c };
+	vk::RenderPassBeginInfo renderPassInfo = { _renderPass, _swapChainFramebuffers[_currentImageIndex],{ { 0, 0 }, _swapChainExtent }, 1, &clearColor };
+	_commandBuffers[_currentImageIndex].beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
+	_commandBuffers[_currentImageIndex].bindPipeline(vk::PipelineBindPoint::eGraphics, _graphicsPipeline);
+
+	for (auto work : _drawList) {
+		printf("%zu\n", _drawList.size());
+		work.first->enable(this);
+		for (auto mesh : work.second) {
+			size_t numberOfElements = mesh->geometryBuffers[0].numElements;
+			for (auto element : mesh->geometryBuffers) {
+				mesh->bindIAVertexBuffer(element.first);
+			}
+			_commandBuffers[_currentImageIndex].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, _pipelineLayout, 0, NROFDESCRIPTORSETS, _descriptorSets.data(), 0, nullptr);
+			_commandBuffers[_currentImageIndex].draw(numberOfElements, 1, 0, 0);
+		}
+	}
+
+	_commandBuffers[_currentImageIndex].endRenderPass();
+	_commandBuffers[_currentImageIndex].end();
+
 	vk::Semaphore waitSemaphores[] = {_imageAvailableSemaphore};
 	vk::PipelineStageFlags waitStages[] = {vk::PipelineStageFlagBits::eColorAttachmentOutput};
 	vk::Semaphore signalSemaphores[] = {_renderFinishedSemaphore};
@@ -274,6 +309,7 @@ void VulkanRenderer::frame() {
 
 	_drawList.clear();
 }
+
 void VulkanRenderer::present() {
 	if (_currentImageIndex == UINT32_MAX)
 		return;
@@ -733,7 +769,92 @@ bool VulkanRenderer::_createVulkanPipeline() {
 
 	vk::PipelineColorBlendStateCreateInfo colorBlending{{}, false, vk::LogicOp::eCopy, 1, &colorBlendAttachment, {{0, 0, 0, 0}}};
 
-	vk::PipelineLayoutCreateInfo pipelineLayoutInfo{{}, 0, nullptr, 0, nullptr};
+	{ // Descriptor sets for SSBOs and constant buffers.
+		// I guess we have to hardcode the bindings in here to match up with the design? I have no clue what i'm talking about.
+		{ // Translation.
+			vk::DescriptorSetLayoutBinding layoutBinding = {};
+			layoutBinding.binding = TRANSLATION;
+			layoutBinding.descriptorType = vk::DescriptorType::eUniformBuffer;
+			layoutBinding.descriptorCount = 1;
+			layoutBinding.stageFlags = vk::ShaderStageFlagBits::eVertex;
+			layoutBinding.pImmutableSamplers = nullptr;
+
+			vk::DescriptorSetLayoutCreateInfo layoutInfo = {};
+			layoutInfo.bindingCount = 1;
+			layoutInfo.pBindings = &layoutBinding;
+
+			_descriptorSetLayouts.push_back(_device.createDescriptorSetLayout(layoutInfo));
+			EXPECT(_descriptorSetLayouts.back(), "Descriptor set layout is invalid!\n");
+		}
+
+		{ // Diffuse tint.
+			vk::DescriptorSetLayoutBinding layoutBinding = {};
+			layoutBinding.binding = DIFFUSE_TINT;
+			layoutBinding.descriptorType = vk::DescriptorType::eUniformBuffer;
+			layoutBinding.descriptorCount = 1;
+			layoutBinding.stageFlags = vk::ShaderStageFlagBits::eFragment;
+			layoutBinding.pImmutableSamplers = nullptr;
+
+			vk::DescriptorSetLayoutCreateInfo layoutInfo = {};
+			layoutInfo.bindingCount = 1;
+			layoutInfo.pBindings = &layoutBinding;
+
+			_descriptorSetLayouts.push_back(_device.createDescriptorSetLayout(layoutInfo));
+			EXPECT(_descriptorSetLayouts.back(), "Descriptor set layout is invalid!\n");
+		}
+
+		{
+			vk::DescriptorSetLayoutBinding layoutBinding = {};
+			layoutBinding.binding = POSITION;
+			layoutBinding.descriptorType = vk::DescriptorType::eStorageBuffer;
+			layoutBinding.descriptorCount = 1;
+			layoutBinding.stageFlags = vk::ShaderStageFlagBits::eVertex;
+			layoutBinding.pImmutableSamplers = nullptr;
+
+			vk::DescriptorSetLayoutCreateInfo layoutInfo = {};
+			layoutInfo.bindingCount = 1;
+			layoutInfo.pBindings = &layoutBinding;
+
+			_descriptorSetLayouts.push_back(_device.createDescriptorSetLayout(layoutInfo));
+			EXPECT(_descriptorSetLayouts.back(), "Descriptor set layout is invalid!\n");
+		}
+
+		{
+			vk::DescriptorSetLayoutBinding layoutBinding = {};
+			layoutBinding.binding = NORMAL;
+			layoutBinding.descriptorType = vk::DescriptorType::eStorageBuffer;
+			layoutBinding.descriptorCount = 1;
+			layoutBinding.stageFlags = vk::ShaderStageFlagBits::eVertex;
+			layoutBinding.pImmutableSamplers = nullptr;
+
+			vk::DescriptorSetLayoutCreateInfo layoutInfo = {};
+			layoutInfo.bindingCount = 1;
+			layoutInfo.pBindings = &layoutBinding;
+
+			_descriptorSetLayouts.push_back(_device.createDescriptorSetLayout(layoutInfo));
+			EXPECT(_descriptorSetLayouts.back(), "Descriptor set layout is invalid!\n");
+		}
+
+		{
+			vk::DescriptorSetLayoutBinding layoutBinding = {};
+			layoutBinding.binding = TEXTCOORD;
+			layoutBinding.descriptorType = vk::DescriptorType::eStorageBuffer;
+			layoutBinding.descriptorCount = 1;
+			layoutBinding.stageFlags = vk::ShaderStageFlagBits::eVertex;
+			layoutBinding.pImmutableSamplers = nullptr;
+
+			vk::DescriptorSetLayoutCreateInfo layoutInfo = {};
+			layoutInfo.bindingCount = 1;
+			layoutInfo.pBindings = &layoutBinding;
+
+			_descriptorSetLayouts.push_back(_device.createDescriptorSetLayout(layoutInfo));
+			EXPECT(_descriptorSetLayouts.back(), "Descriptor set layout is invalid!\n");
+		}
+	}
+
+	vk::PipelineLayoutCreateInfo pipelineLayoutInfo;
+	pipelineLayoutInfo.setLayoutCount = NROFDESCRIPTORSETS;
+	pipelineLayoutInfo.pSetLayouts = _descriptorSetLayouts.data();
 
 	_pipelineLayout = _device.createPipelineLayout(pipelineLayoutInfo);
 	EXPECT(_pipelineLayout, "Pipeline Layout is null!");
@@ -753,12 +874,11 @@ bool VulkanRenderer::_createVulkanPipeline() {
 	std::string defineDiffColName = "#define DIFFUSE_TINT_NAME " + std::string(DIFFUSE_TINT_NAME) + "\n";
 
 	std::string defineDiffuse = "#define DIFFUSE_SLOT " + std::to_string(DIFFUSE_SLOT) + "\n";
-	m.addDefine(definePos + defineNor + defineUV + defineTX + defineTXName + defineDiffCol + defineDiffColName, Material::ShaderType::VS);
-	m.addDefine(definePos + defineNor + defineUV + defineTX + defineTXName + defineDiffCol + defineDiffColName, Material::ShaderType::PS);
+	m.addDefine(definePos + defineNor + defineUV + defineTX + defineTXName + defineDiffCol + defineDiffColName + defineDiffuse, Material::ShaderType::VS);
+	m.addDefine(definePos + defineNor + defineUV + defineTX + defineTXName + defineDiffCol + defineDiffColName + defineDiffuse, Material::ShaderType::PS);
 
 	std::string err;
 	m.compileMaterial(err);
-
 	vk::GraphicsPipelineCreateInfo pipelineInfo{{},
 	                                            (uint32_t)m._program.size(),
 	                                            m._program.data(),
@@ -783,6 +903,36 @@ bool VulkanRenderer::_createVulkanPipeline() {
 	return true;
 }
 
+bool VulkanRenderer::_createDescriptorPool() {
+	// Creates two pool sizes, one for the uniform buffers and one for the SSBOs.
+	vk::DescriptorPoolSize poolSize[2] = {};
+	poolSize[0].type = vk::DescriptorType::eUniformBuffer;
+	poolSize[0].descriptorCount = 2; // Two uniform buffer descriptor sets.
+	poolSize[1].type = vk::DescriptorType::eStorageBuffer;
+	poolSize[1].descriptorCount = 3; // Three storage buffer descriptor sets.
+
+	vk::DescriptorPoolCreateInfo poolInfo = {};
+	poolInfo.poolSizeCount = 2; // Two poolsizes therefore two poolSizeCount.
+	poolInfo.pPoolSizes = poolSize;
+	poolInfo.maxSets = NROFDESCRIPTORSETS;
+	
+	_descriptorPool = _device.createDescriptorPool(poolInfo);
+	EXPECT(_descriptorPool, "Failed to create descriptor pool!\n");
+	return true;
+}
+
+bool VulkanRenderer::_createDescriptorSets() {
+	vk::DescriptorSetAllocateInfo allocInfo = {};
+	allocInfo.descriptorPool = _descriptorPool;
+	allocInfo.descriptorSetCount = NROFDESCRIPTORSETS;
+	allocInfo.pSetLayouts = _descriptorSetLayouts.data();
+
+	_descriptorSets = _device.allocateDescriptorSets(allocInfo);
+	EXPECT(_descriptorSets[0], "Failed to allocate descriptor sets!\n");
+	// Only check first for failure, since the other one should be broken aswell otherwise, I think, lmao.
+	return true;
+}
+
 bool VulkanRenderer::_createVulkanFramebuffers() {
 	_swapChainFramebuffers.resize(_swapChainImageViews.size());
 	for (size_t i = 0; i < _swapChainImageViews.size(); i++) {
@@ -798,6 +948,8 @@ bool VulkanRenderer::_createVulkanFramebuffers() {
 
 bool VulkanRenderer::_createVulkanCommandPool() {
 	vk::CommandPoolCreateInfo createInfo{{}, _queueInformation.graphics};
+	// Reset flag to be able to re-record each frame, this is needed since the meshes are created after the command buffers.
+	createInfo.flags = vk::CommandPoolCreateFlagBits::eResetCommandBuffer;
 	_commandPool = _device.createCommandPool(createInfo);
 	EXPECT(_commandPool, "Failed to create command pool!");
 	return true;
@@ -820,7 +972,7 @@ bool VulkanRenderer::_createVulkanCommandBuffers() {
 		_commandBuffers[i].beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
 
 		_commandBuffers[i].bindPipeline(vk::PipelineBindPoint::eGraphics, _graphicsPipeline);
-		_commandBuffers[i].draw(3, 1, 0, 0);
+		//_commandBuffers[i].draw(3, 1, 0, 0);
 		_commandBuffers[i].endRenderPass();
 		_commandBuffers[i].end();
 	}
