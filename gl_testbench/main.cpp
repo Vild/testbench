@@ -10,6 +10,12 @@
 #include "Texture2D.h"
 #include <math.h>
 
+#if defined(_WIN32) || defined(_WIN64)
+#define snprintf _snprintf
+#define vsnprintf _vsnprintf
+#define strcasecmp _stricmp
+#define strncasecmp _strnicmp
+#endif
 
 #ifdef _WIN32
 #define ASSETS_FOLDER "../assets"
@@ -40,6 +46,9 @@ void renderScene();
 
 char gTitleBuff[256];
 double gLastDelta = 0.0;
+
+Renderer::BACKEND rendererType = Renderer::BACKEND::VULKAN;
+const char* RENDERER_TYPES[4] = { "GL45", "Vulkan", "DX11", "DX12" };
 
 void updateDelta()
 {
@@ -131,7 +140,7 @@ void renderScene()
 	renderer->frame();
 	renderer->present();
 	updateDelta();
-	sprintf(gTitleBuff, "Vulkan - %3.0lfms", gLastDelta);
+	sprintf(gTitleBuff, "%s - %3.0lfms", RENDERER_TYPES[static_cast<int>(rendererType)], gLastDelta);
 	renderer->setWinTitle(gTitleBuff);
 }
 
@@ -306,10 +315,16 @@ void shutdown() {
 
 int main(int argc, char *argv[])
 {
-	renderer = Renderer::makeRenderer(Renderer::BACKEND::VULKAN);
-	if (renderer->initialize(800,600))
+	for (int i = 1; i < argc; i++)
+		if (!strcasecmp(argv[i], "gl45"))
+			rendererType = Renderer::BACKEND::GL45;
+		else if (!strcasecmp(argv[i], "vulkan"))
+			rendererType = Renderer::BACKEND::VULKAN;
+
+	renderer = Renderer::makeRenderer(rendererType);
+	if (renderer->initialize(800, 600))
 		return -1;
-	renderer->setWinTitle("Vulkan");
+	renderer->setWinTitle(RENDERER_TYPES[static_cast<int>(rendererType)]);
 	renderer->setClearColor(0.0, 0.1, 0.1, 1.0);
 	initialiseTestbench();
 	run();
