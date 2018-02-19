@@ -18,7 +18,6 @@ ConstantBufferVK::ConstantBufferVK(VulkanRenderer* renderer, uint32_t binding) :
 }
 
 ConstantBufferVK::~ConstantBufferVK() {
-	STUB();
 	_device.destroyBuffer(_buffer);
 	_device.freeMemory(_bufferMemory);
 }

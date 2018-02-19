@@ -22,6 +22,7 @@ private:
 	vk::Device _device;
 
 	size_t _size;
+
 	vk::Buffer _buffer;
 	vk::WriteDescriptorSet _descriptorWrite;
 	vk::DeviceMemory _bufferMemory;

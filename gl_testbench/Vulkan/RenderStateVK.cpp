@@ -1,12 +1,8 @@
 #include "RenderStateVK.h"
 #include "VulkanRenderer.h"
 
-RenderStateVK::RenderStateVK() {
-	STUB();
-}
-RenderStateVK::~RenderStateVK() {
-	STUB();
-}
+RenderStateVK::RenderStateVK() {}
+RenderStateVK::~RenderStateVK() {}
 
 void RenderStateVK::setWireFrame(bool wireFrame) {
 	STUB();

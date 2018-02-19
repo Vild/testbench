@@ -263,7 +263,7 @@ void VulkanRenderer::frame() {
 	EXPECT_ASSERT(rv.result == vk::Result::eSuccess || rv.result == vk::Result::eSuboptimalKHR, "Failed to acquire new image");
 	_currentImageIndex = rv.value;
 
-	vk::CommandBufferBeginInfo beginInfo{vk::CommandBufferUsageFlagBits::eSimultaneousUse};
+	vk::CommandBufferBeginInfo beginInfo{vk::CommandBufferUsageFlagBits::eOneTimeSubmit};
 	_commandBuffers[_currentImageIndex].begin(beginInfo);
 
 	vk::ClearColorValue c = vk::ClearColorValue{std::array<float, 4>{{0.0f, 0.0f, 0.0f, 1.0f}}};
@@ -283,8 +283,8 @@ void VulkanRenderer::frame() {
 	_commandBuffers[_currentImageIndex].beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
 	_commandBuffers[_currentImageIndex].bindPipeline(vk::PipelineBindPoint::eGraphics, _graphicsPipeline);
 
+	printf("drawList.size: %zu\n", _drawList.size());
 	for (auto work : _drawList) {
-		printf("%zu\n", _drawList.size());
 		work.first->enable(this);
 		for (auto mesh : work.second) {
 			size_t numberOfElements = mesh->geometryBuffers[_currentImageIndex].numElements;
@@ -967,7 +967,7 @@ bool VulkanRenderer::_createVulkanCommandBuffers() {
 	_commandBuffers = _device.allocateCommandBuffers(allocInfo);
 	EXPECT(_commandBuffers.size(), "Failed to allocate command buffers");
 
-	for (size_t i = 0; i < _commandBuffers.size(); i++) {
+	/*for (size_t i = 0; i < _commandBuffers.size(); i++) {
 		vk::CommandBufferBeginInfo beginInfo{vk::CommandBufferUsageFlagBits::eSimultaneousUse};
 
 		_commandBuffers[i].begin(beginInfo);
@@ -981,7 +981,7 @@ bool VulkanRenderer::_createVulkanCommandBuffers() {
 		//_commandBuffers[i].draw(3, 1, 0, 0);
 		_commandBuffers[i].endRenderPass();
 		_commandBuffers[i].end();
-	}
+		}*/
 	return true;
 }
 
