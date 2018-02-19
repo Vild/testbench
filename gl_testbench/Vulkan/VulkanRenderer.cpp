@@ -282,6 +282,17 @@ void VulkanRenderer::frame() {
 	vk::ClearColorValue c = vk::ClearColorValue{ std::array<float, 4>{ {0.0f, 0.0f, 0.0f, 1.0f}} };
 	vk::ClearValue clearColor{ c };
 	vk::RenderPassBeginInfo renderPassInfo = { _renderPass, _swapChainFramebuffers[_currentImageIndex],{ { 0, 0 }, _swapChainExtent }, 1, &clearColor };
+
+	for (auto work : _drawList) {
+		printf("%zu\n", _drawList.size());
+		work.first->enable(this);
+		for (auto mesh : work.second) {
+			for (auto element : mesh->geometryBuffers) {
+				mesh->bindIAVertexBuffer(element.first);
+			}
+		}
+	}
+
 	_commandBuffers[_currentImageIndex].beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
 	_commandBuffers[_currentImageIndex].bindPipeline(vk::PipelineBindPoint::eGraphics, _graphicsPipeline);
 
@@ -289,10 +300,10 @@ void VulkanRenderer::frame() {
 		printf("%zu\n", _drawList.size());
 		work.first->enable(this);
 		for (auto mesh : work.second) {
-			size_t numberOfElements = mesh->geometryBuffers[0].numElements;
-			for (auto element : mesh->geometryBuffers) {
-				mesh->bindIAVertexBuffer(element.first);
-			}
+			size_t numberOfElements = mesh->geometryBuffers[_currentImageIndex].numElements;
+			//for (auto element : mesh->geometryBuffers) {
+			//	mesh->bindIAVertexBuffer(element.first);
+			//}
 			_commandBuffers[_currentImageIndex].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, _pipelineLayout, 0, NROFDESCRIPTORSETS, _descriptorSets.data(), 0, nullptr);
 			_commandBuffers[_currentImageIndex].draw(numberOfElements, 1, 0, 0);
 		}

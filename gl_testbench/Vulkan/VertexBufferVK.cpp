@@ -33,7 +33,7 @@ void VertexBufferVK::bind(size_t offset, size_t size, uint32_t location) {
 
 	vk::DescriptorBufferInfo bufferInfo = {};
 	bufferInfo.buffer = _buffer;
-	bufferInfo.offset = offset;
+	bufferInfo.offset = 0;
 	bufferInfo.range = size;
 
 	_descriptorWrite.dstBinding = location;
