@@ -19,14 +19,17 @@ int Texture2DVK::loadFromFile(std::string filename) {
 	vk::Buffer stagingBuffer;
 	vk::DeviceMemory stagingBufferMemory;
 
-	_renderer->createBuffer(imageSize, vk::BufferUsageFlagBits::eTransferSrc, vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent, stagingBuffer, stagingBufferMemory);
+	_renderer->createBuffer(imageSize, vk::BufferUsageFlagBits::eTransferSrc,
+	                        vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent, stagingBuffer, stagingBufferMemory);
 
 	void* data = _device.mapMemory(stagingBufferMemory, 0, imageSize);
 	memcpy(data, pixels, static_cast<size_t>(imageSize));
 	_device.unmapMemory(stagingBufferMemory);
 	stbi_image_free(pixels);
 
-	_renderer->createImage(texWidth, texHeight, vk::Format::eR8G8B8A8Unorm, vk::ImageTiling::eOptimal, vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled, vk::MemoryPropertyFlagBits::eDeviceLocal, _image, _imageMemory);
+	_renderer->createImage(texWidth, texHeight, vk::Format::eR8G8B8A8Unorm, vk::ImageTiling::eOptimal,
+	                       vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled, vk::MemoryPropertyFlagBits::eDeviceLocal, _image,
+	                       _imageMemory);
 
 	{
 		EasyCommandQueue ecq = _renderer->acquireEasyCommandQueue();

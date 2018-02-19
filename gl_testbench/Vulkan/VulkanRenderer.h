@@ -96,7 +96,15 @@ public:
 	EasyCommandQueue acquireEasyCommandQueue();
 
 	void createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties, vk::Buffer& buffer, vk::DeviceMemory& bufferMemory);
-	void createImage(uint32_t width, uint32_t height, vk::Format format, vk::ImageTiling tiling, vk::ImageUsageFlags usage, vk::MemoryPropertyFlags properties, vk::Image& image, vk::DeviceMemory& imageMemory);
+	void createImage(uint32_t width,
+	                 uint32_t height,
+	                 vk::Format format,
+	                 vk::ImageTiling tiling,
+	                 vk::ImageUsageFlags usage,
+	                 vk::MemoryPropertyFlags properties,
+	                 vk::Image& image,
+	                 vk::DeviceMemory& imageMemory);
+
 private:
 	struct InitFunction {
 		typedef bool (VulkanRenderer::*initFunction)();
@@ -191,6 +199,7 @@ public:
 	void copyBufferToImage(vk::Buffer buffer, vk::Image image, uint32_t width, uint32_t height);
 
 	void run();
+
 private:
 	VulkanRenderer* _renderer;
 	vk::Device _device;

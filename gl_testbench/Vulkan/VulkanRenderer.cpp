@@ -33,23 +33,21 @@
 
 #define NROFDESCRIPTORSETS 5
 
-const std::vector<VulkanRenderer::InitFunction> VulkanRenderer::_inits = {
-  {"initSDL", &VulkanRenderer::_initSDL, false},
-  {"createVulkanInstance", &VulkanRenderer::_createVulkanInstance, false},
-  {"createSDLSurface", &VulkanRenderer::_createSDLSurface, false},
-  {"createVulkanPhysicalDevice", &VulkanRenderer::_createVulkanPhysicalDevice, false},
-  {"createVulkanLogicalDevice", &VulkanRenderer::_createVulkanLogicalDevice, false},
-  {"createVulkanSwapChain", &VulkanRenderer::_createVulkanSwapChain, true},
-  {"createVulkanImageViews", &VulkanRenderer::_createVulkanImageViews, true},
-  {"createVulkanRenderPass", &VulkanRenderer::_createVulkanRenderPass, true},
-  {"createVulkanPipeline", &VulkanRenderer::_createVulkanPipeline, true},
-  {"createVulkanFramebuffers", &VulkanRenderer::_createVulkanFramebuffers, true},
-  {"createVulkanCommandPool", &VulkanRenderer::_createVulkanCommandPool, false},
-  {"createVulkanCommandBuffers", &VulkanRenderer::_createVulkanCommandBuffers, true},
-  {"createVulkanSemaphores", &VulkanRenderer::_createVulkanSemaphores, false},
-  {"createDescriptorPool", &VulkanRenderer::_createDescriptorPool, true},
-  {"createDescriptorSets", &VulkanRenderer::_createDescriptorSets, true }
-};
+const std::vector<VulkanRenderer::InitFunction> VulkanRenderer::_inits = {{"initSDL", &VulkanRenderer::_initSDL, false},
+                                                                          {"createVulkanInstance", &VulkanRenderer::_createVulkanInstance, false},
+                                                                          {"createSDLSurface", &VulkanRenderer::_createSDLSurface, false},
+                                                                          {"createVulkanPhysicalDevice", &VulkanRenderer::_createVulkanPhysicalDevice, false},
+                                                                          {"createVulkanLogicalDevice", &VulkanRenderer::_createVulkanLogicalDevice, false},
+                                                                          {"createVulkanSwapChain", &VulkanRenderer::_createVulkanSwapChain, true},
+                                                                          {"createVulkanImageViews", &VulkanRenderer::_createVulkanImageViews, true},
+                                                                          {"createVulkanRenderPass", &VulkanRenderer::_createVulkanRenderPass, true},
+                                                                          {"createVulkanPipeline", &VulkanRenderer::_createVulkanPipeline, true},
+                                                                          {"createVulkanFramebuffers", &VulkanRenderer::_createVulkanFramebuffers, true},
+                                                                          {"createVulkanCommandPool", &VulkanRenderer::_createVulkanCommandPool, false},
+                                                                          {"createVulkanCommandBuffers", &VulkanRenderer::_createVulkanCommandBuffers, true},
+                                                                          {"createVulkanSemaphores", &VulkanRenderer::_createVulkanSemaphores, false},
+                                                                          {"createDescriptorPool", &VulkanRenderer::_createDescriptorPool, true},
+                                                                          {"createDescriptorSets", &VulkanRenderer::_createDescriptorSets, true}};
 
 static VkResult CreateDebugReportCallbackEXT(VkInstance instance,
                                              const VkDebugReportCallbackCreateInfoEXT* pCreateInfo,
@@ -130,13 +128,7 @@ void EasyCommandQueue::transitionImageLayout(vk::Image image, vk::Format format,
 	} else
 		EXPECT_ASSERT(0, "unsupported layout transition!");
 
-	_commandBuffer.pipelineBarrier(
-		sourceStage, destinationStage,
-		vk::DependencyFlags(),
-		0, nullptr,
-		0, nullptr,
-		1, &barrier
-		);
+	_commandBuffer.pipelineBarrier(sourceStage, destinationStage, vk::DependencyFlags(), 0, nullptr, 0, nullptr, 1, &barrier);
 }
 
 void EasyCommandQueue::copyBufferToImage(vk::Buffer buffer, vk::Image image, uint32_t width, uint32_t height) {
@@ -149,11 +141,7 @@ void EasyCommandQueue::copyBufferToImage(vk::Buffer buffer, vk::Image image, uin
 	region.imageSubresource.baseArrayLayer = 0;
 	region.imageSubresource.layerCount = 1;
 	region.imageOffset = vk::Offset3D{0, 0, 0};
-	region.imageExtent = vk::Extent3D{
-		width,
-		height,
-		1
-	};
+	region.imageExtent = vk::Extent3D{width, height, 1};
 
 	_commandBuffer.copyBufferToImage(buffer, image, vk::ImageLayout::eTransferDstOptimal, 1, &region);
 }
@@ -240,7 +228,6 @@ int VulkanRenderer::shutdown() {
 	}
 	_device.destroyDescriptorPool(_descriptorPool);
 
-
 	_device.destroy();
 	DestroyDebugReportCallbackEXT(_instance, _debugCallback, nullptr);
 	_instance.destroy();
@@ -276,12 +263,12 @@ void VulkanRenderer::frame() {
 	EXPECT_ASSERT(rv.result == vk::Result::eSuccess || rv.result == vk::Result::eSuboptimalKHR, "Failed to acquire new image");
 	_currentImageIndex = rv.value;
 
-	vk::CommandBufferBeginInfo beginInfo{ vk::CommandBufferUsageFlagBits::eSimultaneousUse };
+	vk::CommandBufferBeginInfo beginInfo{vk::CommandBufferUsageFlagBits::eSimultaneousUse};
 	_commandBuffers[_currentImageIndex].begin(beginInfo);
 
-	vk::ClearColorValue c = vk::ClearColorValue{ std::array<float, 4>{ {0.0f, 0.0f, 0.0f, 1.0f}} };
-	vk::ClearValue clearColor{ c };
-	vk::RenderPassBeginInfo renderPassInfo = { _renderPass, _swapChainFramebuffers[_currentImageIndex],{ { 0, 0 }, _swapChainExtent }, 1, &clearColor };
+	vk::ClearColorValue c = vk::ClearColorValue{std::array<float, 4>{{0.0f, 0.0f, 0.0f, 1.0f}}};
+	vk::ClearValue clearColor{c};
+	vk::RenderPassBeginInfo renderPassInfo = {_renderPass, _swapChainFramebuffers[_currentImageIndex], {{0, 0}, _swapChainExtent}, 1, &clearColor};
 
 	for (auto work : _drawList) {
 		printf("%zu\n", _drawList.size());
@@ -301,10 +288,11 @@ void VulkanRenderer::frame() {
 		work.first->enable(this);
 		for (auto mesh : work.second) {
 			size_t numberOfElements = mesh->geometryBuffers[_currentImageIndex].numElements;
-			//for (auto element : mesh->geometryBuffers) {
+			// for (auto element : mesh->geometryBuffers) {
 			//	mesh->bindIAVertexBuffer(element.first);
 			//}
-			_commandBuffers[_currentImageIndex].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, _pipelineLayout, 0, NROFDESCRIPTORSETS, _descriptorSets.data(), 0, nullptr);
+			_commandBuffers[_currentImageIndex].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, _pipelineLayout, 0, NROFDESCRIPTORSETS, _descriptorSets.data(),
+			                                                       0, nullptr);
 			_commandBuffers[_currentImageIndex].draw(numberOfElements, 1, 0, 0);
 		}
 	}
@@ -364,7 +352,14 @@ void VulkanRenderer::createBuffer(vk::DeviceSize size,
 	_device.bindBufferMemory(buffer, bufferMemory, 0);
 }
 
-void VulkanRenderer::createImage(uint32_t width, uint32_t height, vk::Format format, vk::ImageTiling tiling, vk::ImageUsageFlags usage, vk::MemoryPropertyFlags properties, vk::Image& image, vk::DeviceMemory& imageMemory) {
+void VulkanRenderer::createImage(uint32_t width,
+                                 uint32_t height,
+                                 vk::Format format,
+                                 vk::ImageTiling tiling,
+                                 vk::ImageUsageFlags usage,
+                                 vk::MemoryPropertyFlags properties,
+                                 vk::Image& image,
+                                 vk::DeviceMemory& imageMemory) {
 	vk::ImageCreateInfo imageInfo;
 	imageInfo.imageType = vk::ImageType::e2D;
 	imageInfo.extent.width = width;
@@ -926,7 +921,7 @@ bool VulkanRenderer::_createDescriptorPool() {
 	poolInfo.poolSizeCount = 2; // Two poolsizes therefore two poolSizeCount.
 	poolInfo.pPoolSizes = poolSize;
 	poolInfo.maxSets = NROFDESCRIPTORSETS;
-	
+
 	_descriptorPool = _device.createDescriptorPool(poolInfo);
 	EXPECT(_descriptorPool, "Failed to create descriptor pool!\n");
 	return true;

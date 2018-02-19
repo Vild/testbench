@@ -4,7 +4,7 @@
 
 ConstantBufferVK::ConstantBufferVK(VulkanRenderer* renderer, uint32_t binding) : _renderer(renderer), _device(renderer->_device) {
 	// Prepares the Write Descriptor for setData function later on.
-	if(binding == TRANSLATION)
+	if (binding == TRANSLATION)
 		_descriptorWrite.dstSet = renderer->_descriptorSets[0];
 	else
 		_descriptorWrite.dstSet = renderer->_descriptorSets[1];
