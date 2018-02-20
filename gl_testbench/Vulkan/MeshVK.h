@@ -12,7 +12,8 @@ enum class DescriptorType {
 	diffuseTint = 1,
 	position = 2,
 	normal = 3,
-	textcoord = 4
+	textcoord = 4,
+	diffuseSlot = 5
 };
 
 class MeshVK : public Mesh {
@@ -26,5 +27,9 @@ public:
 		return descriptorSets[static_cast<int>(type)];
 	}
 
+	void bindTextures();
+
 	std::vector<vk::DescriptorSet> descriptorSets;
+private:
+	VulkanRenderer* _renderer;
 };

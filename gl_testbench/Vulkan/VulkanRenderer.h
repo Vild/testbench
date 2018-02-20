@@ -54,6 +54,7 @@ class MaterialVK;
 class ConstantBufferVK;
 class VertexBufferVK;
 class Texture2DVK;
+class Sampler2DVK;
 class MeshVK;
 
 struct EasyCommandQueue;
@@ -63,6 +64,7 @@ class VulkanRenderer : public Renderer {
 	friend ConstantBufferVK;
 	friend VertexBufferVK;
 	friend Texture2DVK;
+	friend Sampler2DVK;
 	friend MeshVK;
 
 	friend EasyCommandQueue;

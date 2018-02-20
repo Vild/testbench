@@ -17,10 +17,6 @@ layout(set = 0, binding=TRANSLATION) uniform TRANSLATION_NAME {
 	vec4 translate;
 };
 
-layout(binding=DIFFUSE_TINT) uniform DIFFUSE_TINT_NAME {
-	vec4 diffuseTint;
-};
-
 void main() {
 #ifdef NORMAL
 	normal_out = normal_in[gl_VertexIndex];

@@ -30,6 +30,7 @@ int Texture2DVK::loadFromFile(std::string filename) {
 	                       vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled, vk::MemoryPropertyFlagBits::eDeviceLocal, _image,
 	                       _imageMemory);
 
+
 	{
 		EasyCommandQueue ecq = _renderer->acquireEasyCommandQueue();
 		ecq.transitionImageLayout(_image, vk::Format::eR8G8B8A8Unorm, vk::ImageLayout::eUndefined, vk::ImageLayout::eTransferDstOptimal);
@@ -40,8 +41,41 @@ int Texture2DVK::loadFromFile(std::string filename) {
 
 	_device.destroyBuffer(stagingBuffer);
 	_device.freeMemory(stagingBufferMemory);
+
+	{ // Image view for fatboy.
+		vk::ImageViewCreateInfo viewInfo;
+		viewInfo.image = _image;
+		viewInfo.viewType = vk::ImageViewType::e2D;
+		viewInfo.format = vk::Format::eR8G8B8A8Unorm;
+		viewInfo.subresourceRange.aspectMask = vk::ImageAspectFlagBits::eColor;
+		viewInfo.subresourceRange.baseMipLevel = 0;
+		viewInfo.subresourceRange.levelCount = 1;
+		viewInfo.subresourceRange.baseArrayLayer = 0;
+		viewInfo.subresourceRange.layerCount = 1;
+		_imageView = _device.createImageView(viewInfo);
+	}
+
 	return 0;
 }
 void Texture2DVK::bind(unsigned int slot) {
-	STUB();
+
+}
+
+void Texture2DVK::updateSampler(MeshVK* mesh, unsigned int slot) {
+	vk::DescriptorImageInfo imageInfo = {};
+	imageInfo.imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal;
+	imageInfo.imageView = _imageView;
+	if (this->sampler != nullptr) {
+		Sampler2DVK* s = (Sampler2DVK*)this->sampler;
+		imageInfo.sampler = s->getSampler();
+	vk::WriteDescriptorSet descriptorWrite = {};
+	descriptorWrite.dstSet = mesh->getDescriptorSet(DescriptorType::diffuseSlot);
+	descriptorWrite.dstBinding = DIFFUSE_SLOT;
+	descriptorWrite.dstArrayElement = 0;
+	descriptorWrite.descriptorType = vk::DescriptorType::eSampledImage;
+	descriptorWrite.descriptorCount = 1;
+	descriptorWrite.pImageInfo = &imageInfo;
+
+	_device.updateDescriptorSets(descriptorWrite, nullptr);
+	}
 }

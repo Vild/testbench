@@ -255,6 +255,7 @@ void VulkanRenderer::submit(Mesh* mesh_) {
 		cb.second->bindDescriptors(mesh);
 	static_cast<ConstantBufferVK*>(mesh->txBuffer)->bindDescriptors(mesh);
 
+	mesh->bindTextures();
 	mesh->bindIAVertexBuffers();
 
 	_drawList[mesh->technique].push_back(mesh);
@@ -287,6 +288,7 @@ void VulkanRenderer::frame() {
 			_commandBuffers[_currentImageIndex].bindPipeline(vk::PipelineBindPoint::eGraphics, _graphicsPipeline);
 		for (auto mesh : work.second) {
 			size_t numberOfElements = mesh->geometryBuffers[_currentImageIndex].numElements;
+
 			_commandBuffers[_currentImageIndex].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, _pipelineLayout, 0, (uint32_t)mesh->descriptorSets.size(), mesh->descriptorSets.data(),
 			                                                       0, nullptr);
 			_commandBuffers[_currentImageIndex].draw(numberOfElements, 1, 0, 0);
@@ -684,6 +686,7 @@ bool VulkanRenderer::_createVulkanImageViews() {
 		createInfo.subresourceRange.layerCount = 1;
 		_swapChainImageViews[i] = _device.createImageView(createInfo);
 	}
+
 	return true;
 }
 
@@ -862,6 +865,22 @@ bool VulkanRenderer::_createVulkanPipeline() {
 			_descriptorSetLayouts.push_back(_device.createDescriptorSetLayout(layoutInfo));
 			EXPECT(_descriptorSetLayouts.back(), "Descriptor set layout is invalid!\n");
 		}
+
+		{
+			vk::DescriptorSetLayoutBinding layoutBinding = {};
+			layoutBinding.binding = DIFFUSE_SLOT;
+			layoutBinding.descriptorType = vk::DescriptorType::eSampledImage;
+			layoutBinding.descriptorCount = 1;
+			layoutBinding.stageFlags = vk::ShaderStageFlagBits::eFragment;
+			layoutBinding.pImmutableSamplers = nullptr;
+
+			vk::DescriptorSetLayoutCreateInfo layoutInfo = {};
+			layoutInfo.bindingCount = 1;
+			layoutInfo.pBindings = &layoutBinding;
+
+			_descriptorSetLayouts.push_back(_device.createDescriptorSetLayout(layoutInfo));
+			EXPECT(_descriptorSetLayouts.back(), "Descriptor set layout is invalid!\n");
+		}
 	}
 
 	vk::PipelineLayoutCreateInfo pipelineLayoutInfo;
@@ -924,11 +943,14 @@ bool VulkanRenderer::_createDescriptorPool() {
 	// Creates two pool sizes, one for the uniform buffers and one for the SSBOs.
 	constexpr int MAX_AMOUNT = 1000; //TODO: Get better multiplier, idk how to do this. Let's hope no-one breaks it!!!!
 
-	vk::DescriptorPoolSize poolSize[2];
+	vk::DescriptorPoolSize poolSize[3];
 	poolSize[0].type = vk::DescriptorType::eUniformBuffer;
 	poolSize[0].descriptorCount = 2 * MAX_AMOUNT; // Two uniform buffer descriptor sets.
 	poolSize[1].type = vk::DescriptorType::eStorageBuffer;
 	poolSize[1].descriptorCount = 3 * MAX_AMOUNT; // Three storage buffer descriptor sets.
+	poolSize[2].type = vk::DescriptorType::eSampledImage;
+	poolSize[2].descriptorCount = 1 * MAX_AMOUNT;
+
 
 	vk::DescriptorPoolCreateInfo poolInfo;
 	poolInfo.poolSizeCount = sizeof(poolSize) / sizeof(*poolSize);
