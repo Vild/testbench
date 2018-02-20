@@ -31,8 +31,6 @@
 #define DEBUG_EXTENSION
 #endif
 
-#define NROFDESCRIPTORSETS 5
-
 const std::vector<VulkanRenderer::InitFunction> VulkanRenderer::_inits = {{"initSDL", &VulkanRenderer::_initSDL, false},
                                                                           {"createVulkanInstance", &VulkanRenderer::_createVulkanInstance, false},
                                                                           {"createSDLSurface", &VulkanRenderer::_createSDLSurface, false},
@@ -46,8 +44,7 @@ const std::vector<VulkanRenderer::InitFunction> VulkanRenderer::_inits = {{"init
                                                                           {"createVulkanCommandPool", &VulkanRenderer::_createVulkanCommandPool, false},
                                                                           {"createVulkanCommandBuffers", &VulkanRenderer::_createVulkanCommandBuffers, true},
                                                                           {"createVulkanSemaphores", &VulkanRenderer::_createVulkanSemaphores, false},
-                                                                          {"createDescriptorPool", &VulkanRenderer::_createDescriptorPool, true},
-                                                                          {"createDescriptorSets", &VulkanRenderer::_createDescriptorSets, true}};
+                                                                          {"createDescriptorPool", &VulkanRenderer::_createDescriptorPool, true}};
 
 static VkResult CreateDebugReportCallbackEXT(VkInstance instance,
                                              const VkDebugReportCallbackCreateInfoEXT* pCreateInfo,
@@ -164,7 +161,7 @@ Material* VulkanRenderer::makeMaterial(const std::string& name) {
 	return new MaterialVK(this, name);
 }
 Mesh* VulkanRenderer::makeMesh() {
-	return new MeshVK();
+	return new MeshVK(this);
 }
 // VertexBuffer* VulkanRenderer::makeVertexBuffer();
 VertexBuffer* VulkanRenderer::makeVertexBuffer(size_t size, VertexBuffer::DATA_USAGE usage) {
@@ -251,7 +248,15 @@ void VulkanRenderer::clearBuffer(unsigned int) {
 void VulkanRenderer::setRenderState(RenderState* ps) {
 	ps->set();
 }
-void VulkanRenderer::submit(Mesh* mesh) {
+void VulkanRenderer::submit(Mesh* mesh_) {
+	auto mesh = static_cast<MeshVK*>(mesh_);
+
+	for (auto& cb : static_cast<MaterialVK*>(mesh->technique->getMaterial())->constantBuffers)
+		cb.second->bindDescriptors(mesh);
+	static_cast<ConstantBufferVK*>(mesh->txBuffer)->bindDescriptors(mesh);
+
+	mesh->bindIAVertexBuffers();
+
 	_drawList[mesh->technique].push_back(mesh);
 }
 void VulkanRenderer::frame() {
@@ -266,32 +271,23 @@ void VulkanRenderer::frame() {
 	vk::CommandBufferBeginInfo beginInfo{vk::CommandBufferUsageFlagBits::eOneTimeSubmit};
 	_commandBuffers[_currentImageIndex].begin(beginInfo);
 
-	vk::ClearColorValue c = vk::ClearColorValue{std::array<float, 4>{{0.0f, 0.0f, 0.0f, 1.0f}}};
-	vk::ClearValue clearColor{c};
-	vk::RenderPassBeginInfo renderPassInfo = {_renderPass, _swapChainFramebuffers[_currentImageIndex], {{0, 0}, _swapChainExtent}, 1, &clearColor};
+	vk::ClearValue clearColor[2] = {vk::ClearColorValue{std::array<float, 4>{{_clearColor[0], _clearColor[1], _clearColor[2], _clearColor[3]}}}, vk::ClearDepthStencilValue{1.0f, 0}};
+	vk::RenderPassBeginInfo renderPassInfo = {_renderPass, _swapChainFramebuffers[_currentImageIndex], {{0, 0}, _swapChainExtent}, 2, clearColor};
 
-	for (auto work : _drawList) {
-		printf("%zu\n", _drawList.size());
-		work.first->enable(this);
-		for (auto mesh : work.second) {
-			for (auto element : mesh->geometryBuffers) {
-				mesh->bindIAVertexBuffer(element.first);
-			}
-		}
-	}
+	//printf("drawList.size: %zu\n", _drawList.size());
 
 	_commandBuffers[_currentImageIndex].beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
-	_commandBuffers[_currentImageIndex].bindPipeline(vk::PipelineBindPoint::eGraphics, _graphicsPipeline);
 
-	printf("drawList.size: %zu\n", _drawList.size());
+	//printf("\tBinding draw\n");
 	for (auto work : _drawList) {
-		work.first->enable(this);
+		work.first->enable(this); // TODO: remove?
+		if (static_cast<RenderStateVK*>(work.first->getRenderState())->get())
+			_commandBuffers[_currentImageIndex].bindPipeline(vk::PipelineBindPoint::eGraphics, _graphicsWireframePipeline);
+		else
+			_commandBuffers[_currentImageIndex].bindPipeline(vk::PipelineBindPoint::eGraphics, _graphicsPipeline);
 		for (auto mesh : work.second) {
 			size_t numberOfElements = mesh->geometryBuffers[_currentImageIndex].numElements;
-			// for (auto element : mesh->geometryBuffers) {
-			//	mesh->bindIAVertexBuffer(element.first);
-			//}
-			_commandBuffers[_currentImageIndex].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, _pipelineLayout, 0, NROFDESCRIPTORSETS, _descriptorSets.data(),
+			_commandBuffers[_currentImageIndex].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, _pipelineLayout, 0, (uint32_t)mesh->descriptorSets.size(), mesh->descriptorSets.data(),
 			                                                       0, nullptr);
 			_commandBuffers[_currentImageIndex].draw(numberOfElements, 1, 0, 0);
 		}
@@ -405,6 +401,7 @@ void VulkanRenderer::_cleanupSwapChain() {
 
 	_device.freeCommandBuffers(_commandPool, (uint32_t)_commandBuffers.size(), _commandBuffers.data());
 
+	_device.destroyPipeline(_graphicsWireframePipeline);
 	_device.destroyPipeline(_graphicsPipeline);
 	_device.destroyPipelineLayout(_pipelineLayout);
 	_device.destroyRenderPass(_renderPass);
@@ -763,7 +760,7 @@ bool VulkanRenderer::_createVulkanPipeline() {
 	rasterizer.rasterizerDiscardEnable = false;
 	rasterizer.polygonMode = vk::PolygonMode::eFill;
 	rasterizer.lineWidth = 1.0f;
-	rasterizer.cullMode = vk::CullModeFlagBits::eBack;
+	rasterizer.cullMode = vk::CullModeFlagBits::eNone;
 	rasterizer.frontFace = vk::FrontFace::eCounterClockwise;
 	rasterizer.depthBiasEnable = false;
 
@@ -774,6 +771,15 @@ bool VulkanRenderer::_createVulkanPipeline() {
 	                                       vk::ColorComponentFlagBits::eA);
 
 	vk::PipelineColorBlendStateCreateInfo colorBlending{{}, false, vk::LogicOp::eCopy, 1, &colorBlendAttachment, {{0, 0, 0, 0}}};
+
+	vk::PipelineDepthStencilStateCreateInfo depthStencil;
+	depthStencil.depthTestEnable = true;
+	depthStencil.depthWriteEnable = true;
+	depthStencil.depthCompareOp = vk::CompareOp::eLessOrEqual;
+	depthStencil.depthBoundsTestEnable = false;
+	depthStencil.stencilTestEnable = false;
+	depthStencil.minDepthBounds = 0.0f;
+	depthStencil.maxDepthBounds = 1.0f;
 
 	{ // Descriptor sets for SSBOs and constant buffers.
 		// I guess we have to hardcode the bindings in here to match up with the design? I have no clue what i'm talking about.
@@ -859,7 +865,7 @@ bool VulkanRenderer::_createVulkanPipeline() {
 	}
 
 	vk::PipelineLayoutCreateInfo pipelineLayoutInfo;
-	pipelineLayoutInfo.setLayoutCount = NROFDESCRIPTORSETS;
+	pipelineLayoutInfo.setLayoutCount = (uint32_t)_descriptorSetLayouts.size();
 	pipelineLayoutInfo.pSetLayouts = _descriptorSetLayouts.data();
 
 	_pipelineLayout = _device.createPipelineLayout(pipelineLayoutInfo);
@@ -894,7 +900,7 @@ bool VulkanRenderer::_createVulkanPipeline() {
 	                                            &viewportState,
 	                                            &rasterizer,
 	                                            &multisampling,
-	                                            nullptr,
+	                                            &depthStencil,
 	                                            &colorBlending,
 	                                            nullptr,
 	                                            _pipelineLayout,
@@ -906,36 +912,31 @@ bool VulkanRenderer::_createVulkanPipeline() {
 	_graphicsPipeline = _device.createGraphicsPipeline(vk::PipelineCache(), pipelineInfo);
 	EXPECT(_graphicsPipeline, "Can't create Graphics pipeline!");
 
+	rasterizer.polygonMode = vk::PolygonMode::eLine;
+
+	_graphicsWireframePipeline = _device.createGraphicsPipeline(vk::PipelineCache(), pipelineInfo);
+	EXPECT(_graphicsWireframePipeline, "Can't create Graphics Wireframe pipeline!");
+
 	return true;
 }
 
 bool VulkanRenderer::_createDescriptorPool() {
 	// Creates two pool sizes, one for the uniform buffers and one for the SSBOs.
-	vk::DescriptorPoolSize poolSize[2] = {};
-	poolSize[0].type = vk::DescriptorType::eUniformBuffer;
-	poolSize[0].descriptorCount = 2; // Two uniform buffer descriptor sets.
-	poolSize[1].type = vk::DescriptorType::eStorageBuffer;
-	poolSize[1].descriptorCount = 3; // Three storage buffer descriptor sets.
+	constexpr int MAX_AMOUNT = 1000; //TODO: Get better multiplier, idk how to do this. Let's hope no-one breaks it!!!!
 
-	vk::DescriptorPoolCreateInfo poolInfo = {};
-	poolInfo.poolSizeCount = 2; // Two poolsizes therefore two poolSizeCount.
+	vk::DescriptorPoolSize poolSize[2];
+	poolSize[0].type = vk::DescriptorType::eUniformBuffer;
+	poolSize[0].descriptorCount = 2 * MAX_AMOUNT; // Two uniform buffer descriptor sets.
+	poolSize[1].type = vk::DescriptorType::eStorageBuffer;
+	poolSize[1].descriptorCount = 3 * MAX_AMOUNT; // Three storage buffer descriptor sets.
+
+	vk::DescriptorPoolCreateInfo poolInfo;
+	poolInfo.poolSizeCount = sizeof(poolSize) / sizeof(*poolSize);
 	poolInfo.pPoolSizes = poolSize;
-	poolInfo.maxSets = NROFDESCRIPTORSETS;
+	poolInfo.maxSets = MAX_AMOUNT; //(uint32_t)_descriptorSetLayouts.size() * 1000; 
 
 	_descriptorPool = _device.createDescriptorPool(poolInfo);
 	EXPECT(_descriptorPool, "Failed to create descriptor pool!\n");
-	return true;
-}
-
-bool VulkanRenderer::_createDescriptorSets() {
-	vk::DescriptorSetAllocateInfo allocInfo = {};
-	allocInfo.descriptorPool = _descriptorPool;
-	allocInfo.descriptorSetCount = NROFDESCRIPTORSETS;
-	allocInfo.pSetLayouts = _descriptorSetLayouts.data();
-
-	_descriptorSets = _device.allocateDescriptorSets(allocInfo);
-	EXPECT(_descriptorSets[0], "Failed to allocate descriptor sets!\n");
-	// Only check first for failure, since the other one should be broken aswell otherwise, I think, lmao.
 	return true;
 }
 

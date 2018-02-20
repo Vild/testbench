@@ -1,13 +1,10 @@
 #include "ConstantBufferVK.h"
 #include "VulkanRenderer.h"
+#include "MeshVK.h"
 #include "../IA.h"
 
 ConstantBufferVK::ConstantBufferVK(VulkanRenderer* renderer, uint32_t binding) : _renderer(renderer), _device(renderer->_device) {
 	// Prepares the Write Descriptor for setData function later on.
-	if (binding == TRANSLATION)
-		_descriptorWrite.dstSet = renderer->_descriptorSets[0];
-	else
-		_descriptorWrite.dstSet = renderer->_descriptorSets[1];
 	_descriptorWrite.dstBinding = binding;
 	_descriptorWrite.dstArrayElement = 0;
 	_descriptorWrite.descriptorType = vk::DescriptorType::eUniformBuffer;
@@ -28,14 +25,10 @@ void ConstantBufferVK::setData(const void* data, size_t size, Material* m, uint3
 		_renderer->createBuffer(bufferSize, vk::BufferUsageFlagBits::eUniformBuffer,
 		                        vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent, _buffer, _bufferMemory);
 
-		vk::DescriptorBufferInfo bufferInfo = {};
-		bufferInfo.buffer = _buffer;
-		bufferInfo.offset = 0;
-		bufferInfo.range = size;
-
-		// Applies the final info needed to update descriptor sets.
-		_descriptorWrite.pBufferInfo = &bufferInfo;
-		_device.updateDescriptorSets(_descriptorWrite, nullptr);
+		_bufferInfo.buffer = _buffer;
+		_bufferInfo.offset = 0;
+		_bufferInfo.range = size;
+		_descriptorWrite.pBufferInfo = &_bufferInfo;
 	}
 
 	void* ptr = _device.mapMemory(_bufferMemory, 0, size);
@@ -44,5 +37,14 @@ void ConstantBufferVK::setData(const void* data, size_t size, Material* m, uint3
 }
 
 void ConstantBufferVK::bind(Material* material) {
-	STUB();
+	// STUB();
+}
+
+void ConstantBufferVK::bindDescriptors(MeshVK* mesh) {
+	if (_descriptorWrite.dstBinding == TRANSLATION)
+		_descriptorWrite.dstSet = mesh->getDescriptorSet(DescriptorType::translation);
+	else
+		_descriptorWrite.dstSet = mesh->getDescriptorSet(DescriptorType::diffuseTint);
+
+	_device.updateDescriptorSets(_descriptorWrite, nullptr);
 }

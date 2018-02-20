@@ -13,13 +13,26 @@ out gl_PerVertex {
 #endif
 layout(set = 2, binding=POSITION) buffer pos { vec4 position_in[]; };
 
-layout(set = 0, binding=TRANSLATION) uniform TRANSLATION_NAME
-{
+layout(set = 0, binding=TRANSLATION) uniform TRANSLATION_NAME {
 	vec4 translate;
 };
 
+layout(binding=DIFFUSE_TINT) uniform DIFFUSE_TINT_NAME {
+	vec4 diffuseTint;
+};
+
 void main() {
-    gl_Position = vec4(position_in[gl_VertexIndex].xy + translate.xy, 0.0, 1.0);
+#ifdef NORMAL
+	normal_out = normal_in[gl_VertexIndex];
+#endif
+
+#ifdef TEXTCOORD
+	uv_out = uv_in[gl_VertexIndex];
+#endif
+
+	gl_Position = position_in[gl_VertexIndex] + translate;
+	gl_Position.y = -gl_Position.y;
+	gl_Position.z = (gl_Position.z + gl_Position.w) / 2.0;
 	//gl_Position = position_in[gl_VertexIndex] + translate;
 }
 

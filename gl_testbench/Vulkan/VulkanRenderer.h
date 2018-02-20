@@ -43,8 +43,9 @@
 		} \
 	} while (0)
 
-#ifndef __PRETTY_FUNCTION__
-#define __PRETTY_FUNCTION__ __FUNCTION__
+
+#ifdef _WIN32
+#define __PRETTY_FUNCTION__ __FUNCSIG__
 #endif
 
 #define STUB() printf("%s\n", __PRETTY_FUNCTION__)
@@ -53,6 +54,7 @@ class MaterialVK;
 class ConstantBufferVK;
 class VertexBufferVK;
 class Texture2DVK;
+class MeshVK;
 
 struct EasyCommandQueue;
 
@@ -61,6 +63,7 @@ class VulkanRenderer : public Renderer {
 	friend ConstantBufferVK;
 	friend VertexBufferVK;
 	friend Texture2DVK;
+	friend MeshVK;
 
 	friend EasyCommandQueue;
 
@@ -149,8 +152,8 @@ private:
 	vk::PipelineLayout _pipelineLayout;
 	std::vector<vk::DescriptorSetLayout> _descriptorSetLayouts;
 	vk::DescriptorPool _descriptorPool;
-	std::vector<vk::DescriptorSet> _descriptorSets;
 	vk::Pipeline _graphicsPipeline;
+	vk::Pipeline _graphicsWireframePipeline;
 
 	std::vector<vk::Framebuffer> _swapChainFramebuffers;
 	vk::CommandPool _commandPool;
@@ -160,7 +163,7 @@ private:
 	vk::Semaphore _imageAvailableSemaphore;
 	vk::Semaphore _renderFinishedSemaphore;
 
-	std::unordered_map<Technique*, std::vector<Mesh*>> _drawList;
+	std::unordered_map<Technique*, std::vector<MeshVK*>> _drawList;
 
 	bool _globalWireframeMode = false;
 	float _clearColor[4] = {0, 0, 0, 0};

@@ -140,7 +140,7 @@ void renderScene()
 	renderer->frame();
 	renderer->present();
 	updateDelta();
-	sprintf(gTitleBuff, "%s - %3.0lfms", RENDERER_TYPES[static_cast<int>(rendererType)], gLastDelta);
+	sprintf(gTitleBuff, "%s - %3.1lffps (%3.1lfms)", RENDERER_TYPES[static_cast<int>(rendererType)], 1000.0 / gLastDelta, gLastDelta);
 	renderer->setWinTitle(gTitleBuff);
 }
 
@@ -218,7 +218,7 @@ int initialiseTestbench()
 		// when material is bound, this buffer should be also bound for access.
 
 		m->updateConstantBuffer(diffuse[i], 4 * sizeof(float), DIFFUSE_TINT);
-		
+
 		materials.push_back(m);
 	}
 
@@ -269,7 +269,7 @@ int initialiseTestbench()
 
 		// we can create a constant buffer outside the material, for example as part of the Mesh.
 		m->txBuffer = renderer->makeConstantBuffer(std::string(TRANSLATION_NAME), TRANSLATION);
-		
+
 		m->technique = techniques[ i % 4];
 		if (i % 4 == 2)
 			m->addTexture(textures[0], DIFFUSE_SLOT);

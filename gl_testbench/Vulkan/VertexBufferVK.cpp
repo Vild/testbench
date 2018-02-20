@@ -1,6 +1,7 @@
 #include "VertexBufferVK.h"
 #include "VulkanRenderer.h"
 #include "../IA.h"
+#include "MeshVK.h"
 
 VertexBufferVK::VertexBufferVK(VulkanRenderer* renderer, size_t size) : _renderer(renderer), _device(renderer->_device), _size(size) {}
 
@@ -32,33 +33,32 @@ void VertexBufferVK::setData(const void* data, size_t size, size_t offset) {
 	memcpy(ptr, data, size);
 	_device.unmapMemory(_bufferMemory);
 }
-void VertexBufferVK::bind(size_t offset, size_t size, uint32_t location) {
+void VertexBufferVK::bind(MeshVK* mesh, size_t offset, size_t size, uint32_t location) {
 	static vk::PhysicalDeviceProperties pdp = _renderer->_physicalDevice.getProperties();
 	static auto minSBOA = pdp.limits.minStorageBufferOffsetAlignment;
 	EXPECT_ASSERT((minSBOA & (minSBOA - 1)) == 0, "minSBOA is not power-of-2");
 	// This is very ugly, temporary until I can think of any other way.
 	if (location == POSITION)
-		_descriptorWrite.dstSet = _renderer->_descriptorSets[2];
+		_descriptorWrite.dstSet = mesh->getDescriptorSet(DescriptorType::position);
 	else if (location == NORMAL)
-		_descriptorWrite.dstSet = _renderer->_descriptorSets[3];
+		_descriptorWrite.dstSet = mesh->getDescriptorSet(DescriptorType::normal);
 	else
-		_descriptorWrite.dstSet = _renderer->_descriptorSets[4];
+		_descriptorWrite.dstSet = mesh->getDescriptorSet(DescriptorType::textcoord);
 
 	EXPECT_ASSERT(offset % size == 0, "offset % size must be 0");
 	size_t idx = offset / size;
 	size = (size + minSBOA - 1) & ~(minSBOA - 1);
 	offset = idx * size;
 
-	vk::DescriptorBufferInfo bufferInfo = {};
-	bufferInfo.buffer = _buffer;
-	bufferInfo.offset = offset;
-	bufferInfo.range = size;
+	_bufferInfo.buffer = _buffer;
+	_bufferInfo.offset = offset;
+	_bufferInfo.range = size;
 
 	_descriptorWrite.dstBinding = location;
 	_descriptorWrite.dstArrayElement = 0;
 	_descriptorWrite.descriptorType = vk::DescriptorType::eStorageBuffer;
 	_descriptorWrite.descriptorCount = 1;
-	_descriptorWrite.pBufferInfo = &bufferInfo;
+	_descriptorWrite.pBufferInfo = &_bufferInfo;
 	_descriptorWrite.pImageInfo = nullptr;
 	_descriptorWrite.pTexelBufferView = nullptr;
 

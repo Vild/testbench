@@ -24,11 +24,11 @@ run: all
 
 $(OBJ)%.o: $(SRC)%.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) -c $< -o $@ $(CXXFLAGS)
+	+$(CXX) -c $< -o $@ $(CXXFLAGS)
 
 $(TARGET): $(OBJECTS)
 	@mkdir -p $(dir $@)
-	$(CXX) $(OBJECTS) -o $(TARGET) $(LFLAGS)
+	+$(CXX) $(OBJECTS) -o $(TARGET) $(LFLAGS)
 
 clean:
 	@$(RM) -rf $(TARGET) $(OBJ)

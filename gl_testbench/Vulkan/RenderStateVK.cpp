@@ -9,7 +9,7 @@ void RenderStateVK::setWireFrame(bool wireFrame) {
 	_wireFrame = wireFrame;
 }
 void RenderStateVK::set() {
-	STUB();
+	// STUB();
 }
 
 void RenderStateVK::setGlobalWireFrame(bool* global) {
