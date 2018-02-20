@@ -5,6 +5,7 @@
 
 Texture2DVK::Texture2DVK(VulkanRenderer* renderer) : _renderer(renderer), _device(renderer->_device) {}
 Texture2DVK::~Texture2DVK() {
+	_device.destroyImageView(_imageView);
 	_device.destroyImage(_image);
 	_device.freeMemory(_imageMemory);
 }
