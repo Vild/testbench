@@ -41,8 +41,9 @@ const std::vector<VulkanRenderer::InitFunction> VulkanRenderer::_inits = {{"init
                                                                           {"createVulkanImageViews", &VulkanRenderer::_createVulkanImageViews, true},
                                                                           {"createVulkanRenderPass", &VulkanRenderer::_createVulkanRenderPass, true},
                                                                           {"createVulkanPipeline", &VulkanRenderer::_createVulkanPipeline, true},
-                                                                          {"createVulkanFramebuffers", &VulkanRenderer::_createVulkanFramebuffers, true},
                                                                           {"createVulkanCommandPool", &VulkanRenderer::_createVulkanCommandPool, false},
+																																					{"createVulkanDepthResources", &VulkanRenderer::_createVulkanDepthResources, true},
+                                                                          {"createVulkanFramebuffers", &VulkanRenderer::_createVulkanFramebuffers, true},
                                                                           {"createVulkanCommandBuffers", &VulkanRenderer::_createVulkanCommandBuffers, true},
                                                                           {"createVulkanSemaphores", &VulkanRenderer::_createVulkanSemaphores, false},
                                                                           {"createDescriptorPool", &VulkanRenderer::_createDescriptorPool, true}};
@@ -102,7 +103,15 @@ void EasyCommandQueue::transitionImageLayout(vk::Image image, vk::Format format,
 	barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	barrier.image = image;
-	barrier.subresourceRange.aspectMask = vk::ImageAspectFlagBits::eColor;
+
+	if (newLayout == vk::ImageLayout::eDepthStencilAttachmentOptimal) {
+		barrier.subresourceRange.aspectMask = vk::ImageAspectFlagBits::eDepth;
+
+		if (format == vk::Format::eD32SfloatS8Uint || format == vk::Format::eD24UnormS8Uint)
+			barrier.subresourceRange.aspectMask |= vk::ImageAspectFlagBits::eStencil;
+	} else
+		barrier.subresourceRange.aspectMask = vk::ImageAspectFlagBits::eColor;
+
 	barrier.subresourceRange.baseMipLevel = 0;
 	barrier.subresourceRange.levelCount = 1;
 	barrier.subresourceRange.baseArrayLayer = 0;
@@ -123,6 +132,12 @@ void EasyCommandQueue::transitionImageLayout(vk::Image image, vk::Format format,
 
 		sourceStage = vk::PipelineStageFlagBits::eTransfer;
 		destinationStage = vk::PipelineStageFlagBits::eFragmentShader;
+	} else if (oldLayout == vk::ImageLayout::eUndefined && newLayout == vk::ImageLayout::eDepthStencilAttachmentOptimal) {
+		barrier.srcAccessMask = vk::AccessFlags();
+		barrier.dstAccessMask = vk::AccessFlagBits::eDepthStencilAttachmentRead | vk::AccessFlagBits::eDepthStencilAttachmentWrite;
+
+		sourceStage = vk::PipelineStageFlagBits::eTopOfPipe;
+		destinationStage = vk::PipelineStageFlagBits::eEarlyFragmentTests;
 	} else
 		EXPECT_ASSERT(0, "unsupported layout transition!");
 
@@ -398,6 +413,10 @@ uint32_t VulkanRenderer::_findMemoryType(uint32_t typeFilter, vk::MemoryProperty
 }
 
 void VulkanRenderer::_cleanupSwapChain() {
+	_device.destroyImageView(_depthImageView);
+	_device.destroyImage(_depthImage);
+	_device.freeMemory(_depthImageMemory);
+
 	for (auto framebuffer : _swapChainFramebuffers)
 		_device.destroyFramebuffer(framebuffer);
 
@@ -698,14 +717,29 @@ bool VulkanRenderer::_createVulkanRenderPass() {
 	colorAttachment.initialLayout = vk::ImageLayout::eUndefined;
 	colorAttachment.finalLayout = vk::ImageLayout::ePresentSrcKHR;
 
+	vk::AttachmentDescription depthAttachment;
+	depthAttachment.format = _findDepthFormat();
+	depthAttachment.samples = vk::SampleCountFlagBits::e1;
+	depthAttachment.loadOp = vk::AttachmentLoadOp::eClear;
+	depthAttachment.storeOp = vk::AttachmentStoreOp::eDontCare;
+	depthAttachment.stencilLoadOp = vk::AttachmentLoadOp::eDontCare;
+	depthAttachment.stencilStoreOp = vk::AttachmentStoreOp::eDontCare;
+	depthAttachment.initialLayout = vk::ImageLayout::eUndefined;
+	depthAttachment.finalLayout = vk::ImageLayout::eDepthStencilAttachmentOptimal;
+
 	vk::AttachmentReference colorAttachmentRef;
 	colorAttachmentRef.attachment = 0;
 	colorAttachmentRef.layout = vk::ImageLayout::eColorAttachmentOptimal;
+
+	vk::AttachmentReference depthAttachmentRef;
+	depthAttachmentRef.attachment = 1;
+	depthAttachmentRef.layout = vk::ImageLayout::eDepthStencilAttachmentOptimal;
 
 	vk::SubpassDescription subpass;
 	subpass.pipelineBindPoint = vk::PipelineBindPoint::eGraphics;
 	subpass.colorAttachmentCount = 1;
 	subpass.pColorAttachments = &colorAttachmentRef;
+	subpass.pDepthStencilAttachment = &depthAttachmentRef;
 
 	vk::SubpassDependency dependency;
 	dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
@@ -715,9 +749,13 @@ bool VulkanRenderer::_createVulkanRenderPass() {
 	dependency.dstStageMask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
 	dependency.dstAccessMask = vk::AccessFlagBits::eColorAttachmentRead | vk::AccessFlagBits::eColorAttachmentWrite;
 
+	std::vector<vk::AttachmentDescription> attachments{
+		colorAttachment,
+		depthAttachment
+	};
 	vk::RenderPassCreateInfo renderPassInfo;
-	renderPassInfo.attachmentCount = 1;
-	renderPassInfo.pAttachments = &colorAttachment;
+	renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+	renderPassInfo.pAttachments = attachments.data();
 	renderPassInfo.subpassCount = 1;
 	renderPassInfo.pSubpasses = &subpass;
 	renderPassInfo.dependencyCount = 1;
@@ -845,7 +883,7 @@ bool VulkanRenderer::_createVulkanPipeline() {
 		_descriptorTextureSetLayouts = _descriptorSetLayouts;
 		{
 			layoutBinding.binding = DIFFUSE_SLOT;
-			layoutBinding.descriptorType = vk::DescriptorType::eSampledImage;
+			layoutBinding.descriptorType = vk::DescriptorType::eCombinedImageSampler;
 			layoutBinding.descriptorCount = 1;
 			layoutBinding.stageFlags = vk::ShaderStageFlagBits::eFragment;
 			layoutBinding.pImmutableSamplers = nullptr;
@@ -884,7 +922,7 @@ bool VulkanRenderer::_createDescriptorPool() {
 	poolSize[0].descriptorCount = 2 * MAX_AMOUNT; // Two uniform buffer descriptor sets.
 	poolSize[1].type = vk::DescriptorType::eStorageBuffer;
 	poolSize[1].descriptorCount = 3 * MAX_AMOUNT; // Three storage buffer descriptor sets.
-	poolSize[2].type = vk::DescriptorType::eSampledImage;
+	poolSize[2].type = vk::DescriptorType::eCombinedImageSampler;
 	poolSize[2].descriptorCount = 1 * MAX_AMOUNT;
 
 
@@ -901,9 +939,18 @@ bool VulkanRenderer::_createDescriptorPool() {
 bool VulkanRenderer::_createVulkanFramebuffers() {
 	_swapChainFramebuffers.resize(_swapChainImageViews.size());
 	for (size_t i = 0; i < _swapChainImageViews.size(); i++) {
-		vk::ImageView attachments[] = {_swapChainImageViews[i]};
+		std::vector<vk::ImageView> attachments{
+			_swapChainImageViews[i],
+			_depthImageView
+		};
 
-		vk::FramebufferCreateInfo framebufferInfo = {{}, _renderPass, 1, attachments, _swapChainExtent.width, _swapChainExtent.height, 1};
+		vk::FramebufferCreateInfo framebufferInfo;
+		framebufferInfo.renderPass = _renderPass;
+		framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+		framebufferInfo.pAttachments = attachments.data();
+		framebufferInfo.width = _swapChainExtent.width;
+		framebufferInfo.height = _swapChainExtent.height;
+		framebufferInfo.layers = 1;
 
 		_swapChainFramebuffers[i] = _device.createFramebuffer(framebufferInfo);
 		EXPECT(_swapChainFramebuffers[i], "Failed to create framebuffer!");
@@ -920,27 +967,53 @@ bool VulkanRenderer::_createVulkanCommandPool() {
 	return true;
 }
 
+vk::Format VulkanRenderer::_findDepthFormat() {
+	auto findSupportedFormat = [this](const std::vector<vk::Format>& candidates, vk::ImageTiling tiling, vk::FormatFeatureFlags features) -> vk::Format {
+		for (auto format : candidates) {
+			vk::FormatProperties props = _physicalDevice.getFormatProperties(format);
+
+			if (tiling == vk::ImageTiling::eLinear && (props.linearTilingFeatures & features) == features)
+				return format;
+			else if (tiling == vk::ImageTiling::eOptimal && (props.optimalTilingFeatures & features) == features)
+				return format;
+		}
+
+		EXPECT_ASSERT(0, "Failed to find supported format!");
+	};
+	return findSupportedFormat({vk::Format::eD32Sfloat, vk::Format::eD32SfloatS8Uint, vk::Format::eD24UnormS8Uint}, vk::ImageTiling::eOptimal, vk::FormatFeatureFlagBits::eDepthStencilAttachment);
+}
+
+bool VulkanRenderer::_createVulkanDepthResources() {
+	vk::Format depthFormat = _findDepthFormat();
+
+	createImage(_swapChainExtent.width, _swapChainExtent.height, depthFormat, vk::ImageTiling::eOptimal, vk::ImageUsageFlagBits::eDepthStencilAttachment, vk::MemoryPropertyFlagBits::eDeviceLocal, _depthImage, _depthImageMemory);
+
+	vk::ImageViewCreateInfo viewInfo;
+	viewInfo.image = _depthImage;
+	viewInfo.viewType = vk::ImageViewType::e2D;
+	viewInfo.format = depthFormat;
+	viewInfo.subresourceRange.aspectMask = vk::ImageAspectFlagBits::eDepth;
+	viewInfo.subresourceRange.baseMipLevel = 0;
+	viewInfo.subresourceRange.levelCount = 1;
+	viewInfo.subresourceRange.baseArrayLayer = 0;
+	viewInfo.subresourceRange.layerCount = 1;
+
+	_depthImageView = _device.createImageView(viewInfo);
+	EXPECT(_depthImageView, "Failed to create texture image view!");
+
+	EasyCommandQueue ecq = acquireEasyCommandQueue();
+	ecq.transitionImageLayout(_depthImage, depthFormat, vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal);
+	ecq.run();
+
+	return true;
+}
+
 bool VulkanRenderer::_createVulkanCommandBuffers() {
 	vk::CommandBufferAllocateInfo allocInfo{_commandPool, vk::CommandBufferLevel::ePrimary, (uint32_t)_swapChainFramebuffers.size()};
 
 	_commandBuffers = _device.allocateCommandBuffers(allocInfo);
 	EXPECT(_commandBuffers.size(), "Failed to allocate command buffers");
 
-	/*for (size_t i = 0; i < _commandBuffers.size(); i++) {
-		vk::CommandBufferBeginInfo beginInfo{vk::CommandBufferUsageFlagBits::eSimultaneousUse};
-
-		_commandBuffers[i].begin(beginInfo);
-
-		vk::ClearColorValue c = vk::ClearColorValue{std::array<float, 4>{{0.0f, 0.0f, 0.0f, 1.0f}}};
-		vk::ClearValue clearColor{c};
-		vk::RenderPassBeginInfo renderPassInfo = {_renderPass, _swapChainFramebuffers[i], {{0, 0}, _swapChainExtent}, 1, &clearColor};
-		_commandBuffers[i].beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
-
-		_commandBuffers[i].bindPipeline(vk::PipelineBindPoint::eGraphics, _graphicsPipeline);
-		//_commandBuffers[i].draw(3, 1, 0, 0);
-		_commandBuffers[i].endRenderPass();
-		_commandBuffers[i].end();
-		}*/
 	return true;
 }
 

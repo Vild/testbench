@@ -152,6 +152,10 @@ private:
 	std::vector<vk::Image> _swapChainImages;
 	std::vector<vk::ImageView> _swapChainImageViews;
 
+	vk::Image _depthImage;
+	vk::DeviceMemory _depthImageMemory;
+	vk::ImageView _depthImageView;
+
 	vk::RenderPass _renderPass;
 	std::vector<vk::DescriptorSetLayout> _descriptorSetLayouts;
 	std::vector<vk::DescriptorSetLayout> _descriptorTextureSetLayouts;
@@ -187,6 +191,7 @@ private:
 	float _clearColor[4] = {0, 0, 0, 0};
 
 	uint32_t _findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties);
+	vk::Format _findDepthFormat();
 
 	void _cleanupSwapChain();
 	void _recreateSwapChain();
@@ -202,8 +207,9 @@ private:
 	bool _createVulkanPipeline();
 	bool _createDescriptorPool();
 	bool _createDescriptorSets();
-	bool _createVulkanFramebuffers();
 	bool _createVulkanCommandPool();
+	bool _createVulkanDepthResources();
+	bool _createVulkanFramebuffers();
 	bool _createVulkanCommandBuffers();
 	bool _createVulkanSemaphores();
 };
