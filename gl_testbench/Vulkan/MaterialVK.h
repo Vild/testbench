@@ -9,9 +9,11 @@
 #include <iostream>
 
 class VulkanRenderer;
+class TechniqueVK;
 
 class MaterialVK : public Material {
 	friend VulkanRenderer;
+	friend TechniqueVK;
 
 public:
 	MaterialVK(VulkanRenderer* renderer, const std::string& name);

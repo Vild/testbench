@@ -21,13 +21,13 @@ public:
 	MeshVK(VulkanRenderer* renderer);
 	virtual ~MeshVK();
 
+	void finalize();
 	void bindIAVertexBuffers();
+	void bindTextures();
 
 	inline vk::DescriptorSet& getDescriptorSet(DescriptorType type) {
 		return descriptorSets[static_cast<int>(type)];
 	}
-
-	void bindTextures();
 
 	std::vector<vk::DescriptorSet> descriptorSets;
 private:

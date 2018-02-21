@@ -69,14 +69,14 @@ void Texture2DVK::updateSampler(MeshVK* mesh, unsigned int slot) {
 	if (this->sampler != nullptr) {
 		Sampler2DVK* s = (Sampler2DVK*)this->sampler;
 		imageInfo.sampler = s->getSampler();
-	vk::WriteDescriptorSet descriptorWrite = {};
-	descriptorWrite.dstSet = mesh->getDescriptorSet(DescriptorType::diffuseSlot);
-	descriptorWrite.dstBinding = DIFFUSE_SLOT;
-	descriptorWrite.dstArrayElement = 0;
-	descriptorWrite.descriptorType = vk::DescriptorType::eSampledImage;
-	descriptorWrite.descriptorCount = 1;
-	descriptorWrite.pImageInfo = &imageInfo;
+		vk::WriteDescriptorSet descriptorWrite = {};
+		descriptorWrite.dstSet = mesh->getDescriptorSet(DescriptorType::diffuseSlot);
+		descriptorWrite.dstBinding = DIFFUSE_SLOT;
+		descriptorWrite.dstArrayElement = 0;
+		descriptorWrite.descriptorType = vk::DescriptorType::eSampledImage;
+		descriptorWrite.descriptorCount = 1;
+		descriptorWrite.pImageInfo = &imageInfo;
 
-	_device.updateDescriptorSets(descriptorWrite, nullptr);
+		_device.updateDescriptorSets(descriptorWrite, nullptr);
 	}
 }

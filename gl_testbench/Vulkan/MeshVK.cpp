@@ -3,17 +3,26 @@
 #include "VertexBufferVK.h"
 #include "Texture2DVK.h"
 
-MeshVK::MeshVK(VulkanRenderer* renderer) : _renderer(renderer) {
-	vk::DescriptorSetAllocateInfo allocInfo;
-	allocInfo.descriptorPool = renderer->_descriptorPool;
-	allocInfo.descriptorSetCount = (uint32_t)renderer->_descriptorSetLayouts.size();
-	allocInfo.pSetLayouts = renderer->_descriptorSetLayouts.data();
+MeshVK::MeshVK(VulkanRenderer* renderer) : _renderer(renderer) {}
+MeshVK::~MeshVK() {}
 
-	descriptorSets = renderer->_device.allocateDescriptorSets(allocInfo);
+void MeshVK::finalize() {
+	if (descriptorSets.size())
+		return;
+	vk::DescriptorSetAllocateInfo allocInfo;
+	allocInfo.descriptorPool = _renderer->_descriptorPool;
+	if (textures.size()) {
+		allocInfo.descriptorSetCount = (uint32_t)_renderer->_descriptorTextureSetLayouts.size();
+		allocInfo.pSetLayouts = _renderer->_descriptorTextureSetLayouts.data();
+	} else {
+		allocInfo.descriptorSetCount = (uint32_t)_renderer->_descriptorSetLayouts.size();
+		allocInfo.pSetLayouts = _renderer->_descriptorSetLayouts.data();
+	}
+
+	descriptorSets = _renderer->_device.allocateDescriptorSets(allocInfo);
 	for (auto& ds : descriptorSets)
 		EXPECT_ASSERT(ds, "Failed to allocate descriptor sets!\n");
 }
-MeshVK::~MeshVK() {}
 
 void MeshVK::bindIAVertexBuffers() {
 	for (auto& it : geometryBuffers)

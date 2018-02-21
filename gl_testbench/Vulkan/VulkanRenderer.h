@@ -56,6 +56,7 @@ class VertexBufferVK;
 class Texture2DVK;
 class Sampler2DVK;
 class MeshVK;
+class TechniqueVK;
 
 struct EasyCommandQueue;
 
@@ -66,6 +67,7 @@ class VulkanRenderer : public Renderer {
 	friend Texture2DVK;
 	friend Sampler2DVK;
 	friend MeshVK;
+	friend TechniqueVK;
 
 	friend EasyCommandQueue;
 
@@ -151,11 +153,25 @@ private:
 	std::vector<vk::ImageView> _swapChainImageViews;
 
 	vk::RenderPass _renderPass;
-	vk::PipelineLayout _pipelineLayout;
 	std::vector<vk::DescriptorSetLayout> _descriptorSetLayouts;
+	std::vector<vk::DescriptorSetLayout> _descriptorTextureSetLayouts;
 	vk::DescriptorPool _descriptorPool;
-	vk::Pipeline _graphicsPipeline;
-	vk::Pipeline _graphicsWireframePipeline;
+
+	struct BasePipelineInfo {
+		vk::PipelineVertexInputStateCreateInfo vertexInputInfo;
+		vk::PipelineInputAssemblyStateCreateInfo inputAssembly;
+		vk::Viewport viewport;
+		vk::Rect2D scissor;
+		vk::PipelineViewportStateCreateInfo viewportState;
+		vk::PipelineRasterizationStateCreateInfo rasterizer;
+		vk::PipelineMultisampleStateCreateInfo multisampling;
+		vk::PipelineColorBlendAttachmentState colorBlendAttachment;
+		vk::PipelineColorBlendStateCreateInfo colorBlending;
+		vk::PipelineDepthStencilStateCreateInfo depthStencil;
+
+		vk::GraphicsPipelineCreateInfo pipelineInfo;
+	};
+	BasePipelineInfo _basePipelineInfo;
 
 	std::vector<vk::Framebuffer> _swapChainFramebuffers;
 	vk::CommandPool _commandPool;
