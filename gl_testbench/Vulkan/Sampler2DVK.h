@@ -12,6 +12,7 @@ public:
 	void setMinFilter(FILTER filter) final;
 	void setWrap(WRAPPING s, WRAPPING t) final;
 	vk::Sampler getSampler() { return _sampler; }
+
 private:
 	VulkanRenderer* _renderer;
 	vk::Device _device;

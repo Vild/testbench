@@ -43,7 +43,6 @@
 		} \
 	} while (0)
 
-
 #ifdef _WIN32
 #define __PRETTY_FUNCTION__ __FUNCSIG__
 #endif

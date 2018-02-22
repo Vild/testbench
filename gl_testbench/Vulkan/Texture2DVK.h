@@ -17,6 +17,7 @@ public:
 	int loadFromFile(std::string filename) final;
 	void bind(unsigned int slot) final;
 	void updateSampler(MeshVK* mesh, unsigned int slot);
+
 private:
 	VulkanRenderer* _renderer;
 	vk::Device _device;

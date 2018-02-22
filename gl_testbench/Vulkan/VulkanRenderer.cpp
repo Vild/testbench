@@ -42,7 +42,7 @@ const std::vector<VulkanRenderer::InitFunction> VulkanRenderer::_inits = {{"init
                                                                           {"createVulkanRenderPass", &VulkanRenderer::_createVulkanRenderPass, true},
                                                                           {"createVulkanPipeline", &VulkanRenderer::_createVulkanPipeline, true},
                                                                           {"createVulkanCommandPool", &VulkanRenderer::_createVulkanCommandPool, false},
-																																					{"createVulkanDepthResources", &VulkanRenderer::_createVulkanDepthResources, true},
+                                                                          {"createVulkanDepthResources", &VulkanRenderer::_createVulkanDepthResources, true},
                                                                           {"createVulkanFramebuffers", &VulkanRenderer::_createVulkanFramebuffers, true},
                                                                           {"createVulkanCommandBuffers", &VulkanRenderer::_createVulkanCommandBuffers, true},
                                                                           {"createVulkanSemaphores", &VulkanRenderer::_createVulkanSemaphores, false},
@@ -289,14 +289,15 @@ void VulkanRenderer::frame() {
 	vk::CommandBufferBeginInfo beginInfo{vk::CommandBufferUsageFlagBits::eOneTimeSubmit};
 	_commandBuffers[_currentImageIndex].begin(beginInfo);
 
-	vk::ClearValue clearColor[2] = {vk::ClearColorValue{std::array<float, 4>{{_clearColor[0], _clearColor[1], _clearColor[2], _clearColor[3]}}}, vk::ClearDepthStencilValue{1.0f, 0}};
+	vk::ClearValue clearColor[2] = {vk::ClearColorValue{std::array<float, 4>{{_clearColor[0], _clearColor[1], _clearColor[2], _clearColor[3]}}},
+	                                vk::ClearDepthStencilValue{1.0f, 0}};
 	vk::RenderPassBeginInfo renderPassInfo = {_renderPass, _swapChainFramebuffers[_currentImageIndex], {{0, 0}, _swapChainExtent}, 2, clearColor};
 
-	//printf("drawList.size: %zu\n", _drawList.size());
+	// printf("drawList.size: %zu\n", _drawList.size());
 
 	_commandBuffers[_currentImageIndex].beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
 
-	//printf("\tBinding draw\n");
+	// printf("\tBinding draw\n");
 	for (auto& work : _drawList) {
 		TechniqueVK* technique = static_cast<TechniqueVK*>(const_cast<Technique*>(work.first));
 		technique->enable(work.second[0]);
@@ -305,7 +306,8 @@ void VulkanRenderer::frame() {
 		// TODO: implement instance renderering
 		for (auto mesh : work.second) {
 			size_t numberOfElements = mesh->geometryBuffers[_currentImageIndex].numElements;
-			_commandBuffers[_currentImageIndex].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, technique->_pipelineLayout, 0, (uint32_t)mesh->descriptorSets.size(), mesh->descriptorSets.data(), 0, nullptr);
+			_commandBuffers[_currentImageIndex].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, technique->_pipelineLayout, 0,
+			                                                       (uint32_t)mesh->descriptorSets.size(), mesh->descriptorSets.data(), 0, nullptr);
 			_commandBuffers[_currentImageIndex].draw(numberOfElements, 1, 0, 0);
 		}
 	}
@@ -749,10 +751,7 @@ bool VulkanRenderer::_createVulkanRenderPass() {
 	dependency.dstStageMask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
 	dependency.dstAccessMask = vk::AccessFlagBits::eColorAttachmentRead | vk::AccessFlagBits::eColorAttachmentWrite;
 
-	std::vector<vk::AttachmentDescription> attachments{
-		colorAttachment,
-		depthAttachment
-	};
+	std::vector<vk::AttachmentDescription> attachments{colorAttachment, depthAttachment};
 	vk::RenderPassCreateInfo renderPassInfo;
 	renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
 	renderPassInfo.pAttachments = attachments.data();
@@ -800,7 +799,8 @@ bool VulkanRenderer::_createVulkanPipeline() {
 	bpi.multisampling.rasterizationSamples = vk::SampleCountFlagBits::e1;
 	bpi.multisampling.sampleShadingEnable = false;
 
-	bpi.colorBlendAttachment.setColorWriteMask(vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG | vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA);
+	bpi.colorBlendAttachment.setColorWriteMask(vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG | vk::ColorComponentFlagBits::eB |
+	                                           vk::ColorComponentFlagBits::eA);
 
 	bpi.colorBlending.logicOpEnable = false;
 	bpi.colorBlending.logicOp = vk::LogicOp::eCopy;
@@ -893,8 +893,8 @@ bool VulkanRenderer::_createVulkanPipeline() {
 		}
 	}
 
-	//bpi.pipelineInfo.stageCount = (uint32_t)m._program.size();
-	//bpi.pipelineInfo.pStages = m._program.data();
+	// bpi.pipelineInfo.stageCount = (uint32_t)m._program.size();
+	// bpi.pipelineInfo.pStages = m._program.data();
 	bpi.pipelineInfo.pVertexInputState = &bpi.vertexInputInfo;
 	bpi.pipelineInfo.pInputAssemblyState = &bpi.inputAssembly;
 	bpi.pipelineInfo.pTessellationState = nullptr;
@@ -904,7 +904,7 @@ bool VulkanRenderer::_createVulkanPipeline() {
 	bpi.pipelineInfo.pDepthStencilState = &bpi.depthStencil;
 	bpi.pipelineInfo.pColorBlendState = &bpi.colorBlending;
 	bpi.pipelineInfo.pDynamicState = nullptr;
-	//bpi.pipelineInfo.layout = _pipelineLayout;
+	// bpi.pipelineInfo.layout = _pipelineLayout;
 	bpi.pipelineInfo.renderPass = _renderPass;
 	bpi.pipelineInfo.subpass = 0;
 	bpi.pipelineInfo.basePipelineHandle = vk::Pipeline();
@@ -915,7 +915,7 @@ bool VulkanRenderer::_createVulkanPipeline() {
 
 bool VulkanRenderer::_createDescriptorPool() {
 	// Creates two pool sizes, one for the uniform buffers and one for the SSBOs.
-	constexpr int MAX_AMOUNT = 1000; //TODO: Get better multiplier, idk how to do this. Let's hope no-one breaks it!!!!
+	constexpr int MAX_AMOUNT = 1000; // TODO: Get better multiplier, idk how to do this. Let's hope no-one breaks it!!!!
 
 	vk::DescriptorPoolSize poolSize[3];
 	poolSize[0].type = vk::DescriptorType::eUniformBuffer;
@@ -925,11 +925,10 @@ bool VulkanRenderer::_createDescriptorPool() {
 	poolSize[2].type = vk::DescriptorType::eCombinedImageSampler;
 	poolSize[2].descriptorCount = 1 * MAX_AMOUNT;
 
-
 	vk::DescriptorPoolCreateInfo poolInfo;
 	poolInfo.poolSizeCount = sizeof(poolSize) / sizeof(*poolSize);
 	poolInfo.pPoolSizes = poolSize;
-	poolInfo.maxSets = MAX_AMOUNT; //(uint32_t)_descriptorSetLayouts.size() * 1000; 
+	poolInfo.maxSets = MAX_AMOUNT; //(uint32_t)_descriptorSetLayouts.size() * 1000;
 
 	_descriptorPool = _device.createDescriptorPool(poolInfo);
 	EXPECT(_descriptorPool, "Failed to create descriptor pool!\n");
@@ -939,10 +938,7 @@ bool VulkanRenderer::_createDescriptorPool() {
 bool VulkanRenderer::_createVulkanFramebuffers() {
 	_swapChainFramebuffers.resize(_swapChainImageViews.size());
 	for (size_t i = 0; i < _swapChainImageViews.size(); i++) {
-		std::vector<vk::ImageView> attachments{
-			_swapChainImageViews[i],
-			_depthImageView
-		};
+		std::vector<vk::ImageView> attachments{_swapChainImageViews[i], _depthImageView};
 
 		vk::FramebufferCreateInfo framebufferInfo;
 		framebufferInfo.renderPass = _renderPass;
@@ -980,13 +976,15 @@ vk::Format VulkanRenderer::_findDepthFormat() {
 
 		EXPECT_ASSERT(0, "Failed to find supported format!");
 	};
-	return findSupportedFormat({vk::Format::eD32Sfloat, vk::Format::eD32SfloatS8Uint, vk::Format::eD24UnormS8Uint}, vk::ImageTiling::eOptimal, vk::FormatFeatureFlagBits::eDepthStencilAttachment);
+	return findSupportedFormat({vk::Format::eD32Sfloat, vk::Format::eD32SfloatS8Uint, vk::Format::eD24UnormS8Uint}, vk::ImageTiling::eOptimal,
+	                           vk::FormatFeatureFlagBits::eDepthStencilAttachment);
 }
 
 bool VulkanRenderer::_createVulkanDepthResources() {
 	vk::Format depthFormat = _findDepthFormat();
 
-	createImage(_swapChainExtent.width, _swapChainExtent.height, depthFormat, vk::ImageTiling::eOptimal, vk::ImageUsageFlagBits::eDepthStencilAttachment, vk::MemoryPropertyFlagBits::eDeviceLocal, _depthImage, _depthImageMemory);
+	createImage(_swapChainExtent.width, _swapChainExtent.height, depthFormat, vk::ImageTiling::eOptimal, vk::ImageUsageFlagBits::eDepthStencilAttachment,
+	            vk::MemoryPropertyFlagBits::eDeviceLocal, _depthImage, _depthImageMemory);
 
 	vk::ImageViewCreateInfo viewInfo;
 	viewInfo.image = _depthImage;

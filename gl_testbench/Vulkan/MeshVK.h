@@ -7,14 +7,7 @@
 
 class VulkanRenderer;
 
-enum class DescriptorType {
-	translation = 0,
-	diffuseTint = 1,
-	position = 2,
-	normal = 3,
-	textcoord = 4,
-	diffuseSlot = 5
-};
+enum class DescriptorType { translation = 0, diffuseTint = 1, position = 2, normal = 3, textcoord = 4, diffuseSlot = 5 };
 
 class MeshVK : public Mesh {
 public:
@@ -25,11 +18,10 @@ public:
 	void bindIAVertexBuffers();
 	void bindTextures();
 
-	inline vk::DescriptorSet& getDescriptorSet(DescriptorType type) {
-		return descriptorSets[static_cast<int>(type)];
-	}
+	inline vk::DescriptorSet& getDescriptorSet(DescriptorType type) { return descriptorSets[static_cast<int>(type)]; }
 
 	std::vector<vk::DescriptorSet> descriptorSets;
+
 private:
 	VulkanRenderer* _renderer;
 };

@@ -8,6 +8,7 @@ class MeshVK;
 
 class TechniqueVK : public Technique {
 	friend VulkanRenderer;
+
 public:
 	TechniqueVK(VulkanRenderer* renderer, Material* m, RenderState* r);
 	virtual ~TechniqueVK();

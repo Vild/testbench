@@ -31,7 +31,6 @@ int Texture2DVK::loadFromFile(std::string filename) {
 	                       vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled, vk::MemoryPropertyFlagBits::eDeviceLocal, _image,
 	                       _imageMemory);
 
-
 	{
 		EasyCommandQueue ecq = _renderer->acquireEasyCommandQueue();
 		ecq.transitionImageLayout(_image, vk::Format::eR8G8B8A8Unorm, vk::ImageLayout::eUndefined, vk::ImageLayout::eTransferDstOptimal);
@@ -58,9 +57,7 @@ int Texture2DVK::loadFromFile(std::string filename) {
 
 	return 0;
 }
-void Texture2DVK::bind(unsigned int slot) {
-
-}
+void Texture2DVK::bind(unsigned int slot) {}
 
 void Texture2DVK::updateSampler(MeshVK* mesh, unsigned int slot) {
 	vk::DescriptorImageInfo imageInfo = {};

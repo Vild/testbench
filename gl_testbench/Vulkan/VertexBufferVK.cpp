@@ -64,7 +64,7 @@ void VertexBufferVK::bind(MeshVK* mesh, size_t offset, size_t size, uint32_t loc
 
 	// Applies the final info needed to update descriptor sets.
 	_device.updateDescriptorSets(_descriptorWrite, nullptr);
-	//printf("%s(offset: 0x%zX, size: 0x%zX, location: %u);\n", __PRETTY_FUNCTION__, offset, size, location);
+	// printf("%s(offset: 0x%zX, size: 0x%zX, location: %u);\n", __PRETTY_FUNCTION__, offset, size, location);
 }
 void VertexBufferVK::unbind() {
 	STUB();
