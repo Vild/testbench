@@ -179,6 +179,7 @@
     <ClCompile Include="Vulkan\MeshVK.cpp" />
     <ClCompile Include="Vulkan\RenderStateVK.cpp" />
     <ClCompile Include="Vulkan\Sampler2DVK.cpp" />
+    <ClCompile Include="Vulkan\TechniqueVK.cpp" />
     <ClCompile Include="Vulkan\Texture2DVK.cpp" />
     <ClCompile Include="Vulkan\TransformVK.cpp" />
     <ClCompile Include="Vulkan\VertexBufferVK.cpp" />
@@ -215,6 +216,7 @@
     <ClInclude Include="Vulkan\RenderStateVK.h" />
     <ClInclude Include="Vulkan\ResourceBindingVK.h" />
     <ClInclude Include="Vulkan\Sampler2DVK.h" />
+    <ClInclude Include="Vulkan\TechniqueVK.h" />
     <ClInclude Include="Vulkan\Texture2DVK.h" />
     <ClInclude Include="Vulkan\TransformVK.h" />
     <ClInclude Include="Vulkan\VertexBufferVK.h" />
