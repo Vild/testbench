@@ -6,8 +6,8 @@
 #include <vulkan/vulkan.hpp>
 
 class VulkanRenderer;
-
-enum class DescriptorType { translation = 0, diffuseTint = 1, position = 2, normal = 3, textcoord = 4, diffuseSlot = 5 };
+// cameraViewProjection = 2,
+enum class DescriptorType { translation = 0, diffuseTint = 1, cameraViewProjection = 2, position = 3, normal = 4, textcoord = 5, diffuseSlot = 6};
 
 class MeshVK : public Mesh {
 public:

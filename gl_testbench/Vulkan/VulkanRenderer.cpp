@@ -271,6 +271,7 @@ void VulkanRenderer::submit(Mesh* mesh_) {
 	for (auto& cb : static_cast<MaterialVK*>(mesh->technique->getMaterial())->constantBuffers)
 		cb.second->bindDescriptors(mesh);
 	static_cast<ConstantBufferVK*>(mesh->txBuffer)->bindDescriptors(mesh);
+	static_cast<ConstantBufferVK*>(mesh->cameraVPBuffer)->bindDescriptors(mesh);
 
 	mesh->bindTextures();
 	mesh->bindIAVertexBuffers();
@@ -302,7 +303,7 @@ void VulkanRenderer::frame() {
 		TechniqueVK* technique = static_cast<TechniqueVK*>(const_cast<Technique*>(work.first));
 		technique->enable(work.second[0]);
 		_commandBuffers[_currentImageIndex].bindPipeline(vk::PipelineBindPoint::eGraphics, technique->_graphicsPipeline);
-
+		 
 		// TODO: implement instance renderering
 		for (auto mesh : work.second) {
 			size_t numberOfElements = mesh->geometryBuffers[_currentImageIndex].numElements;
@@ -847,7 +848,18 @@ bool VulkanRenderer::_createVulkanPipeline() {
 			EXPECT(_descriptorSetLayouts.back(), "Descriptor set layout is invalid!\n");
 		}
 
-		{
+		{ // VIEW PROJECTION
+			layoutBinding.binding = CAMERA_VIEW_PROJECTION;
+			layoutBinding.descriptorType = vk::DescriptorType::eUniformBuffer;
+			layoutBinding.descriptorCount = 1;
+			layoutBinding.stageFlags = vk::ShaderStageFlagBits::eVertex;
+			layoutBinding.pImmutableSamplers = nullptr;
+
+			_descriptorSetLayouts.push_back(_device.createDescriptorSetLayout(layoutInfo));
+			EXPECT(_descriptorSetLayouts.back(), "Descriptor set layout is invalid!\n");
+		}
+
+		{ // Position
 			layoutBinding.binding = POSITION;
 			layoutBinding.descriptorType = vk::DescriptorType::eStorageBuffer;
 			layoutBinding.descriptorCount = 1;
@@ -858,7 +870,7 @@ bool VulkanRenderer::_createVulkanPipeline() {
 			EXPECT(_descriptorSetLayouts.back(), "Descriptor set layout is invalid!\n");
 		}
 
-		{
+		{ // Normal
 			layoutBinding.binding = NORMAL;
 			layoutBinding.descriptorType = vk::DescriptorType::eStorageBuffer;
 			layoutBinding.descriptorCount = 1;
@@ -869,7 +881,7 @@ bool VulkanRenderer::_createVulkanPipeline() {
 			EXPECT(_descriptorSetLayouts.back(), "Descriptor set layout is invalid!\n");
 		}
 
-		{
+		{ // UV
 			layoutBinding.binding = TEXTCOORD;
 			layoutBinding.descriptorType = vk::DescriptorType::eStorageBuffer;
 			layoutBinding.descriptorCount = 1;
@@ -919,7 +931,7 @@ bool VulkanRenderer::_createDescriptorPool() {
 
 	vk::DescriptorPoolSize poolSize[3];
 	poolSize[0].type = vk::DescriptorType::eUniformBuffer;
-	poolSize[0].descriptorCount = 2 * MAX_AMOUNT; // Two uniform buffer descriptor sets.
+	poolSize[0].descriptorCount = 3 * MAX_AMOUNT; // Three uniform buffer descriptor sets.
 	poolSize[1].type = vk::DescriptorType::eStorageBuffer;
 	poolSize[1].descriptorCount = 3 * MAX_AMOUNT; // Three storage buffer descriptor sets.
 	poolSize[2].type = vk::DescriptorType::eCombinedImageSampler;

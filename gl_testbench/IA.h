@@ -9,4 +9,7 @@
 #define DIFFUSE_TINT 6
 #define DIFFUSE_TINT_NAME "DiffuseColor"
 
+#define CAMERA_VIEW_PROJECTION 7
+#define CAMERA_VIEW_PROJECTION_NAME "CameraViewProjection"
+
 #define DIFFUSE_SLOT 0
