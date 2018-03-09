@@ -50,7 +50,7 @@ void renderScene();
 char gTitleBuff[256];
 double gLastDelta = 0.0;
 
-Renderer::BACKEND rendererType = Renderer::BACKEND::VULKAN;
+Renderer::BACKEND rendererType = Renderer::BACKEND::GL45;
 const char* RENDERER_TYPES[4] = { "GL45", "Vulkan", "DX11", "DX12" };
 
 void updateDelta()

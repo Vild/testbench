@@ -48,7 +48,7 @@ void ConstantBufferGL::setData(const void* data, size_t size, Material* m, unsig
 	// index of uniform block has not been found yet, or we are using this buffer
 	// with another material!
 	// otherwise we already know the index!, it's fixed at compile time
-	if (index == GL_MAX_UNIFORM_LOCATIONS || lastMat != m)
+	if ((index == GL_MAX_UNIFORM_LOCATIONS || lastMat != m) && m != nullptr)
 	{
 		lastMat = m;
 		MaterialGL* mat = (MaterialGL*)m;

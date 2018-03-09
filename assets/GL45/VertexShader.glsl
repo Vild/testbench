@@ -27,6 +27,11 @@ layout(binding=DIFFUSE_TINT) uniform DIFFUSE_TINT_NAME
 	vec4 diffuseTint;
 };
 
+layout(binding=CAMERA_VIEW_PROJECTION) uniform CAMERA_VIEW_PROJECTION_NAME{
+	mat4 view;
+	mat4 proj;
+};
+
 void main() {
 
 	#ifdef NORMAL
@@ -37,5 +42,5 @@ void main() {
 		uv_out = uv_in[gl_VertexID];
 	#endif
 
-	gl_Position = position_in[gl_VertexID] + translate;
+	gl_Position = proj * view * (position_in[gl_VertexID] + translate);
 };
