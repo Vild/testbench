@@ -1,6 +1,6 @@
 CXX := g++
 CXXFLAGS := -Wall -Iinclude -DDEBUG -std=c++1z -ggdb $(shell pkg-config --cflags gl glew sdl2 vulkan)
-LFLAGS := $(shell pkg-config --libs gl glew sdl2 vulkan)
+LFLAGS := $(shell pkg-config --libs gl glew sdl2 vulkan) -lstdc++fs
 
 SRC := gl_testbench/
 OBJ := obj/

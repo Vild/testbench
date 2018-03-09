@@ -5,6 +5,11 @@
 #include <type_traits> 
 #include <assert.h>
 #include <math.h>
+#ifdef _WIN32
+#include <filesystem>
+#else
+#include <experimental/filesystem>
+#endif
 
 #include "Renderer.h"
 #include "Mesh.h"
@@ -52,6 +57,45 @@ double gLastDelta = 0.0;
 
 Renderer::BACKEND rendererType = Renderer::BACKEND::VULKAN;
 const char* RENDERER_TYPES[4] = { "GL45", "Vulkan", "DX11", "DX12" };
+
+#include <glm/glm.hpp>
+#include <glm/gtx/string_cast.hpp>
+
+struct Model {
+	glm::mat4 t;
+	char meshFile[64];
+};
+
+struct Room {
+	char roomName[32];
+	uint32_t modelsLength;
+	Model models[0];
+};
+
+void findModels() {
+	/*std::string path = ASSETS_FOLDER "/rooms";
+	printf("Rooms:\n");
+	std::vector<std::unique_ptr<Room, decltype(&std::free)>> rooms;
+	for (auto & p : std::experimental::filesystem::directory_iterator(path)) {
+		FILE* fp = fopen(p.path().string().c_str(), "rb");
+		fseek(fp, 0, SEEK_END);
+		long len = ftell(fp);
+		fseek(fp, 0, SEEK_SET);
+
+		Room* room = (Room*)malloc(len);
+		fread(room, len, 1, fp);
+		rooms.push_back(std::unique_ptr<Room, decltype(&std::free)>(room, &std::free));
+		fclose(fp);
+	}
+
+	for (auto& room : rooms) {
+		printf("Room (%s):\n", room->roomName);
+		for (uint32_t i = 0; i < room->modelsLength; i++) {
+			auto& model = room->models[i];
+			printf("\t%s: %s\n", model.meshFile, glm::to_string(model.t).c_str());
+		}
+	}*/
+}
 
 void updateDelta()
 {
@@ -349,6 +393,8 @@ int main(int argc, char *argv[])
 			rendererType = Renderer::BACKEND::GL45;
 		else if (!strcasecmp(argv[i], "vulkan"))
 			rendererType = Renderer::BACKEND::VULKAN;
+
+	findModels();
 
 	renderer = Renderer::makeRenderer(rendererType);
 	if (renderer->initialize(800, 600))
