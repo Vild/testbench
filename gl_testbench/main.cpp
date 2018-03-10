@@ -61,40 +61,51 @@ const char* RENDERER_TYPES[4] = { "GL45", "Vulkan", "DX11", "DX12" };
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
 
+
+constexpr int ROOM_UNIT_SIZE = 32;
+constexpr int ROOM_COUNT = 64;
+constexpr int MAP_PIXEL_SIZE = ROOM_UNIT_SIZE * ROOM_COUNT;
+
 struct Model {
 	glm::mat4 t;
 	char meshFile[64];
 };
 
 struct Room {
-	char roomName[32];
-	uint32_t modelsLength;
-	Model models[0];
+	std::vector<Model> models;
+
+	// NOTE: Can see will also include the position for the room this list is in
+	std::vector<glm::ivec2> canSee;
 };
 
-void findModels() {
-	/*std::string path = ASSETS_FOLDER "/rooms";
-	printf("Rooms:\n");
-	std::vector<std::unique_ptr<Room, decltype(&std::free)>> rooms;
-	for (auto & p : std::experimental::filesystem::directory_iterator(path)) {
-		FILE* fp = fopen(p.path().string().c_str(), "rb");
-		fseek(fp, 0, SEEK_END);
-		long len = ftell(fp);
-		fseek(fp, 0, SEEK_SET);
+struct Map {
+	Room rooms[ROOM_COUNT][ROOM_COUNT];
+};
 
-		Room* room = (Room*)malloc(len);
-		fread(room, len, 1, fp);
-		rooms.push_back(std::unique_ptr<Room, decltype(&std::free)>(room, &std::free));
-		fclose(fp);
-	}
-
-	for (auto& room : rooms) {
-		printf("Room (%s):\n", room->roomName);
-		for (uint32_t i = 0; i < room->modelsLength; i++) {
-			auto& model = room->models[i];
-			printf("\t%s: %s\n", model.meshFile, glm::to_string(model.t).c_str());
+Map findModels() {
+	Map map;
+	FILE* fp = fopen(ASSETS_FOLDER "/map.cmf", "rb");
+	for (int y = 0; y < ROOM_COUNT; y++)
+		for (int x = 0; x < ROOM_COUNT; x++) {
+			Room& r = map.rooms[y][x];
+			{
+				uint32_t modelsLength;
+				fread(&modelsLength, sizeof(uint32_t), 1, fp);
+				r.models.resize(modelsLength);
+				fread(r.models.data(), sizeof(Model), modelsLength, fp);
+				for (const Model& m : r.models) {
+					printf("%s\n", m.meshFile);
+				}
+			}
+			{
+				uint32_t canSeeLength;
+				fread(&canSeeLength, sizeof(uint32_t), 1, fp);
+				r.canSee.resize(canSeeLength);
+				fread(r.canSee.data(), sizeof(int[2]), canSeeLength, fp);
+			}
 		}
-	}*/
+	fclose(fp);
+	return std::move(map);
 }
 
 void updateDelta()
