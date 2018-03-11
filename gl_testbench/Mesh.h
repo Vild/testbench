@@ -18,6 +18,8 @@ public:
 
 	// translation buffers
 	ConstantBuffer* txBuffer;
+	// Pointer to cameraVP
+	ConstantBuffer* cameraVPBuffer;
 	// local copy of the translation
 	Transform* transform;
 

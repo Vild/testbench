@@ -1,0 +1,3355 @@
+{
+    "data": {
+        "children": [
+            {
+                "children": null,
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/Floor_v2.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "Floor_v2.mATTIC"
+            },
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 3.430000066757202,
+                                "halfExtentsY": 1.899999976158142,
+                                "halfExtentsZ": 1.5700000524520875,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 1.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb"
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/WallCylinder1.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            0.0,
+                            9.638237953186036,
+                            14.432249069213868
+                        ],
+                        "rotation": [
+                            0.2900000214576721,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "WallCylinder1.mATTIC"
+            },
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 1.0,
+                                "halfExtentsY": 4.970000267028809,
+                                "halfExtentsZ": 3.4000000953674318,
+                                "quatRotationW": 1.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    1.9600000381469727,
+                                    2.7900002002716066,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "wall top"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 1.3600000143051148,
+                                "halfExtentsY": 7.610000133514404,
+                                "halfExtentsZ": 6.680000305175781,
+                                "quatRotationW": 1.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    1.8600001335144044,
+                                    0.0,
+                                    -10.080000877380371
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "wall left"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 1.3700001239776612,
+                                "halfExtentsY": 7.62000036239624,
+                                "halfExtentsZ": 6.720000267028809,
+                                "quatRotationW": 1.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    1.8600001335144044,
+                                    0.0,
+                                    10.070000648498536
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "wall right"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 3.06000018119812,
+                                "halfExtentsY": 1.0200001001358033,
+                                "halfExtentsZ": 1.6800000667572022,
+                                "quatRotationW": 0.9238795042037964,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.3826834559440613,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 45.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    -0.9100000262260437,
+                                    -6.770000457763672,
+                                    -8.510000228881836
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "wall left angle"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 2.31000018119812,
+                                "halfExtentsY": 0.9800000190734863,
+                                "halfExtentsZ": 1.6800000667572022,
+                                "quatRotationW": 0.9238795042037964,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.3826834559440613,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 45.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    -1.0099999904632569,
+                                    -6.680000305175781,
+                                    8.5
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "wall right angle"
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/WallDoor_V3.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            -13.760000228881836,
+                            7.600000381469727,
+                            0.0
+                        ],
+                        "rotation": [
+                            0.0,
+                            360.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "WallDoor_V3.mATTIC"
+            },
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 1.0,
+                                "halfExtentsY": 4.970000267028809,
+                                "halfExtentsZ": 3.4000000953674318,
+                                "quatRotationW": 1.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    1.9600000381469727,
+                                    2.7900002002716066,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "wall top"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 1.3600000143051148,
+                                "halfExtentsY": 7.610000133514404,
+                                "halfExtentsZ": 6.680000305175781,
+                                "quatRotationW": 1.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    1.8600001335144044,
+                                    0.0,
+                                    -10.080000877380371
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "wall left"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 1.3700001239776612,
+                                "halfExtentsY": 7.62000036239624,
+                                "halfExtentsZ": 6.720000267028809,
+                                "quatRotationW": 1.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    1.8600001335144044,
+                                    0.0,
+                                    10.070000648498536
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "wall right"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 3.06000018119812,
+                                "halfExtentsY": 1.0200001001358033,
+                                "halfExtentsZ": 1.6800000667572022,
+                                "quatRotationW": 0.9238795042037964,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.3826834559440613,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 45.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    -0.9100000262260437,
+                                    -6.770000457763672,
+                                    -8.510000228881836
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "wall left angle"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 2.31000018119812,
+                                "halfExtentsY": 0.9800000190734863,
+                                "halfExtentsZ": 1.6800000667572022,
+                                "quatRotationW": 0.9238795042037964,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.3826834559440613,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 45.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    -1.0099999904632569,
+                                    -6.680000305175781,
+                                    8.5
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "wall right angle"
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/WallDoor_V3.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            0.0,
+                            7.590000152587891,
+                            -13.820000648498536
+                        ],
+                        "rotation": [
+                            0.0,
+                            1.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "WallDoor_V3.mATTIC"
+            },
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 1.0,
+                                "halfExtentsY": 4.970000267028809,
+                                "halfExtentsZ": 3.4000000953674318,
+                                "quatRotationW": 1.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    1.9600000381469727,
+                                    2.7900002002716066,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "wall top"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 1.3600000143051148,
+                                "halfExtentsY": 7.610000133514404,
+                                "halfExtentsZ": 6.680000305175781,
+                                "quatRotationW": 1.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    1.8600001335144044,
+                                    0.0,
+                                    -10.080000877380371
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "wall left"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 1.3700001239776612,
+                                "halfExtentsY": 7.62000036239624,
+                                "halfExtentsZ": 6.720000267028809,
+                                "quatRotationW": 1.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    1.8600001335144044,
+                                    0.0,
+                                    10.070000648498536
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "wall right"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 3.06000018119812,
+                                "halfExtentsY": 1.0200001001358033,
+                                "halfExtentsZ": 1.6800000667572022,
+                                "quatRotationW": 0.9238795042037964,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.3826834559440613,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 45.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    -0.9100000262260437,
+                                    -6.770000457763672,
+                                    -8.510000228881836
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "wall left angle"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 2.31000018119812,
+                                "halfExtentsY": 0.9800000190734863,
+                                "halfExtentsZ": 1.6800000667572022,
+                                "quatRotationW": 0.9238795042037964,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.3826834559440613,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 45.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    -1.0099999904632569,
+                                    -6.680000305175781,
+                                    8.5
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "wall right angle"
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/WallDoor_V3.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            13.780000686645508,
+                            7.600000381469727,
+                            0.0
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "WallDoor_V3.mATTIC"
+            },
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 0.8200000524520874,
+                                "halfExtentsY": 7.62000036239624,
+                                "halfExtentsZ": 16.920000076293947,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 1.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    1.8500001430511475,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 1.0200001001358033,
+                                "halfExtentsY": 7.660000324249268,
+                                "halfExtentsZ": 1.380000114440918,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 1.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    1.2700001001358033,
+                                    0.0,
+                                    -8.480000495910645
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb left"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 1.0600000619888306,
+                                "halfExtentsY": 7.680000305175781,
+                                "halfExtentsZ": 1.6600000858306885,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 1.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    1.3300000429153443,
+                                    0.0,
+                                    8.510000228881836
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb right"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 2.2900002002716066,
+                                "halfExtentsY": 0.6500000357627869,
+                                "halfExtentsZ": 1.5800000429153443,
+                                "quatRotationW": 0.9238795042037964,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.3826834559440613,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 45.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    -0.7300000190734863,
+                                    -6.470000267028809,
+                                    -8.520000457763672
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb left pillar"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 2.200000047683716,
+                                "halfExtentsY": 1.090000033378601,
+                                "halfExtentsZ": 1.630000114440918,
+                                "quatRotationW": 0.9238795042037964,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.3826834559440613,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 45.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    -0.4700000286102295,
+                                    -6.87000036239624,
+                                    8.510000228881836
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb right pillar"
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/Wall_V3.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            0.0,
+                            7.62000036239624,
+                            13.840001106262207
+                        ],
+                        "rotation": [
+                            0.0,
+                            -1.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "Wall_V3.mATTIC"
+            },
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 4.330000400543213,
+                                "halfExtentsY": 1.600000023841858,
+                                "halfExtentsZ": 1.25,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 1.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb "
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/Shelf.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            0.0,
+                            2.0500001907348635,
+                            13.0
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "Shelf.mATTIC"
+            },
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 0.9000000357627869,
+                                "halfExtentsY": 1.1700000762939454,
+                                "halfExtentsZ": 1.0,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 1.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb "
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/R2D3.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            0.13542965054512025,
+                            3.8491127490997316,
+                            12.070918083190918
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.5539112687110901,
+                            0.0,
+                            0.8325755596160889
+                        ],
+                        "scale": [
+                            0.20000000298023225,
+                            0.20000000298023225,
+                            0.20000000298023225
+                        ]
+                    }
+                },
+                "name": "R2D3.mATTIC"
+            },
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 1.0,
+                                "halfExtentsY": 5.450000286102295,
+                                "halfExtentsZ": 1.0500000715255738,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 1.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb"
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/MiniGenerator.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            0.0,
+                            7.930000305175781,
+                            0.0
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.5,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "MiniGenerator.mATTIC"
+            },
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 1.0099999904632569,
+                                "halfExtentsY": 0.7600000500679016,
+                                "halfExtentsZ": 3.250000238418579,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 1.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb "
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/Counter.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            -4.0,
+                            0.7099999785423279,
+                            0.0
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.9999991655349731,
+                            0.0,
+                            1.4901161193847657e-8
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "Counter.mATTIC"
+            },
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 1.0099999904632569,
+                                "halfExtentsY": 0.7600000500679016,
+                                "halfExtentsZ": 3.250000238418579,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 1.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb "
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/Counter.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            4.0,
+                            0.7099999785423279,
+                            0.0
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "Counter.mATTIC"
+            },
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 1.0099999904632569,
+                                "halfExtentsY": 0.7600000500679016,
+                                "halfExtentsZ": 3.250000238418579,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 1.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb "
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/Counter.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            0.0,
+                            0.7099999785423279,
+                            4.0
+                        ],
+                        "rotation": [
+                            0.0,
+                            -1.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "Counter.mATTIC"
+            },
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 0.7500000596046448,
+                                "halfExtentsY": 0.7900000214576721,
+                                "halfExtentsZ": 2.31000018119812,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 1.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb "
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/OfficeTable.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            0.0,
+                            0.7500000596046448,
+                            -4.060000419616699
+                        ],
+                        "rotation": [
+                            0.0,
+                            1.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.1100000143051148,
+                            1.0,
+                            1.3300000429153443
+                        ]
+                    }
+                },
+                "name": "OfficeTable.mATTIC"
+            },
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 0.5800000429153442,
+                                "halfExtentsY": 1.1299999952316285,
+                                "halfExtentsZ": 0.5,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 1.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb "
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/OfficeChair.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            0.44910573959350588,
+                            1.2100000381469727,
+                            -6.242149353027344
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.9484806656837463,
+                            0.0,
+                            0.31683605909347536
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "OfficeChair.mATTIC"
+            },
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 0.14000000059604646,
+                                "halfExtentsY": 0.4400000274181366,
+                                "halfExtentsZ": 0.5,
+                                "quatRotationW": 0.9914448857307434,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": -0.13052619993686677,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": -15.000000953674317,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb "
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/RegularMonitor.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            0.7740041017532349,
+                            1.9543874263763428,
+                            -3.854024648666382
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.8592361807823181,
+                            0.0,
+                            0.511579155921936
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "RegularMonitor.mATTIC"
+            },
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 0.7500000596046448,
+                                "halfExtentsY": 0.7300000190734863,
+                                "halfExtentsZ": 0.30000001192092898,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 1.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb "
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/SmallComputer.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            2.2649879455566408,
+                            2.208106756210327,
+                            -4.079681396484375
+                        ],
+                        "rotation": [
+                            0.0,
+                            1.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "SmallComputer.mATTIC"
+            },
+            {
+                "children": null,
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/SourceCode_Monitor.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            -0.9050546288490295,
+                            2.0292012691497804,
+                            -4.133905410766602
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.9722321629524231,
+                            0.0,
+                            0.23401860892772675
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "SourceCode_Monitor.mATTIC"
+            },
+            {
+                "children": null,
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/Keyboard.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            0.2011377513408661,
+                            1.53129243850708,
+                            -4.323970317840576
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.9815105199813843,
+                            0.0,
+                            0.1914098709821701
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "Keyboard.mATTIC"
+            },
+            {
+                "children": null,
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/WaterBottle.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            1.4672085046768189,
+                            1.586944580078125,
+                            -4.47721529006958
+                        ],
+                        "rotation": [
+                            -0.6452657580375671,
+                            0.27734607458114626,
+                            0.23453158140182496,
+                            0.6720911264419556
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "WaterBottle.mATTIC"
+            },
+            {
+                "children": null,
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/TableLamp.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            -2.414702892303467,
+                            1.9040987491607667,
+                            -3.9250879287719728
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.9019154906272888,
+                            0.0,
+                            -0.43191251158714297
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "TableLamp.mATTIC"
+            },
+            {
+                "children": null,
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/Cup.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            -3.614830493927002,
+                            1.5273560285568238,
+                            -2.085176467895508
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "Cup.mATTIC"
+            },
+            {
+                "children": null,
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/Book_ForwardRenderingMan.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            3.9795868396759035,
+                            1.464216709136963,
+                            0.6169672012329102
+                        ],
+                        "rotation": [
+                            -0.5958943963050842,
+                            -0.5958943963050842,
+                            0.8030627369880676,
+                            0.8030627369880676
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "Book_ForwardRenderingMan.mATTIC"
+            },
+            {
+                "children": null,
+                "components": {
+                    "DrawObjectComponent": null,
+                    "GhostObjectComponent": {
+                        "collisionType": 2,
+                        "halfExtentsX": 14.0,
+                        "halfExtentsY": 0.6700000166893005,
+                        "halfExtentsZ": 14.0,
+                        "quatRotationW": 0.0,
+                        "quatRotationX": 0.0,
+                        "quatRotationY": 0.0,
+                        "quatRotationZ": 1.0,
+                        "rotationX": 0.0,
+                        "rotationY": 0.0,
+                        "rotationZ": 0.0
+                    },
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/Roof_V1.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            0.0,
+                            15.55000114440918,
+                            0.0
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "Roof_V1.mATTIC"
+            },
+            {
+                "children": null,
+                "components": {
+                    "SpawnPointComponent": {
+                        "enemySpawn": true,
+                        "perkSpawn": true,
+                        "playerSpawn": true,
+                        "spawnerSpawn": true
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            -4.2970452308654789,
+                            0.0,
+                            -11.537309646606446
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "SpawnPoint"
+            },
+            {
+                "children": null,
+                "components": {
+                    "SpawnPointComponent": {
+                        "enemySpawn": true,
+                        "perkSpawn": true,
+                        "playerSpawn": true,
+                        "spawnerSpawn": true
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            11.380203247070313,
+                            0.0,
+                            -4.231013774871826
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "SpawnPoint"
+            },
+            {
+                "children": null,
+                "components": {
+                    "SpawnPointComponent": {
+                        "enemySpawn": true,
+                        "perkSpawn": true,
+                        "playerSpawn": true,
+                        "spawnerSpawn": true
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            10.779626846313477,
+                            0.0,
+                            4.0943498611450199
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "SpawnPoint"
+            },
+            {
+                "children": null,
+                "components": {
+                    "SpawnPointComponent": {
+                        "enemySpawn": true,
+                        "perkSpawn": true,
+                        "playerSpawn": true,
+                        "spawnerSpawn": true
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            -7.9986572265625,
+                            0.0,
+                            4.263394355773926
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "SpawnPoint"
+            },
+            {
+                "children": null,
+                "components": {
+                    "SpawnPointComponent": {
+                        "enemySpawn": true,
+                        "perkSpawn": true,
+                        "playerSpawn": true,
+                        "spawnerSpawn": true
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            5.465138912200928,
+                            0.0,
+                            9.393667221069336
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "SpawnPoint"
+            },
+            {
+                "children": null,
+                "components": {
+                    "SpawnPointComponent": {
+                        "enemySpawn": true,
+                        "perkSpawn": true,
+                        "playerSpawn": true,
+                        "spawnerSpawn": true
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            -3.5145254135131838,
+                            0.0,
+                            9.538966178894043
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "SpawnPoint"
+            },
+            {
+                "children": null,
+                "components": {
+                    "SpawnPointComponent": {
+                        "enemySpawn": true,
+                        "perkSpawn": true,
+                        "playerSpawn": true,
+                        "spawnerSpawn": true
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            -10.835747718811036,
+                            0.0,
+                            -2.870068311691284
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "SpawnPoint"
+            },
+            {
+                "children": null,
+                "components": {
+                    "SpawnPointComponent": {
+                        "enemySpawn": true,
+                        "perkSpawn": true,
+                        "playerSpawn": true,
+                        "spawnerSpawn": true
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            2.769498348236084,
+                            0.0,
+                            9.106220245361329
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "SpawnPoint"
+            }
+        ],
+        "components": {
+            "RoomComponent": {
+                "doorsE": true,
+                "doorsN": true,
+                "doorsS": false,
+                "doorsW": true,
+                "gridPosition": [
+                    0,
+                    0
+                ],
+                "map": [
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ]
+                ],
+                "mapSize": 32,
+                "openE": false,
+                "openN": false,
+                "openS": false,
+                "openW": false
+            },
+            "TransformComponent": {
+                "ignoreParent": false,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        "name": "Workspace"
+    },
+    "name": "Room"
+}

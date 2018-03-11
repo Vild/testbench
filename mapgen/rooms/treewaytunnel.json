@@ -1,0 +1,2096 @@
+{
+    "data": {
+        "children": [
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 17.060001373291017,
+                                "halfExtentsY": 3.2200002670288088,
+                                "halfExtentsZ": 0.64000004529953,
+                                "quatRotationW": 1.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.0,
+                                    0.8200000524520874,
+                                    11.630000114440918
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb big wall"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 17.360000610351564,
+                                "halfExtentsY": 1.2400000095367432,
+                                "halfExtentsZ": 0.30000001192092898,
+                                "quatRotationW": 0.9588197469711304,
+                                "quatRotationX": 0.28401535749435427,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 33.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.0,
+                                    -3.2800002098083498,
+                                    10.680000305175782
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb lower big wall"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 17.290000915527345,
+                                "halfExtentsY": 0.4000000059604645,
+                                "halfExtentsZ": 5.240000247955322,
+                                "quatRotationW": 1.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.0,
+                                    -4.400000095367432,
+                                    4.75
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb floor big wall"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 0.3800000250339508,
+                                "halfExtentsY": 0.8200000524520874,
+                                "halfExtentsZ": 3.2300002574920656,
+                                "quatRotationW": 0.9238795042037964,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.3826834559440613,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 45.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    17.579999923706056,
+                                    -4.820000171661377,
+                                    4.760000228881836
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb left ramp big wall"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 0.7900000214576721,
+                                "halfExtentsY": 0.39000001549720766,
+                                "halfExtentsZ": 3.2400002479553224,
+                                "quatRotationW": 0.9238795042037964,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.3826834559440613,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 45.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    -17.57000160217285,
+                                    -4.820000171661377,
+                                    4.75
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb right ramp bigg wall"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 3.250000238418579,
+                                "halfExtentsY": 0.5900000333786011,
+                                "halfExtentsZ": 0.33000001311302187,
+                                "quatRotationW": 0.9238795042037964,
+                                "quatRotationX": 0.3826834559440613,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 45.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.0,
+                                    -4.62000036239624,
+                                    -12.730000495910645
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb middle ramp "
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 5.960000514984131,
+                                "halfExtentsY": 0.6200000047683716,
+                                "halfExtentsZ": 10.550000190734864,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 1.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.0,
+                                    -4.62000036239624,
+                                    -1.9500000476837159
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb middle floor"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 16.520000457763673,
+                                "halfExtentsY": 1.0,
+                                "halfExtentsZ": 12.390000343322754,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 1.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.0,
+                                    5.720000267028809,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb middle roof"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 0.8200000524520874,
+                                "halfExtentsY": 5.070000171661377,
+                                "halfExtentsZ": 2.6500000953674318,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 1.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    16.48000144958496,
+                                    -0.020000001415610315,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb left door l"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 0.8600000143051148,
+                                "halfExtentsY": 4.900000095367432,
+                                "halfExtentsZ": 2.2300000190734865,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 1.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    16.450000762939454,
+                                    0.0,
+                                    9.24000072479248
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb left door r"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 0.8100000619888306,
+                                "halfExtentsY": 1.6600000858306885,
+                                "halfExtentsZ": 2.080000162124634,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 1.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    16.470001220703126,
+                                    3.4600002765655519,
+                                    4.740000247955322
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb left door m"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 4.800000190734863,
+                                "halfExtentsY": 5.490000247955322,
+                                "halfExtentsZ": 4.800000190734863,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 1.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    11.100000381469727,
+                                    -0.30000001192092898,
+                                    -6.420000076293945
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb left wall"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 4.900000095367432,
+                                "halfExtentsY": 3.700000286102295,
+                                "halfExtentsZ": 4.900000095367432,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 1.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    -11.070000648498536,
+                                    0.8800000548362732,
+                                    -6.28000020980835
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb right wall"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 2.380000114440918,
+                                "halfExtentsY": 0.7900000214576721,
+                                "halfExtentsZ": 4.730000019073486,
+                                "quatRotationW": 0.8703556656837463,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.49242356419563296,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 59.000003814697269
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    6.190000057220459,
+                                    -3.380000114440918,
+                                    -6.360000133514404
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb left wall middle ramp"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 4.720000267028809,
+                                "halfExtentsY": 0.7600000500679016,
+                                "halfExtentsZ": 2.2800002098083498,
+                                "quatRotationW": 0.8480480909347534,
+                                "quatRotationX": 0.5299192667007446,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 64.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    11.030000686645508,
+                                    -3.370000123977661,
+                                    -1.630000114440918
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb left wall big wall ramp"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 4.720000267028809,
+                                "halfExtentsY": 0.7300000190734863,
+                                "halfExtentsZ": 1.5700000524520875,
+                                "quatRotationW": 0.874619722366333,
+                                "quatRotationX": 0.48480960726737978,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 58.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    -10.880000114440918,
+                                    -3.7200002670288088,
+                                    -1.2200000286102296
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb right wall big wall ramp"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 0.2200000137090683,
+                                "halfExtentsY": 1.7300001382827759,
+                                "halfExtentsZ": 4.770000457763672,
+                                "quatRotationW": 0.9702957272529602,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.24192191660404206,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 28.000001907348634
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    -5.62000036239624,
+                                    -3.4600002765655519,
+                                    -6.200000286102295
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb right wall midle ramp"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 0.8100000619888306,
+                                "halfExtentsY": 1.380000114440918,
+                                "halfExtentsZ": 2.510000228881836,
+                                "quatRotationW": 1.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    -16.39000129699707,
+                                    3.1100001335144045,
+                                    4.770000457763672
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb right door l"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 1.0,
+                                "halfExtentsY": 4.700000286102295,
+                                "halfExtentsZ": 2.8600001335144045,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 1.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    -16.560001373291017,
+                                    0.0,
+                                    9.8100004196167
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb right door left"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 0.8100000619888306,
+                                "halfExtentsY": 4.670000076293945,
+                                "halfExtentsZ": 2.940000057220459,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 1.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    -16.380001068115236,
+                                    0.030000001192092897,
+                                    -0.48000001907348635
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb right door right"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 2.930000066757202,
+                                "halfExtentsY": 1.4100000858306885,
+                                "halfExtentsZ": 1.190000057220459,
+                                "quatRotationW": 1.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.0,
+                                    3.5400002002716066,
+                                    -11.99000072479248
+                                ],
+                                "rotation": [
+                                    9.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb middel door l"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 2.6700000762939455,
+                                "halfExtentsY": 4.890000343322754,
+                                "halfExtentsZ": 0.9500000476837158,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 1.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    -5.010000228881836,
+                                    0.0,
+                                    -11.750000953674317
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb middel door left"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 3.140000104904175,
+                                "halfExtentsY": 4.860000133514404,
+                                "halfExtentsZ": 1.03000009059906,
+                                "quatRotationW": 1.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    5.490000247955322,
+                                    0.0,
+                                    -11.8100004196167
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "hb middel door right"
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/ThreeWayTunnel.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            0.0,
+                            3.9700002670288088,
+                            -4.680000305175781
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "ThreeWayTunnel.mATTIC"
+            },
+            {
+                "children": null,
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/Floor_v2.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            0.0,
+                            -0.010000000707805157,
+                            0.0
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "Floor_v2.mATTIC"
+            }
+        ],
+        "components": {
+            "RoomComponent": {
+                "doorsE": true,
+                "doorsN": true,
+                "doorsS": false,
+                "doorsW": true,
+                "gridPosition": [
+                    0,
+                    0
+                ],
+                "map": [
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ]
+                ],
+                "mapSize": 32,
+                "openE": false,
+                "openN": false,
+                "openS": false,
+                "openW": false
+            },
+            "TransformComponent": {
+                "ignoreParent": false,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        "name": "Workspace"
+    },
+    "name": "Room"
+}

@@ -4,15 +4,27 @@
 #include <SDL_timer.h>
 #include <type_traits> 
 #include <assert.h>
+#include <math.h>
+#ifdef _WIN32
+#include <filesystem>
+#else
+#include <experimental/filesystem>
+#endif
 
 #include "Renderer.h"
 #include "Mesh.h"
 #include "Texture2D.h"
 #include <math.h>
 #include <glm/glm.hpp>
+#include <glm/gtx/string_cast.hpp>
+
+
+
 
 #include <fstream>
 #include <ctime>
+
+#include "Camera.h"
 
 #if defined(_WIN32) || defined(_WIN64)
 #define snprintf _snprintf
@@ -29,6 +41,7 @@
 
 using namespace std;
 Renderer* renderer;
+Camera camera;
 
 // flat scene at the application level...we don't care about this here.
 // do what ever you want in your renderer backend.
@@ -43,6 +56,7 @@ vector<Sampler2D*> samplers;
 VertexBuffer* pos;
 VertexBuffer* nor;
 VertexBuffer* uvs;
+ConstantBuffer* cameraMatrices;
 
 // forward decls
 void updateScene();
@@ -55,6 +69,10 @@ ofstream file;
 
 Renderer::BACKEND rendererType = Renderer::BACKEND::VULKAN;
 const char* RENDERER_TYPES[4] = { "GL45", "Vulkan", "DX11", "DX12" };
+
+constexpr int ROOM_UNIT_SIZE = 32;
+constexpr int ROOM_COUNT = 64;
+constexpr int MAP_PIXEL_SIZE = ROOM_UNIT_SIZE * ROOM_COUNT;
 
 void loadModel(std::string filepath) {
 	std::vector<VertexBuffer> vertices;
@@ -252,6 +270,48 @@ std::string getDateTime() {
 	return buf;
 }
 
+struct Model {
+	glm::mat4 t;
+	char meshFile[64];
+};
+
+struct Room {
+	std::vector<Model> models;
+
+	// NOTE: Can see will also include the position for the room this list is in
+	std::vector<glm::ivec2> canSee;
+};
+
+struct Map {
+	Room rooms[ROOM_COUNT][ROOM_COUNT];
+};
+
+Map findModels() {
+	Map map;
+	FILE* fp = fopen(ASSETS_FOLDER "/map.cmf", "rb");
+	for (int y = 0; y < ROOM_COUNT; y++)
+		for (int x = 0; x < ROOM_COUNT; x++) {
+			Room& r = map.rooms[y][x];
+			{
+				uint32_t modelsLength;
+				fread(&modelsLength, sizeof(uint32_t), 1, fp);
+				r.models.resize(modelsLength);
+				fread(r.models.data(), sizeof(Model), modelsLength, fp);
+				for (const Model& m : r.models) {
+					printf("%s\n", m.meshFile);
+				}
+			}
+			{
+				uint32_t canSeeLength;
+				fread(&canSeeLength, sizeof(uint32_t), 1, fp);
+				r.canSee.resize(canSeeLength);
+				fread(r.canSee.data(), sizeof(int[2]), canSeeLength, fp);
+			}
+		}
+	fclose(fp);
+	return std::move(map);
+}
+
 void updateDelta()
 {
 	#define WINDOW_SIZE 10
@@ -301,6 +361,22 @@ void run() {
 		{
 			if (windowEvent.type == SDL_QUIT) break;
 			if (windowEvent.type == SDL_KEYUP && windowEvent.key.keysym.sym == SDLK_ESCAPE) break;
+			switch (windowEvent.key.keysym.sym) {
+			case SDLK_w:
+				camera.updatePosition(glm::vec3(0, 0, 1));
+				break;
+			case SDLK_a:
+				camera.updatePosition(glm::vec3(-1, 0, 0));
+				break;
+			case SDLK_s:
+				camera.updatePosition(glm::vec3(0, 0, -1));
+				break;
+			case SDLK_d:
+				camera.updatePosition(glm::vec3(1, 0, 1));
+				break;
+			default:
+				break;
+			}
 		}
 		updateScene();
 		renderScene();
@@ -331,6 +407,12 @@ void updateScene()
 		// just to make them move...
 		shift+=glm::max(TOTAL_TRIS / 1000.0,TOTAL_TRIS / 100.0);
 	}
+
+	{ // Camera update stuffs
+		auto matrices = camera.getMatrices();
+		cameraMatrices->setData(&matrices, sizeof(matrices), nullptr, CAMERA_VIEW_PROJECTION);
+	}
+
 	return;
 };
 
@@ -361,6 +443,10 @@ int initialiseTestbench()
 	std::string defineDiffCol = "#define DIFFUSE_TINT " + std::to_string(DIFFUSE_TINT) + "\n";
 	std::string defineDiffColName = "#define DIFFUSE_TINT_NAME " + std::string(DIFFUSE_TINT_NAME) + "\n";
 
+	std::string defineViewProj = "#define CAMERA_VIEW_PROJECTION " + std::to_string(CAMERA_VIEW_PROJECTION) + "\n";
+	std::string defineViewProjName = "#define CAMERA_VIEW_PROJECTION_NAME " + std::string(CAMERA_VIEW_PROJECTION_NAME) + "\n";
+
+
 	std::string defineDiffuse = "#define DIFFUSE_SLOT " + std::to_string(DIFFUSE_SLOT) + "\n";
 
 	std::vector<std::vector<std::string>> materialDefs = {
@@ -369,16 +455,16 @@ int initialiseTestbench()
 		// these strings should be constructed from the IA.h file!!!
 
 		{ "VertexShader", "FragmentShader", definePos + defineNor + defineUV + defineTX + 
-		   defineTXName + defineDiffCol + defineDiffColName }, 
+		   defineTXName + defineDiffCol + defineDiffColName + defineViewProj + defineViewProjName},
 
 		{ "VertexShader", "FragmentShader", definePos + defineNor + defineUV + defineTX + 
-		   defineTXName + defineDiffCol + defineDiffColName }, 
+		   defineTXName + defineDiffCol + defineDiffColName + defineViewProj + defineViewProjName},
 
 		{ "VertexShader", "FragmentShader", definePos + defineNor + defineUV + defineTX + 
-		   defineTXName + defineDiffCol + defineDiffColName + defineDiffuse	},
+		   defineTXName + defineDiffCol + defineDiffColName + defineDiffuse	+ defineViewProj + defineViewProjName},
 
 		{ "VertexShader", "FragmentShader", definePos + defineNor + defineUV + defineTX + 
-		   defineTXName + defineDiffCol + defineDiffColName }, 
+		   defineTXName + defineDiffCol + defineDiffColName + defineViewProj + defineViewProjName },
 	};
 
 	float degToRad = M_PI / 180.0;
@@ -451,7 +537,7 @@ int initialiseTestbench()
 	pos = renderer->makeVertexBuffer(TOTAL_TRIS * sizeof(triPos), VertexBuffer::DATA_USAGE::STATIC);
 	nor = renderer->makeVertexBuffer(TOTAL_TRIS * sizeof(triNor), VertexBuffer::DATA_USAGE::STATIC);
 	uvs = renderer->makeVertexBuffer(TOTAL_TRIS * sizeof(triUV), VertexBuffer::DATA_USAGE::STATIC);
-
+	cameraMatrices = renderer->makeConstantBuffer(std::string(CAMERA_VIEW_PROJECTION_NAME), CAMERA_VIEW_PROJECTION);
 	// Create a mesh array with 3 basic vertex buffers.
 	for (int i = 0; i < TOTAL_TRIS; i++) {
 
@@ -474,7 +560,7 @@ int initialiseTestbench()
 
 		// we can create a constant buffer outside the material, for example as part of the Mesh.
 		m->txBuffer = renderer->makeConstantBuffer(std::string(TRANSLATION_NAME), TRANSLATION);
-
+		m->cameraVPBuffer = cameraMatrices;
 		m->technique = techniques[ i % 4];
 		if (i % 4 == 2)
 			m->addTexture(textures[0], DIFFUSE_SLOT);
@@ -536,6 +622,8 @@ int main(int argc, char *argv[])
 			rendererType = Renderer::BACKEND::GL45;
 		else if (!strcasecmp(argv[i], "vulkan"))
 			rendererType = Renderer::BACKEND::VULKAN;
+
+	findModels();
 
 	renderer = Renderer::makeRenderer(rendererType);
 	if (renderer->initialize(800, 600))

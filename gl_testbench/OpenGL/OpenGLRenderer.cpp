@@ -121,6 +121,7 @@ int OpenGLRenderer::initialize(unsigned int width, unsigned int height) {
 	{
 		fprintf(stderr, "Error GLEW: %s\n", glewGetErrorString(err));
 	}
+	SDL_GL_SetSwapInterval(0);
 
 	return 0;
 }
@@ -163,6 +164,7 @@ void OpenGLRenderer::frame()
 				mesh->bindIAVertexBuffer(element.first);
 			}
 			mesh->txBuffer->bind(mesh->technique->getMaterial());
+			mesh->cameraVPBuffer->bind(mesh->technique->getMaterial());
 			glDrawArrays(GL_TRIANGLES, 0, numberElements);
 		}
 		drawList.clear();
@@ -186,6 +188,7 @@ void OpenGLRenderer::frame()
 					mesh->bindIAVertexBuffer(element.first);
 				}
 				mesh->txBuffer->bind(work.first->getMaterial());
+				mesh->cameraVPBuffer->bind(mesh->technique->getMaterial());
 				glDrawArrays(GL_TRIANGLES, 0, numberElements);
 			}
 		}

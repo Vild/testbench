@@ -1,0 +1,2203 @@
+{
+    "data": {
+        "children": [
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 16.510000228881837,
+                                "halfExtentsY": 9.710000038146973,
+                                "halfExtentsZ": 1.0800000429153443,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    -0.27000001072883608,
+                                    -0.5900000333786011,
+                                    -0.3100000023841858
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "wallhitbox"
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/Wall_V4.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            0.0,
+                            6.560000419616699,
+                            16.130001068115236
+                        ],
+                        "rotation": [
+                            0.0,
+                            -19.610000610351564,
+                            0.0,
+                            -0.030000001192092897
+                        ],
+                        "scale": [
+                            1.0,
+                            0.6800000071525574,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "Wall_V4.mATTIC"
+            },
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 1.440000057220459,
+                                "halfExtentsY": 4.2900004386901859,
+                                "halfExtentsZ": 16.560001373291017,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.7900000214576721,
+                                    2.6500000953674318,
+                                    0.1900000125169754
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "walldoorhitbox"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 2.0400002002716066,
+                                "halfExtentsY": 2.630000114440918,
+                                "halfExtentsZ": 6.520000457763672,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    1.4700000286102296,
+                                    -5.0,
+                                    -10.020000457763672
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "walldoorhitbox2"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 1.880000114440918,
+                                "halfExtentsY": 2.630000114440918,
+                                "halfExtentsZ": 6.519999980926514,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    1.4600000381469727,
+                                    -5.0,
+                                    9.90000057220459
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "walldoorhitbox3"
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/WallDoor_V3.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            -16.380001068115236,
+                            7.239999771118164,
+                            0.0
+                        ],
+                        "rotation": [
+                            0.0,
+                            12.420001029968262,
+                            0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            0.1900000125169754,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "WallDoor_V3.mATTIC"
+            },
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 16.940000534057618,
+                                "halfExtentsY": 0.5,
+                                "halfExtentsZ": 16.25,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "roofhitbox"
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/Roof_V2.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            0.0,
+                            12.99000072479248,
+                            0.0
+                        ],
+                        "rotation": [
+                            12.130000114440918,
+                            0.0,
+                            0.0,
+                            0.06000000238418579
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "Roof_V2.mATTIC"
+            },
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 1.7100000381469727,
+                                "halfExtentsY": 4.350000381469727,
+                                "halfExtentsZ": 16.880001068115236,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    1.3100000619888306,
+                                    2.5200002193450929,
+                                    -0.42000001668930056
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "walldoorhitbox"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 2.0400002002716066,
+                                "halfExtentsY": 2.6100001335144045,
+                                "halfExtentsZ": 6.910000324249268,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    1.5600000619888306,
+                                    -5.050000190734863,
+                                    -10.370000839233399
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "walldoorhitbox2"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 1.8300000429153443,
+                                "halfExtentsY": 2.609999895095825,
+                                "halfExtentsZ": 6.909999847412109,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    1.5000001192092896,
+                                    -5.050000190734863,
+                                    10.300000190734864
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "walldoorhitbox3"
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/WallDoor_V3.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            16.3700008392334,
+                            7.230000019073486,
+                            0.0
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            0.1899999976158142,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "WallDoor_V3.mATTIC"
+            },
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 1.1800000667572022,
+                                "halfExtentsY": 4.390000343322754,
+                                "halfExtentsZ": 16.990001678466798,
+                                "quatRotationW": 1.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.0,
+                                    2.2100000381469728,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    -0.00008828163845464587,
+                                    -0.0017249098746106029,
+                                    -0.051113419234752658,
+                                    0.9986905455589294
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "walldoorhitbox"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 1.5600000619888306,
+                                "halfExtentsY": 2.5900001525878908,
+                                "halfExtentsZ": 6.700000286102295,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    2.25,
+                                    -4.740000247955322,
+                                    -10.070000648498536
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "walldoorhitbox2"
+                    },
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 1.340000033378601,
+                                "halfExtentsY": 2.5899999141693117,
+                                "halfExtentsZ": 6.699999809265137,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.14000000059604646,
+                                    -4.739999771118164,
+                                    10.100000381469727
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "walldoorhitbox3"
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/WallDoor_V3.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            0.0,
+                            7.210000514984131,
+                            -16.240001678466798
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.6800000071525574,
+                            0.0,
+                            0.6690027713775635
+                        ],
+                        "scale": [
+                            0.2200000137090683,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "WallDoor_V3.mATTIC"
+            },
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 3.5200002193450929,
+                                "halfExtentsY": 1.0,
+                                "halfExtentsZ": 1.7400001287460328,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "tablehitbox"
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/TableWithSeats.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            -2.242000102996826,
+                            1.0,
+                            -5.270000457763672
+                        ],
+                        "rotation": [
+                            0.0,
+                            -0.46000000834465029,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "TableWithSeats.mATTIC"
+            },
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 3.5,
+                                "halfExtentsY": 1.0,
+                                "halfExtentsZ": 1.6200001239776612,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "tablehitbox"
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/TableWithSeats.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            7.768000602722168,
+                            1.0,
+                            7.320000171661377
+                        ],
+                        "rotation": [
+                            0.0,
+                            1.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "TableWithSeats.mATTIC"
+            },
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 3.5,
+                                "halfExtentsY": 1.0,
+                                "halfExtentsZ": 1.600000023841858,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "tablehitbox"
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/TableWithSeats.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            -5.711000442504883,
+                            1.0,
+                            6.880000114440918
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "TableWithSeats.mATTIC"
+            },
+            {
+                "children": [
+                    {
+                        "children": null,
+                        "components": {
+                            "DrawObjectComponent": null,
+                            "GhostObjectComponent": {
+                                "collisionType": 2,
+                                "halfExtentsX": 0.7300000190734863,
+                                "halfExtentsY": 1.440000057220459,
+                                "halfExtentsZ": 0.5900000333786011,
+                                "quatRotationW": 0.0,
+                                "quatRotationX": 0.0,
+                                "quatRotationY": 0.0,
+                                "quatRotationZ": 0.0,
+                                "rotationX": 0.0,
+                                "rotationY": 0.0,
+                                "rotationZ": 0.0
+                            },
+                            "TransformComponent": {
+                                "ignoreParent": false,
+                                "position": [
+                                    0.0,
+                                    0.06000000238418579,
+                                    -0.11000000685453415
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        },
+                        "name": "lockerhitbox"
+                    }
+                ],
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/Locker.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            14.92500114440918,
+                            2.81000018119812,
+                            13.730000495910645
+                        ],
+                        "rotation": [
+                            0.0,
+                            1.0,
+                            0.0,
+                            -1.0
+                        ],
+                        "scale": [
+                            2.0,
+                            2.0,
+                            2.0
+                        ]
+                    }
+                },
+                "name": "Locker.mATTIC"
+            },
+            {
+                "children": null,
+                "components": {
+                    "DrawObjectComponent": null,
+                    "MeshComponent": {
+                        "animationCounter": 0.0,
+                        "animationIndex": 0,
+                        "currentFrame": 1,
+                        "meshFile": "assets/objects/Floor_v2.mATTIC"
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "Floor_v2.mATTIC"
+            },
+            {
+                "children": null,
+                "components": {
+                    "SpawnPointComponent": {
+                        "enemySpawn": true,
+                        "perkSpawn": false,
+                        "playerSpawn": true,
+                        "spawnerSpawn": false
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            0.9355195760726929,
+                            0.0,
+                            11.726005554199219
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "SpawnPoint"
+            },
+            {
+                "children": null,
+                "components": {
+                    "SpawnPointComponent": {
+                        "enemySpawn": true,
+                        "perkSpawn": false,
+                        "playerSpawn": true,
+                        "spawnerSpawn": false
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            11.109217643737793,
+                            0.0000019073486328125,
+                            -13.308045387268067
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "SpawnPoint"
+            },
+            {
+                "children": null,
+                "components": {
+                    "SpawnPointComponent": {
+                        "enemySpawn": true,
+                        "perkSpawn": false,
+                        "playerSpawn": true,
+                        "spawnerSpawn": false
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            -12.385807037353516,
+                            -0.0000019073486328125,
+                            -12.900094032287598
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "SpawnPoint"
+            },
+            {
+                "children": null,
+                "components": {
+                    "SpawnPointComponent": {
+                        "enemySpawn": true,
+                        "perkSpawn": false,
+                        "playerSpawn": true,
+                        "spawnerSpawn": false
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            -11.488819122314454,
+                            0.0,
+                            -1.1624720096588135
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "SpawnPoint"
+            },
+            {
+                "children": null,
+                "components": {
+                    "SpawnPointComponent": {
+                        "enemySpawn": true,
+                        "perkSpawn": false,
+                        "playerSpawn": true,
+                        "spawnerSpawn": false
+                    },
+                    "TransformComponent": {
+                        "ignoreParent": false,
+                        "position": [
+                            5.573992729187012,
+                            0.0,
+                            -1.2004996538162232
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "name": "SpawnPoint"
+            }
+        ],
+        "components": {
+            "RoomComponent": {
+                "doorsE": true,
+                "doorsN": true,
+                "doorsS": false,
+                "doorsW": true,
+                "gridPosition": [
+                    0,
+                    0
+                ],
+                "map": [
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ]
+                ],
+                "mapSize": 32,
+                "openE": false,
+                "openN": false,
+                "openS": false,
+                "openW": false
+            },
+            "TransformComponent": {
+                "ignoreParent": false,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        "name": "Room"
+    },
+    "name": "Room"
+}

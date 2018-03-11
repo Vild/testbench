@@ -13,7 +13,7 @@ layout(set = 1, binding=DIFFUSE_TINT) uniform DIFFUSE_TINT_NAME {
 };
 
 #ifdef DIFFUSE_SLOT
-layout(set = 5, binding=DIFFUSE_SLOT) uniform sampler2D myTex;
+layout(set = 6, binding=DIFFUSE_SLOT) uniform sampler2D myTex;
 #endif
 
 void main() {
