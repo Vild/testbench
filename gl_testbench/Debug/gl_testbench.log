@@ -1,15 +1,8 @@
-﻿  main.cpp
-d:\francholi\source\testbench2\testbench\gl_testbench\main.cpp(2): fatal error C1083: Cannot open include file: 'SDL_keyboard.h': No such file or directory
-  TransformGL.cpp
-d:\francholi\source\testbench2\testbench\gl_testbench\transformgl.h(3): fatal error C1083: Cannot open include file: 'glm/glm.hpp': No such file or directory
-  Renderer.cpp
-d:\francholi\source\testbench2\testbench\gl_testbench\openglrenderer.h(5): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
-  RenderStateGL.cpp
-d:\francholi\source\testbench2\testbench\gl_testbench\renderstategl.cpp(1): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
-  OpenGLRenderer.cpp
-d:\francholi\source\testbench2\testbench\gl_testbench\openglrenderer.h(5): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
-  MeshGL.cpp
-d:\francholi\source\testbench2\testbench\gl_testbench\meshgl.h(2): fatal error C1083: Cannot open include file: 'gl\glew.h': No such file or directory
-  MaterialGL.cpp
-d:\francholi\source\testbench2\testbench\gl_testbench\materialgl.h(3): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
-  Generating Code...
+﻿Build started 2018-03-05 10:51:20.
+     1>Project "C:\Users\Nils\testbench\gl_testbench\gl_testbench.vcxproj" on node 2 (Build target(s)).
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.Cpp.Platform.targets(57,5): error MSB8020: The build tools for v141 (Platform Toolset = 'v141') cannot be found. To build using the v141 build tools, please install v141 build tools.  Alternatively, you may upgrade to the current Visual Studio tools by selecting the Project menu or right-click the solution, and then selecting "Retarget solution".
+     1>Done Building Project "C:\Users\Nils\testbench\gl_testbench\gl_testbench.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:00.12

@@ -9,6 +9,10 @@
 #include "Mesh.h"
 #include "Texture2D.h"
 #include <math.h>
+#include <glm/glm.hpp>
+
+#include <fstream>
+#include <ctime>
 
 #if defined(_WIN32) || defined(_WIN64)
 #define snprintf _snprintf
@@ -47,8 +51,206 @@ void renderScene();
 char gTitleBuff[256];
 double gLastDelta = 0.0;
 
+ofstream file;
+
 Renderer::BACKEND rendererType = Renderer::BACKEND::VULKAN;
 const char* RENDERER_TYPES[4] = { "GL45", "Vulkan", "DX11", "DX12" };
+
+void loadModel(std::string filepath) {
+	std::vector<VertexBuffer> vertices;
+	std::vector<int> indices;
+
+	glm::vec3 vec3;
+	glm::vec2 vec2;
+
+	std::ifstream in(filepath, std::ios::binary);
+	//if(!in.good())
+		//gör skit
+
+	int nrOfMeshes = 0;
+	in.read(reinterpret_cast<char*>(&nrOfMeshes), sizeof(int));
+
+	for (int i = 0; i < nrOfMeshes; i++) {
+		std::string name = "";
+		int nrOfChars = 0;
+
+		in.read(reinterpret_cast<char*>(&nrOfChars), sizeof(int));
+		char* tempName = new char[nrOfChars];
+		in.read(tempName, nrOfChars);
+		name.append(tempName, nrOfChars);
+
+		delete[] tempName;
+
+		int nrOfControlpoints = 0;
+		in.read(reinterpret_cast<char*>(&nrOfControlpoints), sizeof(int));
+
+		std::vector<glm::vec3> position;
+		std::vector<glm::vec3> normal;
+		std::vector<glm::vec2> uv;
+		for (int k = 0; k < nrOfControlpoints; k++) {
+		
+			vec3 = glm::vec3(0);
+
+			in.read(reinterpret_cast<char*>(&vec3), sizeof(vec3));
+			position.push_back(vec3);
+			in.read(reinterpret_cast<char*>(&vec3), sizeof(vec3));
+			normal.push_back(vec3);
+			in.read(reinterpret_cast<char*>(&vec3), sizeof(vec3)); 
+
+			in.read(reinterpret_cast<char*>(&vec2), sizeof(vec2));
+			uv.push_back(vec2);
+		}
+		pos->setData(position.data(), sizeof(position.data()), 0);
+		nor->setData(normal.data(), sizeof(normal.data()), 0);
+		uvs->setData(uv.data(), sizeof(uv.data()), 0);
+
+
+		int nrOfPrimitives = 0;
+
+		in.read(reinterpret_cast<char*>(&nrOfPrimitives), sizeof(int));
+
+		for (int w = 0; w < nrOfPrimitives; w++) {
+			for (int q = 0; q < 3; q++) {
+				int indexData = 0;
+				in.read(reinterpret_cast<char*>(&indexData), sizeof(int));
+				indices.push_back(indexData);
+			}
+		}
+
+		int fileNameLength = 0;
+		glm::vec3 diffuse;
+		float specular = 0;
+
+		std::string fileName = "";
+		std::string glowName = "";
+		in.read(reinterpret_cast<char*>(&fileNameLength), sizeof(int));
+		char* tempFileName = new char[fileNameLength];
+		in.read(tempFileName, fileNameLength);
+
+		fileName.append(tempFileName, fileNameLength);
+		char lastChar = fileName.back();
+		if (lastChar == 'd') {
+			fileName.erase(fileName.size() - 2, fileName.size());
+			fileName.append("ng", fileNameLength - 2);
+		}
+		//if (name != "AlienBossModel") {
+		//	if (fileName != "NULL" && fileNameLength != 0)
+		//		_material.diffuse = IEngine::getInstance()->getState()->getTextureLoader()->getTexture("assets/textures/" + fileName);
+		//	else
+		//		_material.diffuse = IEngine::getInstance()->getState()->getTextureLoader()->getTexture("assets/textures/Floor_specular.png");
+		//}
+		//else
+		//	_material.diffuse = IEngine::getInstance()->getState()->getTextureLoader()->getTexture("assets/textures/AlienBossTexture.png");
+
+		delete[] tempFileName;
+
+		in.read(reinterpret_cast<char*>(&diffuse), sizeof(diffuse));
+		in.read(reinterpret_cast<char*>(&specular), sizeof(specular));
+
+		fileName = "";
+		in.read(reinterpret_cast<char*>(&fileNameLength), sizeof(int));
+		char *tempNormalFileName = new char[fileNameLength];
+		in.read(tempNormalFileName, fileNameLength);
+		fileName.append(tempNormalFileName, fileNameLength);
+		//if (fileName[0] == 'D' && fileName[1] == ':')
+		//	_material.normal = IEngine::getInstance()->getState()->getTextureLoader()->getTexture("assets/textures/normals/LowPolyArmNormalMap.png");
+		//else if (fileName != "NULL" && fileNameLength != 0)
+		//	_material.normal = IEngine::getInstance()->getState()->getTextureLoader()->getTexture("assets/textures/normals/" + fileName);
+		//else
+		//	_material.normal = IEngine::getInstance()->getState()->getTextureLoader()->getTexture("assets/textures/normals/1x1ErrorNormal.png");
+
+		delete[] tempNormalFileName;
+
+		fileName = "";
+		in.read(reinterpret_cast<char*>(&fileNameLength), sizeof(int));
+		char *tempGlowFileName;
+		tempGlowFileName = new char[fileNameLength];
+		in.read(tempGlowFileName, fileNameLength);
+		fileName.append(tempGlowFileName, fileNameLength);
+		//if (fileName != "NULL" && fileNameLength != 0)
+		//	_material.glow = IEngine::getInstance()->getState()->getTextureLoader()->getTexture("assets/textures/glow/" + fileName);
+		//else
+		//	_material.glow = IEngine::getInstance()->getState()->getTextureLoader()->getTexture("assets/textures/glow/errorGlow.png");
+		delete[] tempGlowFileName;
+
+		//for (size_t d = 0; d < vertices.size(); d++)
+		//	vertices[d].color = diffuse;
+
+		vec3 = glm::vec3(0);
+		//Read the position, rotation and scale values
+		in.read(reinterpret_cast<char*>(&vec3), sizeof(vec3));
+		//info->position = vec3;
+		in.read(reinterpret_cast<char*>(&vec3), sizeof(vec3));
+		//info->rotation = vec3;
+		in.read(reinterpret_cast<char*>(&vec3), sizeof(vec3));
+		//info->scale = vec3;
+
+		bool hasAnimation = false;
+		//Read if the mesh has animation, in this case we should
+		//do a different type of rendering in the vertex shader
+		in.read(reinterpret_cast<char*>(&hasAnimation), sizeof(bool));
+		//_indicesCount = indices.size();
+		//_makeBuffers();
+
+		if (hasAnimation) {
+
+			//_meshHasAnimation = true;
+			int nrOfAnimationFiles;
+			in.read(reinterpret_cast<char*>(&nrOfAnimationFiles), sizeof(int));
+			bool test = true;
+			std::string animationFilePath = "assets/objects/characters/";
+			std::string animationFileName;
+			int nrOfFileChars = 0;
+
+			//Read the weight info
+			in.read(reinterpret_cast<char*>(&nrOfFileChars), sizeof(int));
+			char *tempAnimationFileName;
+			tempAnimationFileName = new char[nrOfFileChars];
+			in.read(tempAnimationFileName, nrOfFileChars);
+			animationFileName.append(tempAnimationFileName, nrOfFileChars);
+			delete[] tempAnimationFileName;
+			animationFileName += ".wATTIC";
+			animationFilePath += animationFileName;
+
+			//_loadWeight(animationFilePath.c_str(), vertices);
+
+			//Read all the skeleton info. In other words, all different animations
+			for (int animationFile = 0; animationFile < nrOfAnimationFiles; animationFile++) {
+
+				in.read(reinterpret_cast<char*>(&nrOfFileChars), sizeof(int));
+				animationFilePath = "assets/objects/characters/";
+				animationFileName = "";
+				tempAnimationFileName = new char[nrOfFileChars];
+				in.read(tempAnimationFileName, nrOfFileChars);
+				animationFileName.append(tempAnimationFileName, nrOfFileChars);
+				animationFileName += ".sATTIC";
+				animationFilePath += animationFileName;
+
+				delete[] tempAnimationFileName;
+
+				//_loadSkeleton(animationFilePath.c_str(), vertices);
+
+
+			}
+			//_uploadData(vertices, indices, true, modelMatrixBuffer, 0, 0);
+
+		}
+		else {
+			//_meshHasAnimation = false;
+			//_uploadData(vertices, indices, false, modelMatrixBuffer, 0, 0);
+		}
+	}
+}
+
+std::string getDateTime() {
+	time_t now = time(0);
+	struct tm tstruct;
+	char buf[80];
+	tstruct = *localtime(&now);
+	strftime(buf, sizeof(buf), "%Y-%m-%d;%H.%M.%S", &tstruct);
+
+	return buf;
+}
 
 void updateDelta()
 {
@@ -68,6 +270,9 @@ void updateDelta()
 	avg[loop] = deltaTime;
 	loop = (loop + 1) % WINDOW_SIZE;
 	gLastDelta = (lastSum / WINDOW_SIZE);
+		
+	file << gLastDelta << "\n";
+	file.flush();
 };
 
 // TOTAL_TRIS pretty much decides how many drawcalls in a brute force approach.
@@ -124,7 +329,7 @@ void updateScene()
 			scene[i]->txBuffer->setData(&trans, sizeof(trans), scene[i]->technique->getMaterial(), TRANSLATION);
 		}
 		// just to make them move...
-		shift+=max(TOTAL_TRIS / 1000.0,TOTAL_TRIS / 100.0);
+		shift+=glm::max(TOTAL_TRIS / 1000.0,TOTAL_TRIS / 100.0);
 	}
 	return;
 };
@@ -276,6 +481,16 @@ int initialiseTestbench()
 
 		scene.push_back(m);
 	}
+
+	std::string filename;
+	if (rendererType == ::Renderer::BACKEND::GL45)
+		filename = "GL";
+	else if (rendererType == ::Renderer::BACKEND::VULKAN)
+		filename = "VK";
+
+	filename += getDateTime() + ".txt";
+	file.open(filename.c_str());
+
 	return 0;
 }
 
@@ -311,6 +526,7 @@ void shutdown() {
 		delete t;
 	}
 	renderer->shutdown();
+	file.close();
 };
 
 int main(int argc, char *argv[])

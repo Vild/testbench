@@ -1,1 +1,53 @@
-﻿
+﻿  ConstantBuffer.cpp
+  ConstantBufferGL.cpp
+c:\users\nils\testbench\gl_testbench\opengl\ConstantBufferGL.h(2): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  MaterialGL.cpp
+c:\users\nils\testbench\gl_testbench\opengl\MaterialGL.h(3): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  MeshGL.cpp
+c:\users\nils\testbench\gl_testbench\opengl\MeshGL.h(3): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  OpenGLRenderer.cpp
+c:\users\nils\testbench\gl_testbench\opengl\OpenGLRenderer.h(5): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
+  RenderStateGL.cpp
+OpenGL\RenderStateGL.cpp(1): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  ResourceBindingGL.cpp
+  Sampler2DGL.cpp
+OpenGL\Sampler2DGL.cpp(1): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  Texture2DGL.cpp
+c:\users\nils\testbench\gl_testbench\opengl\Texture2DGL.h(3): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  TransformGL.cpp
+  VertexBufferGL.cpp
+c:\users\nils\testbench\gl_testbench\opengl\VertexBufferGL.h(2): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  Sampler2D.cpp
+  Scene.cpp
+  VertexBuffer.cpp
+  Camera.cpp
+  main.cpp
+main.cpp(2): fatal error C1083: Cannot open include file: 'SDL_keyboard.h': No such file or directory
+  Material.cpp
+  Mesh.cpp
+  RenderState.cpp
+  Renderer.cpp
+c:\users\nils\testbench\gl_testbench\OpenGL/OpenGLRenderer.h(5): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
+  Compiling...
+  Technique.cpp
+  Texture2D.cpp
+  Transform.cpp
+  ConstantBufferVK.cpp
+c:\users\nils\testbench\gl_testbench\vulkan\ConstantBufferVK.h(4): fatal error C1083: Cannot open include file: 'vulkan/vulkan.hpp': No such file or directory
+  MaterialVK.cpp
+c:\users\nils\testbench\gl_testbench\vulkan\ConstantBufferVK.h(4): fatal error C1083: Cannot open include file: 'vulkan/vulkan.hpp': No such file or directory
+  MeshVK.cpp
+c:\users\nils\testbench\gl_testbench\vulkan\MeshVK.h(6): fatal error C1083: Cannot open include file: 'vulkan/vulkan.hpp': No such file or directory
+  RenderStateVK.cpp
+c:\users\nils\testbench\gl_testbench\vulkan\VulkanRenderer.h(15): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
+  Sampler2DVK.cpp
+c:\users\nils\testbench\gl_testbench\vulkan\Sampler2DVK.h(3): fatal error C1083: Cannot open include file: 'vulkan/vulkan.hpp': No such file or directory
+  TechniqueVK.cpp
+c:\users\nils\testbench\gl_testbench\vulkan\TechniqueVK.h(4): fatal error C1083: Cannot open include file: 'vulkan/vulkan.hpp': No such file or directory
+  Texture2DVK.cpp
+c:\users\nils\testbench\gl_testbench\vulkan\Sampler2DVK.h(3): fatal error C1083: Cannot open include file: 'vulkan/vulkan.hpp': No such file or directory
+  TransformVK.cpp
+  VertexBufferVK.cpp
+c:\users\nils\testbench\gl_testbench\vulkan\VertexBufferVK.h(4): fatal error C1083: Cannot open include file: 'vulkan/vulkan.hpp': No such file or directory
+  VulkanRenderer.cpp
+c:\users\nils\testbench\gl_testbench\vulkan\VulkanRenderer.h(15): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
