@@ -19,8 +19,6 @@
 #include <glm/gtx/string_cast.hpp>
 
 
-
-
 #include <fstream>
 #include <ctime>
 
@@ -53,9 +51,6 @@ vector<Technique*> techniques;
 vector<Texture2D*> textures;
 vector<Sampler2D*> samplers;
 
-VertexBuffer* pos;
-VertexBuffer* nor;
-VertexBuffer* uvs;
 ConstantBuffer* cameraMatrices;
 
 // forward decls
@@ -74,16 +69,20 @@ constexpr int ROOM_UNIT_SIZE = 32;
 constexpr int ROOM_COUNT = 64;
 constexpr int MAP_PIXEL_SIZE = ROOM_UNIT_SIZE * ROOM_COUNT;
 
-void loadModel(std::string filepath) {
+Mesh* loadModel(std::string filepath, Technique* technique) {
 	std::vector<VertexBuffer> vertices;
 	std::vector<int> indices;
 
 	glm::vec3 vec3;
 	glm::vec2 vec2;
+	Mesh* m;
 
 	std::ifstream in(filepath, std::ios::binary);
-	//if(!in.good())
-		//gör skit
+	if(!in.good()) {
+		fprintf(stderr, "Failed to load file: %s\n", filepath.c_str());
+		exit(-1);
+	}
+
 
 	int nrOfMeshes = 0;
 	in.read(reinterpret_cast<char*>(&nrOfMeshes), sizeof(int));
@@ -106,22 +105,32 @@ void loadModel(std::string filepath) {
 		std::vector<glm::vec3> normal;
 		std::vector<glm::vec2> uv;
 		for (int k = 0; k < nrOfControlpoints; k++) {
-		
 			vec3 = glm::vec3(0);
 
 			in.read(reinterpret_cast<char*>(&vec3), sizeof(vec3));
 			position.push_back(vec3);
 			in.read(reinterpret_cast<char*>(&vec3), sizeof(vec3));
 			normal.push_back(vec3);
-			in.read(reinterpret_cast<char*>(&vec3), sizeof(vec3)); 
+			in.read(reinterpret_cast<char*>(&vec3), sizeof(vec3));
 
 			in.read(reinterpret_cast<char*>(&vec2), sizeof(vec2));
 			uv.push_back(vec2);
 		}
-		pos->setData(position.data(), sizeof(position.data()), 0);
-		nor->setData(normal.data(), sizeof(normal.data()), 0);
-		uvs->setData(uv.data(), sizeof(uv.data()), 0);
 
+		m = renderer->makeMesh();
+		VertexBuffer* pos = renderer->makeVertexBuffer(position.size() * sizeof(glm::vec3), VertexBuffer::DATA_USAGE::STATIC);
+		VertexBuffer* nor = renderer->makeVertexBuffer(normal.size() * sizeof(glm::vec3), VertexBuffer::DATA_USAGE::STATIC);
+		VertexBuffer* uvs = renderer->makeVertexBuffer(uv.size() * sizeof(glm::vec2), VertexBuffer::DATA_USAGE::STATIC);
+		pos->setData(position.data(), position.size()*sizeof(glm::vec3), 0);
+		m->addIAVertexBufferBinding(pos, 0, position.size(), sizeof(glm::vec3), POSITION);
+		nor->setData(normal.data(), normal.size()*sizeof(glm::vec3), 0);
+		m->addIAVertexBufferBinding(nor, 0, normal.size(), sizeof(glm::vec3), NORMAL);
+		uvs->setData(uv.data(), uv.size()*sizeof(glm::vec2), 0);
+		m->addIAVertexBufferBinding(uvs, 0, uv.size(), sizeof(glm::vec2), TEXTCOORD);
+
+		m->txBuffer = renderer->makeConstantBuffer(std::string(TRANSLATION_NAME), TRANSLATION);
+		m->cameraVPBuffer = cameraMatrices;
+		m->technique = technique;
 
 		int nrOfPrimitives = 0;
 
@@ -215,7 +224,7 @@ void loadModel(std::string filepath) {
 			//_meshHasAnimation = true;
 			int nrOfAnimationFiles;
 			in.read(reinterpret_cast<char*>(&nrOfAnimationFiles), sizeof(int));
-			bool test = true;
+			//bool test = true;
 			std::string animationFilePath = "assets/objects/characters/";
 			std::string animationFileName;
 			int nrOfFileChars = 0;
@@ -247,8 +256,6 @@ void loadModel(std::string filepath) {
 				delete[] tempAnimationFileName;
 
 				//_loadSkeleton(animationFilePath.c_str(), vertices);
-
-
 			}
 			//_uploadData(vertices, indices, true, modelMatrixBuffer, 0, 0);
 
@@ -258,6 +265,7 @@ void loadModel(std::string filepath) {
 			//_uploadData(vertices, indices, false, modelMatrixBuffer, 0, 0);
 		}
 	}
+	return m;
 }
 
 std::string getDateTime() {
@@ -286,7 +294,7 @@ struct Map {
 	Room rooms[ROOM_COUNT][ROOM_COUNT];
 };
 
-Map findModels() {
+Map loadMap(Technique* technique) {
 	Map map;
 	FILE* fp = fopen(ASSETS_FOLDER "/map.cmf", "rb");
 	for (int y = 0; y < ROOM_COUNT; y++)
@@ -299,6 +307,8 @@ Map findModels() {
 				fread(r.models.data(), sizeof(Model), modelsLength, fp);
 				for (const Model& m : r.models) {
 					printf("%s\n", m.meshFile);
+					Mesh* mm = loadModel(m.meshFile, technique);
+					scene.push_back(mm);
 				}
 			}
 			{
@@ -435,14 +445,10 @@ int initialiseTestbench()
 {
 	std::string definePos = "#define POSITION " + std::to_string(POSITION) + "\n";
 	std::string defineNor = "#define NORMAL " + std::to_string(NORMAL) + "\n";
-	std::string defineUV = "#define TEXTCOORD " + std::to_string(TEXTCOORD) + "\n";
 
 	std::string defineTX = "#define TRANSLATION " + std::to_string(TRANSLATION) + "\n";
 	std::string defineTXName = "#define TRANSLATION_NAME " + std::string(TRANSLATION_NAME) + "\n";
 	
-	std::string defineDiffCol = "#define DIFFUSE_TINT " + std::to_string(DIFFUSE_TINT) + "\n";
-	std::string defineDiffColName = "#define DIFFUSE_TINT_NAME " + std::string(DIFFUSE_TINT_NAME) + "\n";
-
 	std::string defineViewProj = "#define CAMERA_VIEW_PROJECTION " + std::to_string(CAMERA_VIEW_PROJECTION) + "\n";
 	std::string defineViewProjName = "#define CAMERA_VIEW_PROJECTION_NAME " + std::string(CAMERA_VIEW_PROJECTION_NAME) + "\n";
 
@@ -450,45 +456,14 @@ int initialiseTestbench()
 	std::string defineDiffuse = "#define DIFFUSE_SLOT " + std::to_string(DIFFUSE_SLOT) + "\n";
 
 	std::vector<std::vector<std::string>> materialDefs = {
-		// vertex shader, fragment shader, defines
-		// shader filename extension must be asked to the renderer
-		// these strings should be constructed from the IA.h file!!!
-
-		{ "VertexShader", "FragmentShader", definePos + defineNor + defineUV + defineTX + 
-		   defineTXName + defineDiffCol + defineDiffColName + defineViewProj + defineViewProjName},
-
-		{ "VertexShader", "FragmentShader", definePos + defineNor + defineUV + defineTX + 
-		   defineTXName + defineDiffCol + defineDiffColName + defineViewProj + defineViewProjName},
-
-		{ "VertexShader", "FragmentShader", definePos + defineNor + defineUV + defineTX + 
-		   defineTXName + defineDiffCol + defineDiffColName + defineDiffuse	+ defineViewProj + defineViewProjName},
-
-		{ "VertexShader", "FragmentShader", definePos + defineNor + defineUV + defineTX + 
-		   defineTXName + defineDiffCol + defineDiffColName + defineViewProj + defineViewProjName },
+		{ "VertexShader", "FragmentShader", definePos + defineNor + defineTX + 
+		   defineTXName + defineViewProj + defineViewProjName},
 	};
-
-	float degToRad = M_PI / 180.0;
-	float scale = (float)TOTAL_PLACES / 359.9;
-	for (int a = 0; a < TOTAL_PLACES; a++)
-	{
-		xt[a] = 0.8f * cosf(degToRad * ((float)a/scale) * 3.0);
-		yt[a] = 0.8f * sinf(degToRad * ((float)a/scale) * 2.0);
-	};
-
-	// triangle geometry:
-	float4 triPos[3] = { { 0.0f,  0.05, 0.0f, 1.0f },{ 0.05, -0.05, 0.0f, 1.0f },{ -0.05, -0.05, 0.0f, 1.0f } };
-	float4 triNor[3] = { { 0.0f,  0.0f, 1.0f, 0.0f },{ 0.0f, 0.0f, 1.0f, 0.0f },{ 0.0f, 0.0f, 1.0f, 0.0f } };
-	float2 triUV[3] =  { { 0.5f,  -0.99f },{ 1.49f, 1.1f },{ -0.51, 1.1f } };
 
 	// load Materials.
 	std::string shaderPath = renderer->getShaderPath();
 	std::string shaderExtension = renderer->getShaderExtension();
-	float diffuse[4][4] = {
-		0.0,0.0,1.0,1.0,
-		0.0,1.0,0.0,1.0,
-		1.0,1.0,1.0,1.0,
-		1.0,0.0,0.0,1.0
-	};
+
 
 	for (size_t i = 0; i < materialDefs.size(); i++)
 	{
@@ -503,70 +478,18 @@ int initialiseTestbench()
 		std::string err;
 		m->compileMaterial(err);
 
-		// add a constant buffer to the material, to tint every triangle using this material
-		m->addConstantBuffer(DIFFUSE_TINT_NAME, DIFFUSE_TINT);
-		// no need to update anymore
-		// when material is bound, this buffer should be also bound for access.
-
-		m->updateConstantBuffer(diffuse[i], 4 * sizeof(float), DIFFUSE_TINT);
-
 		materials.push_back(m);
 	}
 
 	// one technique with wireframe
 	RenderState* renderState1 = renderer->makeRenderState();
-	renderState1->setWireFrame(true);
 
 	// basic technique
 	techniques.push_back(renderer->makeTechnique(materials[0], renderState1));
-	techniques.push_back(renderer->makeTechnique(materials[1], renderer->makeRenderState()));
-	techniques.push_back(renderer->makeTechnique(materials[2], renderer->makeRenderState()));
-	techniques.push_back(renderer->makeTechnique(materials[3], renderer->makeRenderState()));
 
-	// create texture
-	Texture2D* fatboy = renderer->makeTexture2D();
-	fatboy->loadFromFile(ASSETS_FOLDER "/textures/fatboy.png");
-	Sampler2D* sampler = renderer->makeSampler2D();
-	sampler->setWrap(WRAPPING::REPEAT, WRAPPING::REPEAT);
-	fatboy->sampler = sampler;
-
-	textures.push_back(fatboy);
-	samplers.push_back(sampler);
-
-	// pre-allocate one single vertex buffer for ALL triangles
-	pos = renderer->makeVertexBuffer(TOTAL_TRIS * sizeof(triPos), VertexBuffer::DATA_USAGE::STATIC);
-	nor = renderer->makeVertexBuffer(TOTAL_TRIS * sizeof(triNor), VertexBuffer::DATA_USAGE::STATIC);
-	uvs = renderer->makeVertexBuffer(TOTAL_TRIS * sizeof(triUV), VertexBuffer::DATA_USAGE::STATIC);
 	cameraMatrices = renderer->makeConstantBuffer(std::string(CAMERA_VIEW_PROJECTION_NAME), CAMERA_VIEW_PROJECTION);
-	// Create a mesh array with 3 basic vertex buffers.
-	for (int i = 0; i < TOTAL_TRIS; i++) {
 
-		Mesh* m = renderer->makeMesh();
-
-		constexpr auto numberOfPosElements = std::extent<decltype(triPos)>::value;
-		size_t offset = i * sizeof(triPos);
-		pos->setData(triPos, sizeof(triPos), offset);
-		m->addIAVertexBufferBinding(pos, offset, numberOfPosElements, sizeof(float4), POSITION);
-
-		constexpr auto numberOfNorElements = std::extent<decltype(triNor)>::value;
-		offset = i * sizeof(triNor);
-		nor->setData(triNor, sizeof(triNor), offset);
-		m->addIAVertexBufferBinding(nor, offset, numberOfNorElements, sizeof(float4), NORMAL);
-
-		constexpr auto numberOfUVElements = std::extent<decltype(triUV)>::value;
-		offset = i * sizeof(triUV);
-		uvs->setData(triUV, sizeof(triUV), offset);
-		m->addIAVertexBufferBinding(uvs, offset, numberOfUVElements , sizeof(float2), TEXTCOORD);
-
-		// we can create a constant buffer outside the material, for example as part of the Mesh.
-		m->txBuffer = renderer->makeConstantBuffer(std::string(TRANSLATION_NAME), TRANSLATION);
-		m->cameraVPBuffer = cameraMatrices;
-		m->technique = techniques[ i % 4];
-		if (i % 4 == 2)
-			m->addTexture(textures[0], DIFFUSE_SLOT);
-
-		scene.push_back(m);
-	}
+	loadMap(techniques[0]);
 
 	std::string filename;
 	if (rendererType == ::Renderer::BACKEND::GL45)
@@ -581,6 +504,10 @@ int initialiseTestbench()
 }
 
 void shutdown() {
+	//NOTE: We probably leak memory, but that doesn't matter as we are shutting
+	//      down the testbench.
+
+	
 	// shutdown.
 	// delete dynamic objects
 	for (auto m : materials)
@@ -595,13 +522,16 @@ void shutdown() {
 	{
 		delete(m);
 	};
-	assert(pos->refCount() == 0);
+
+	//delete cameraVPBuffer;
+	//delete transform;
+	/*assert(pos->refCount() == 0);
 	delete pos;
 	assert(nor->refCount() == 0);
 	delete nor;
 	assert(uvs->refCount() == 0);
-	delete uvs;
-	
+	delete uvs;*/
+
 	for (auto s : samplers)
 	{
 		delete s;
@@ -622,8 +552,6 @@ int main(int argc, char *argv[])
 			rendererType = Renderer::BACKEND::GL45;
 		else if (!strcasecmp(argv[i], "vulkan"))
 			rendererType = Renderer::BACKEND::VULKAN;
-
-	findModels();
 
 	renderer = Renderer::makeRenderer(rendererType);
 	if (renderer->initialize(800, 600))

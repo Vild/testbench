@@ -927,13 +927,13 @@ bool VulkanRenderer::_createVulkanPipeline() {
 
 bool VulkanRenderer::_createDescriptorPool() {
 	// Creates two pool sizes, one for the uniform buffers and one for the SSBOs.
-	constexpr int MAX_AMOUNT = 1000; // TODO: Get better multiplier, idk how to do this. Let's hope no-one breaks it!!!!
+	constexpr int MAX_AMOUNT = 20000; // TODO: Get better multiplier, idk how to do this. Let's hope no-one breaks it!!!!
 
 	vk::DescriptorPoolSize poolSize[3];
 	poolSize[0].type = vk::DescriptorType::eUniformBuffer;
-	poolSize[0].descriptorCount = 3 * MAX_AMOUNT; // Three uniform buffer descriptor sets.
+	poolSize[0].descriptorCount = 2 * MAX_AMOUNT; // Three uniform buffer descriptor sets.
 	poolSize[1].type = vk::DescriptorType::eStorageBuffer;
-	poolSize[1].descriptorCount = 3 * MAX_AMOUNT; // Three storage buffer descriptor sets.
+	poolSize[1].descriptorCount = 2 * MAX_AMOUNT; // Three storage buffer descriptor sets.
 	poolSize[2].type = vk::DescriptorType::eCombinedImageSampler;
 	poolSize[2].descriptorCount = 1 * MAX_AMOUNT;
 

@@ -26,7 +26,7 @@ void TechniqueVK::enable(MeshVK* mesh) {
 
 		bpi.pipelineInfo.stageCount = (uint32_t) static_cast<MaterialVK*>(material)->_program.size();
 		bpi.pipelineInfo.pStages = static_cast<MaterialVK*>(material)->_program.data();
-		bpi.rasterizer.polygonMode = static_cast<RenderStateVK*>(renderState)->get() ? vk::PolygonMode::eLine : vk::PolygonMode::eFill;
+		bpi.rasterizer.polygonMode = vk::PolygonMode::eFill;
 		bpi.pipelineInfo.layout = _pipelineLayout;
 
 		_graphicsPipeline = _device.createGraphicsPipeline(vk::PipelineCache(), bpi.pipelineInfo);
