@@ -17,7 +17,7 @@
 #include <math.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
-
+#include <glm/gtc/type_ptr.hpp>
 
 #include <fstream>
 #include <ctime>
@@ -37,7 +37,6 @@
 #define ASSETS_FOLDER "assets"
 #endif
 
-using namespace std;
 Renderer* renderer;
 Camera camera;
 
@@ -45,11 +44,12 @@ Camera camera;
 // do what ever you want in your renderer backend.
 // all these objects are loosely coupled, creation and destruction is responsibility
 // of the testbench, not of the container objects
-vector<Mesh*> scene;
-vector<Material*> materials;
-vector<Technique*> techniques;
-vector<Texture2D*> textures;
-vector<Sampler2D*> samplers;
+
+//vector<Mesh*> scene;
+std::vector<Material*> materials;
+std::vector<Technique*> techniques;
+std::vector<Texture2D*> textures;
+std::vector<Sampler2D*> samplers;
 
 ConstantBuffer* cameraMatrices;
 
@@ -60,22 +60,17 @@ void renderScene();
 char gTitleBuff[256];
 double gLastDelta = 0.0;
 
-ofstream file;
+std::ofstream file;
 
 Renderer::BACKEND rendererType = Renderer::BACKEND::VULKAN;
 const char* RENDERER_TYPES[4] = { "GL45", "Vulkan", "DX11", "DX12" };
 
-constexpr int ROOM_UNIT_SIZE = 32;
-constexpr int ROOM_COUNT = 64;
-constexpr int MAP_PIXEL_SIZE = ROOM_UNIT_SIZE * ROOM_COUNT;
-
-Mesh* loadModel(std::string filepath, Technique* technique) {
-	std::vector<VertexBuffer> vertices;
+Mesh* loadModel(std::string filepath, Technique* technique, const std::vector<glm::mat4>& modelMatrices) {
+	std::vector<glm::vec4> position;
 	std::vector<int> indices;
 
 	glm::vec3 vec3;
 	glm::vec2 vec2;
-	Mesh* m;
 
 	std::ifstream in(filepath, std::ios::binary);
 	if(!in.good()) {
@@ -86,51 +81,32 @@ Mesh* loadModel(std::string filepath, Technique* technique) {
 
 	int nrOfMeshes = 0;
 	in.read(reinterpret_cast<char*>(&nrOfMeshes), sizeof(int));
+	if (nrOfMeshes != 1) {
+		fprintf(stderr, "nrOfMeshes != 1\n");
+		exit(-1);
+	}
 
-	for (int i = 0; i < nrOfMeshes; i++) {
-		std::string name = "";
+	{
+		//std::string name = "";
 		int nrOfChars = 0;
 
 		in.read(reinterpret_cast<char*>(&nrOfChars), sizeof(int));
 		char* tempName = new char[nrOfChars];
 		in.read(tempName, nrOfChars);
-		name.append(tempName, nrOfChars);
+		//name.append(tempName, nrOfChars);
 
 		delete[] tempName;
 
 		int nrOfControlpoints = 0;
 		in.read(reinterpret_cast<char*>(&nrOfControlpoints), sizeof(int));
 
-		std::vector<glm::vec3> position;
-		std::vector<glm::vec3> normal;
-		std::vector<glm::vec2> uv;
 		for (int k = 0; k < nrOfControlpoints; k++) {
-			vec3 = glm::vec3(0);
-
 			in.read(reinterpret_cast<char*>(&vec3), sizeof(vec3));
-			position.push_back(vec3);
+			position.push_back(glm::vec4{vec3, 0});
 			in.read(reinterpret_cast<char*>(&vec3), sizeof(vec3));
-			normal.push_back(vec3);
 			in.read(reinterpret_cast<char*>(&vec3), sizeof(vec3));
-
 			in.read(reinterpret_cast<char*>(&vec2), sizeof(vec2));
-			uv.push_back(vec2);
 		}
-
-		m = renderer->makeMesh();
-		VertexBuffer* pos = renderer->makeVertexBuffer(position.size() * sizeof(glm::vec3), VertexBuffer::DATA_USAGE::STATIC);
-		VertexBuffer* nor = renderer->makeVertexBuffer(normal.size() * sizeof(glm::vec3), VertexBuffer::DATA_USAGE::STATIC);
-		VertexBuffer* uvs = renderer->makeVertexBuffer(uv.size() * sizeof(glm::vec2), VertexBuffer::DATA_USAGE::STATIC);
-		pos->setData(position.data(), position.size()*sizeof(glm::vec3), 0);
-		m->addIAVertexBufferBinding(pos, 0, position.size(), sizeof(glm::vec3), POSITION);
-		nor->setData(normal.data(), normal.size()*sizeof(glm::vec3), 0);
-		m->addIAVertexBufferBinding(nor, 0, normal.size(), sizeof(glm::vec3), NORMAL);
-		uvs->setData(uv.data(), uv.size()*sizeof(glm::vec2), 0);
-		m->addIAVertexBufferBinding(uvs, 0, uv.size(), sizeof(glm::vec2), TEXTCOORD);
-
-		m->txBuffer = renderer->makeConstantBuffer(std::string(TRANSLATION_NAME), TRANSLATION);
-		m->cameraVPBuffer = cameraMatrices;
-		m->technique = technique;
 
 		int nrOfPrimitives = 0;
 
@@ -143,128 +119,24 @@ Mesh* loadModel(std::string filepath, Technique* technique) {
 				indices.push_back(indexData);
 			}
 		}
-
-		int fileNameLength = 0;
-		glm::vec3 diffuse;
-		float specular = 0;
-
-		std::string fileName = "";
-		std::string glowName = "";
-		in.read(reinterpret_cast<char*>(&fileNameLength), sizeof(int));
-		char* tempFileName = new char[fileNameLength];
-		in.read(tempFileName, fileNameLength);
-
-		fileName.append(tempFileName, fileNameLength);
-		char lastChar = fileName.back();
-		if (lastChar == 'd') {
-			fileName.erase(fileName.size() - 2, fileName.size());
-			fileName.append("ng", fileNameLength - 2);
-		}
-		//if (name != "AlienBossModel") {
-		//	if (fileName != "NULL" && fileNameLength != 0)
-		//		_material.diffuse = IEngine::getInstance()->getState()->getTextureLoader()->getTexture("assets/textures/" + fileName);
-		//	else
-		//		_material.diffuse = IEngine::getInstance()->getState()->getTextureLoader()->getTexture("assets/textures/Floor_specular.png");
-		//}
-		//else
-		//	_material.diffuse = IEngine::getInstance()->getState()->getTextureLoader()->getTexture("assets/textures/AlienBossTexture.png");
-
-		delete[] tempFileName;
-
-		in.read(reinterpret_cast<char*>(&diffuse), sizeof(diffuse));
-		in.read(reinterpret_cast<char*>(&specular), sizeof(specular));
-
-		fileName = "";
-		in.read(reinterpret_cast<char*>(&fileNameLength), sizeof(int));
-		char *tempNormalFileName = new char[fileNameLength];
-		in.read(tempNormalFileName, fileNameLength);
-		fileName.append(tempNormalFileName, fileNameLength);
-		//if (fileName[0] == 'D' && fileName[1] == ':')
-		//	_material.normal = IEngine::getInstance()->getState()->getTextureLoader()->getTexture("assets/textures/normals/LowPolyArmNormalMap.png");
-		//else if (fileName != "NULL" && fileNameLength != 0)
-		//	_material.normal = IEngine::getInstance()->getState()->getTextureLoader()->getTexture("assets/textures/normals/" + fileName);
-		//else
-		//	_material.normal = IEngine::getInstance()->getState()->getTextureLoader()->getTexture("assets/textures/normals/1x1ErrorNormal.png");
-
-		delete[] tempNormalFileName;
-
-		fileName = "";
-		in.read(reinterpret_cast<char*>(&fileNameLength), sizeof(int));
-		char *tempGlowFileName;
-		tempGlowFileName = new char[fileNameLength];
-		in.read(tempGlowFileName, fileNameLength);
-		fileName.append(tempGlowFileName, fileNameLength);
-		//if (fileName != "NULL" && fileNameLength != 0)
-		//	_material.glow = IEngine::getInstance()->getState()->getTextureLoader()->getTexture("assets/textures/glow/" + fileName);
-		//else
-		//	_material.glow = IEngine::getInstance()->getState()->getTextureLoader()->getTexture("assets/textures/glow/errorGlow.png");
-		delete[] tempGlowFileName;
-
-		//for (size_t d = 0; d < vertices.size(); d++)
-		//	vertices[d].color = diffuse;
-
-		vec3 = glm::vec3(0);
-		//Read the position, rotation and scale values
-		in.read(reinterpret_cast<char*>(&vec3), sizeof(vec3));
-		//info->position = vec3;
-		in.read(reinterpret_cast<char*>(&vec3), sizeof(vec3));
-		//info->rotation = vec3;
-		in.read(reinterpret_cast<char*>(&vec3), sizeof(vec3));
-		//info->scale = vec3;
-
-		bool hasAnimation = false;
-		//Read if the mesh has animation, in this case we should
-		//do a different type of rendering in the vertex shader
-		in.read(reinterpret_cast<char*>(&hasAnimation), sizeof(bool));
-		//_indicesCount = indices.size();
-		//_makeBuffers();
-
-		if (hasAnimation) {
-
-			//_meshHasAnimation = true;
-			int nrOfAnimationFiles;
-			in.read(reinterpret_cast<char*>(&nrOfAnimationFiles), sizeof(int));
-			//bool test = true;
-			std::string animationFilePath = "assets/objects/characters/";
-			std::string animationFileName;
-			int nrOfFileChars = 0;
-
-			//Read the weight info
-			in.read(reinterpret_cast<char*>(&nrOfFileChars), sizeof(int));
-			char *tempAnimationFileName;
-			tempAnimationFileName = new char[nrOfFileChars];
-			in.read(tempAnimationFileName, nrOfFileChars);
-			animationFileName.append(tempAnimationFileName, nrOfFileChars);
-			delete[] tempAnimationFileName;
-			animationFileName += ".wATTIC";
-			animationFilePath += animationFileName;
-
-			//_loadWeight(animationFilePath.c_str(), vertices);
-
-			//Read all the skeleton info. In other words, all different animations
-			for (int animationFile = 0; animationFile < nrOfAnimationFiles; animationFile++) {
-
-				in.read(reinterpret_cast<char*>(&nrOfFileChars), sizeof(int));
-				animationFilePath = "assets/objects/characters/";
-				animationFileName = "";
-				tempAnimationFileName = new char[nrOfFileChars];
-				in.read(tempAnimationFileName, nrOfFileChars);
-				animationFileName.append(tempAnimationFileName, nrOfFileChars);
-				animationFileName += ".sATTIC";
-				animationFilePath += animationFileName;
-
-				delete[] tempAnimationFileName;
-
-				//_loadSkeleton(animationFilePath.c_str(), vertices);
-			}
-			//_uploadData(vertices, indices, true, modelMatrixBuffer, 0, 0);
-
-		}
-		else {
-			//_meshHasAnimation = false;
-			//_uploadData(vertices, indices, false, modelMatrixBuffer, 0, 0);
-		}
 	}
+	Mesh* m = renderer->makeMesh();
+	VertexBuffer* pos = renderer->makeVertexBuffer(position.size() * sizeof(glm::vec4), VertexBuffer::DATA_USAGE::STATIC);
+	pos->setData(position.data(), position.size() * sizeof(glm::vec4), 0);
+	m->addIAVertexBufferBinding(pos, 0, position.size(), sizeof(glm::vec4), POSITION);
+
+	VertexBuffer* idx = renderer->makeVertexBuffer(indices.size() * sizeof(int), VertexBuffer::DATA_USAGE::STATIC);
+	idx->setData(indices.data(), indices.size() * sizeof(int), 0);
+	m->addIAVertexBufferBinding(idx, 0, indices.size(), sizeof(int), INDEX);
+
+	VertexBuffer* model = renderer->makeVertexBuffer(modelMatrices.size() * sizeof(glm::mat4), VertexBuffer::DATA_USAGE::STATIC);
+	model->setData(modelMatrices.data(), modelMatrices.size() * sizeof(glm::mat4), 0);
+	m->addIAVertexBufferBinding(model, 0, modelMatrices.size(), sizeof(glm::mat4), MODEL);
+
+	m->txBuffer = nullptr;
+	m->cameraVPBuffer = cameraMatrices;
+	m->technique = technique;
+
 	return m;
 }
 
@@ -278,38 +150,33 @@ std::string getDateTime() {
 	return buf;
 }
 
-struct Model {
+struct FileModel {
 	glm::mat4 t;
 	char meshFile[64];
 };
 
-struct Room {
-	std::vector<Model> models;
+// :( this one should be moved up
+EngineMap map;
 
-	// NOTE: Can see will also include the position for the room this list is in
-	std::vector<glm::ivec2> canSee;
-};
-
-struct Map {
-	Room rooms[ROOM_COUNT][ROOM_COUNT];
-};
-
-Map loadMap(Technique* technique) {
-	Map map;
+void loadMap(Technique* technique) {
 	FILE* fp = fopen(ASSETS_FOLDER "/map.cmf", "rb");
+	int modelID = 0;
 	for (int y = 0; y < ROOM_COUNT; y++)
 		for (int x = 0; x < ROOM_COUNT; x++) {
-			Room& r = map.rooms[y][x];
+			EngineRoom& r = map.rooms[y][x];
 			{
+				static std::vector<FileModel> models;
 				uint32_t modelsLength;
 				fread(&modelsLength, sizeof(uint32_t), 1, fp);
-				r.models.resize(modelsLength);
-				fread(r.models.data(), sizeof(Model), modelsLength, fp);
-				for (const Model& m : r.models) {
-					printf("%s\n", m.meshFile);
-					Mesh* mm = loadModel(m.meshFile, technique);
-					scene.push_back(mm);
+				models.resize(modelsLength);
+				fread(models.data(), sizeof(FileModel), modelsLength, fp);
+				for (const FileModel& m : models) {
+					CachedMesh& cm = map.meshes[std::string{m.meshFile}];
+
+					cm.modelMatrices.push_back(m.t);
+					r.meshes[std::string{m.meshFile}].push_back(cm.modelMatrices.size() - 1);
 				}
+				models.clear();
 			}
 			{
 				uint32_t canSeeLength;
@@ -319,7 +186,12 @@ Map loadMap(Technique* technique) {
 			}
 		}
 	fclose(fp);
-	return std::move(map);
+
+	for (auto& cm : map.meshes) {
+		printf("Name: %s, Used: %zu\n", cm.first.c_str(), cm.second.modelMatrices.size());
+		cm.second.mesh = loadModel(cm.first, technique, cm.second.modelMatrices);
+		cm.second.mesh->finalize();
+	}
 }
 
 void updateDelta()
@@ -345,12 +217,6 @@ void updateDelta()
 	file.flush();
 };
 
-// TOTAL_TRIS pretty much decides how many drawcalls in a brute force approach.
-constexpr int TOTAL_TRIS = 100.0f;
-// this has to do with how the triangles are spread in the screen, not important.
-constexpr int TOTAL_PLACES = 2 * TOTAL_TRIS;
-float xt[TOTAL_PLACES], yt[TOTAL_PLACES];
-
 // lissajous points
 typedef union { 
 	struct { float x, y, z, w; };
@@ -367,26 +233,27 @@ void run() {
 	SDL_Event windowEvent;
 	while (true)
 	{
-		if (SDL_PollEvent(&windowEvent))
+		while (SDL_PollEvent(&windowEvent))
 		{
-			if (windowEvent.type == SDL_QUIT) break;
-			if (windowEvent.type == SDL_KEYUP && windowEvent.key.keysym.sym == SDLK_ESCAPE) break;
-			switch (windowEvent.key.keysym.sym) {
-			case SDLK_w:
-				camera.updatePosition(glm::vec3(0, 0, 1));
-				break;
-			case SDLK_a:
-				camera.updatePosition(glm::vec3(-1, 0, 0));
-				break;
-			case SDLK_s:
-				camera.updatePosition(glm::vec3(0, 0, -1));
-				break;
-			case SDLK_d:
-				camera.updatePosition(glm::vec3(1, 0, 1));
-				break;
-			default:
-				break;
-			}
+			if (windowEvent.type == SDL_QUIT) return;
+			if (windowEvent.type == SDL_KEYUP && windowEvent.key.keysym.sym == SDLK_ESCAPE) return;
+			if (windowEvent.type == SDL_KEYDOWN)
+				switch (windowEvent.key.keysym.sym) {
+				case SDLK_w:
+					camera.updatePosition(glm::vec3(0, 0, 1));
+					break;
+				case SDLK_d:
+					camera.updatePosition(glm::vec3(-1, 0, 0));
+					break;
+				case SDLK_s:
+					camera.updatePosition(glm::vec3(0, 0, -1));
+					break;
+				case SDLK_a:
+					camera.updatePosition(glm::vec3(1, 0, 0));
+					break;
+				default:
+					break;
+				}
 		}
 		updateScene();
 		renderScene();
@@ -394,46 +261,30 @@ void run() {
 }
 
 /*
- update positions of triangles in the screen changing a translation only
+	update positions of triangles in the screen changing a translation only
 */
 void updateScene()
 {
-	/*
-	    For each mesh in scene list, update their position 
-	*/
-	{
-		static long long shift = 0;
-		const int size = scene.size();
-		for (int i = 0; i < size; i++)
-		{
-			const float4 trans { 
-				xt[(int)(float)(i + shift) % (TOTAL_PLACES)], 
-				yt[(int)(float)(i + shift) % (TOTAL_PLACES)], 
-				i * (-1.0f / TOTAL_PLACES),
-				0.0
-			};
-			scene[i]->txBuffer->setData(&trans, sizeof(trans), scene[i]->technique->getMaterial(), TRANSLATION);
-		}
-		// just to make them move...
-		shift+=glm::max(TOTAL_TRIS / 1000.0,TOTAL_TRIS / 100.0);
-	}
-
 	{ // Camera update stuffs
 		auto matrices = camera.getMatrices();
 		cameraMatrices->setData(&matrices, sizeof(matrices), nullptr, CAMERA_VIEW_PROJECTION);
 	}
 
-	return;
-};
+}
 
 
 void renderScene()
 {
 	renderer->clearBuffer(CLEAR_BUFFER_FLAGS::COLOR | CLEAR_BUFFER_FLAGS::DEPTH);
-	for (auto m : scene)
-	{
-		renderer->submit(m);
-	}
+	renderer->submitPosition((int)camera._position.x / ROOM_UNIT_SIZE, (int)camera._position.z / ROOM_UNIT_SIZE);
+	renderer->submit();
+	/*for (int y = 0; y < ROOM_COUNT; y++)
+			for (int x = 0; x < ROOM_COUNT; x++)
+				for (auto m : map.rooms[y][x].meshes)
+					{
+							for (int id : m.second)
+								renderer->submit(map.meshes[m.first].mesh, id);
+					}*/
 	renderer->frame();
 	renderer->present();
 	updateDelta();
@@ -444,20 +295,14 @@ void renderScene()
 int initialiseTestbench()
 {
 	std::string definePos = "#define POSITION " + std::to_string(POSITION) + "\n";
-	std::string defineNor = "#define NORMAL " + std::to_string(NORMAL) + "\n";
+	std::string defineNor = "#define INDEX " + std::to_string(INDEX) + "\n";
+	std::string defineMod = "#define MODEL " + std::to_string(MODEL) + "\n";
 
-	std::string defineTX = "#define TRANSLATION " + std::to_string(TRANSLATION) + "\n";
-	std::string defineTXName = "#define TRANSLATION_NAME " + std::string(TRANSLATION_NAME) + "\n";
-	
 	std::string defineViewProj = "#define CAMERA_VIEW_PROJECTION " + std::to_string(CAMERA_VIEW_PROJECTION) + "\n";
 	std::string defineViewProjName = "#define CAMERA_VIEW_PROJECTION_NAME " + std::string(CAMERA_VIEW_PROJECTION_NAME) + "\n";
 
-
-	std::string defineDiffuse = "#define DIFFUSE_SLOT " + std::to_string(DIFFUSE_SLOT) + "\n";
-
 	std::vector<std::vector<std::string>> materialDefs = {
-		{ "VertexShader", "FragmentShader", definePos + defineNor + defineTX + 
-		   defineTXName + defineViewProj + defineViewProjName},
+		{ "VertexShader", "FragmentShader", definePos + defineNor + defineMod + defineViewProj + defineViewProjName},
 	};
 
 	// load Materials.
@@ -507,7 +352,7 @@ void shutdown() {
 	//NOTE: We probably leak memory, but that doesn't matter as we are shutting
 	//      down the testbench.
 
-	
+	/*
 	// shutdown.
 	// delete dynamic objects
 	for (auto m : materials)
@@ -525,12 +370,12 @@ void shutdown() {
 
 	//delete cameraVPBuffer;
 	//delete transform;
-	/*assert(pos->refCount() == 0);
+	/ *assert(pos->refCount() == 0);
 	delete pos;
 	assert(nor->refCount() == 0);
 	delete nor;
-	assert(uvs->refCount() == 0);
-	delete uvs;*/
+	assert(indicess->refCount() == 0);
+	delete uvs;* /
 
 	for (auto s : samplers)
 	{
@@ -540,7 +385,7 @@ void shutdown() {
 	for (auto t : textures)
 	{
 		delete t;
-	}
+	}*/
 	renderer->shutdown();
 	file.close();
 };
@@ -556,6 +401,8 @@ int main(int argc, char *argv[])
 	renderer = Renderer::makeRenderer(rendererType);
 	if (renderer->initialize(800, 600))
 		return -1;
+	camera._position = glm::vec3(MAP_PIXEL_SIZE/2, 0, MAP_PIXEL_SIZE/2);
+	renderer->submitMap(&map);
 	renderer->setWinTitle(RENDERER_TYPES[static_cast<int>(rendererType)]);
 	renderer->setClearColor(0.0, 0.1, 0.1, 1.0);
 	initialiseTestbench();

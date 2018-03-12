@@ -10,6 +10,8 @@
 #include "ConstantBuffer.h"
 #include "VertexBuffer.h"
 
+#include <glm/glm.hpp>
+
 class Mesh;
 class Texture2D;
 class Sampler2D;
@@ -22,6 +24,27 @@ namespace CLEAR_BUFFER_FLAGS {
 	static const int COLOR = 1;
 	static const int DEPTH = 2;
 	static const int STENCIL = 4;
+};
+
+constexpr int ROOM_UNIT_SIZE = 32;
+constexpr int ROOM_COUNT = 64;
+constexpr int MAP_PIXEL_SIZE = ROOM_UNIT_SIZE * ROOM_COUNT;
+
+struct EngineRoom {
+	std::map<std::string, std::vector<int> /* Model matrix index */> meshes;
+
+	// NOTE: Can see will also include the position for the room this list is in
+	std::vector<glm::ivec2> canSee;
+};
+
+struct CachedMesh {
+	Mesh* mesh;
+	std::vector<glm::mat4> modelMatrices;
+};
+
+struct EngineMap {
+	std::map<std::string, CachedMesh> meshes;
+	EngineRoom rooms[ROOM_COUNT][ROOM_COUNT];
 };
 
 class Renderer {
@@ -55,8 +78,15 @@ public:
 	// can be partially overriden by a specific Technique.
 	virtual void setRenderState(RenderState* ps) = 0;
 	// submit work (to render) to the renderer.
-	virtual void submit(Mesh* mesh) = 0;
+	inline void submitMap(EngineMap* map) { this->map = map; }
+	inline void submitPosition(int roomX, int roomY) { this->roomX = roomX; this->roomY = roomY; }
+	virtual void submit() = 0;
 	virtual void frame() = 0;
-	
+
 	BACKEND IMPL;
+
+protected:
+	EngineMap* map;
+	int roomX;
+	int roomY;
 };

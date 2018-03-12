@@ -15,7 +15,7 @@ TechniqueVK::~TechniqueVK() {
 void TechniqueVK::enable(MeshVK* mesh) {
 	auto& bpi = _renderer->_basePipelineInfo;
 	if (!_graphicsPipeline) {
-		auto& descriptorSetLayouts = mesh->textures.size() ? _renderer->_descriptorTextureSetLayouts : _renderer->_descriptorSetLayouts;
+		auto& descriptorSetLayouts = /*mesh->textures.size() ? _renderer->_descriptorTextureSetLayouts : */_renderer->_descriptorSetLayouts;
 
 		vk::PipelineLayoutCreateInfo pipelineLayoutInfo;
 		pipelineLayoutInfo.setLayoutCount = (uint32_t)descriptorSetLayouts.size();

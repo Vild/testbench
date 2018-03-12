@@ -4,17 +4,22 @@
 #include "../Mesh.h"
 
 #include <vulkan/vulkan.hpp>
+#include "../IA.h"
 
 class VulkanRenderer;
-// cameraViewProjection = 2,
-enum class DescriptorType { translation = 0, diffuseTint = 1, cameraViewProjection = 2, position = 3, normal = 4, textcoord = 5, diffuseSlot = 6};
+enum class DescriptorType {
+	position = POSITION,
+	index = INDEX,
+	model = MODEL,
+	cameraViewProjection = CAMERA_VIEW_PROJECTION
+};
 
 class MeshVK : public Mesh {
 public:
 	MeshVK(VulkanRenderer* renderer);
 	virtual ~MeshVK();
 
-	void finalize();
+	void finalize() final;
 	void bindIAVertexBuffers();
 	void bindTextures();
 

@@ -40,10 +40,10 @@ void VertexBufferVK::bind(MeshVK* mesh, size_t offset, size_t size, uint32_t loc
 	// This is very ugly, temporary until I can think of any other way.
 	if (location == POSITION)
 		_descriptorWrite.dstSet = mesh->getDescriptorSet(DescriptorType::position);
-	else if (location == NORMAL)
-		_descriptorWrite.dstSet = mesh->getDescriptorSet(DescriptorType::normal);
-	else
-		_descriptorWrite.dstSet = mesh->getDescriptorSet(DescriptorType::textcoord);
+	else if (location == INDEX)
+		_descriptorWrite.dstSet = mesh->getDescriptorSet(DescriptorType::index);
+	else if (location == MODEL)
+		_descriptorWrite.dstSet = mesh->getDescriptorSet(DescriptorType::model);
 
 	EXPECT_ASSERT(offset % size == 0, "offset % size must be 0");
 	size_t idx = offset / size;

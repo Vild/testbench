@@ -6,18 +6,16 @@
 MeshVK::MeshVK(VulkanRenderer* renderer) : _renderer(renderer) {}
 MeshVK::~MeshVK() {}
 
+static int meshID = 0;
+
 void MeshVK::finalize() {
 	if (descriptorSets.size())
 		return;
+	printf("Allocation descriptorset for %d\n", ++meshID);	
 	vk::DescriptorSetAllocateInfo allocInfo;
 	allocInfo.descriptorPool = _renderer->_descriptorPool;
-	if (textures.size()) {
-		allocInfo.descriptorSetCount = (uint32_t)_renderer->_descriptorTextureSetLayouts.size();
-		allocInfo.pSetLayouts = _renderer->_descriptorTextureSetLayouts.data();
-	} else {
-		allocInfo.descriptorSetCount = (uint32_t)_renderer->_descriptorSetLayouts.size();
-		allocInfo.pSetLayouts = _renderer->_descriptorSetLayouts.data();
-	}
+	allocInfo.descriptorSetCount = (uint32_t)_renderer->_descriptorSetLayouts.size();
+	allocInfo.pSetLayouts = _renderer->_descriptorSetLayouts.data();
 
 	descriptorSets = _renderer->_device.allocateDescriptorSets(allocInfo);
 	for (auto& ds : descriptorSets)

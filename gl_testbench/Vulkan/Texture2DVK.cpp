@@ -67,8 +67,9 @@ void Texture2DVK::updateSampler(MeshVK* mesh, unsigned int slot) {
 		Sampler2DVK* s = (Sampler2DVK*)this->sampler;
 		imageInfo.sampler = s->getSampler();
 		vk::WriteDescriptorSet descriptorWrite = {};
-		descriptorWrite.dstSet = mesh->getDescriptorSet(DescriptorType::diffuseSlot);
-		descriptorWrite.dstBinding = DIFFUSE_SLOT;
+		assert(0);
+		//descriptorWrite.dstSet = mesh->getDescriptorSet(DescriptorType::diffuseSlot);
+		//descriptorWrite.dstBinding = DIFFUSE_SLOT;
 		descriptorWrite.dstArrayElement = 0;
 		descriptorWrite.descriptorType = vk::DescriptorType::eCombinedImageSampler;
 		descriptorWrite.descriptorCount = 1;

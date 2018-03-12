@@ -1,8 +1,8 @@
 #include "Camera.h"
 
 Camera::Camera(){
-	_position = glm::vec3(0);
-	_direction = glm::vec3(0, 0, -1);
+	_position = glm::vec3(0, 1.7, 0);
+	_direction = glm::vec3(0, 0, 1);
 }
 
 Camera::~Camera(){

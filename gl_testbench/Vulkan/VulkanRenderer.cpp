@@ -236,7 +236,7 @@ int VulkanRenderer::shutdown() {
 
 	_device.destroyCommandPool(_commandPool);
 
-	for (auto layout : _descriptorTextureSetLayouts) // it contains all items in _descriptorSetLayouts
+	for (auto layout : _descriptorSetLayouts)
 		_device.destroyDescriptorSetLayout(layout);
 
 	_device.destroyDescriptorPool(_descriptorPool);
@@ -264,19 +264,24 @@ void VulkanRenderer::clearBuffer(unsigned int) {
 void VulkanRenderer::setRenderState(RenderState* ps) {
 	ps->set();
 }
-void VulkanRenderer::submit(Mesh* mesh_) {
-	auto mesh = static_cast<MeshVK*>(mesh_);
-	mesh->finalize();
+void VulkanRenderer::submit() {
+	printf("roomX: %d, roomY: %d\n", roomX, roomY);
+	for (auto& xy : map->rooms[roomY][roomX].canSee)
+		for (auto m : map->rooms[xy.y][xy.x].meshes)
+			for (int id : m.second) {
+				auto mesh = static_cast<MeshVK*>(map->meshes[m.first].mesh);
 
-	for (auto& cb : static_cast<MaterialVK*>(mesh->technique->getMaterial())->constantBuffers)
-		cb.second->bindDescriptors(mesh);
-	static_cast<ConstantBufferVK*>(mesh->txBuffer)->bindDescriptors(mesh);
-	static_cast<ConstantBufferVK*>(mesh->cameraVPBuffer)->bindDescriptors(mesh);
+				for (auto& cb : static_cast<MaterialVK*>(mesh->technique->getMaterial())->constantBuffers)
+					cb.second->bindDescriptors(mesh);
+				if (mesh->txBuffer)
+					static_cast<ConstantBufferVK*>(mesh->txBuffer)->bindDescriptors(mesh);
+				static_cast<ConstantBufferVK*>(mesh->cameraVPBuffer)->bindDescriptors(mesh);
 
-	mesh->bindTextures();
-	mesh->bindIAVertexBuffers();
+				mesh->bindTextures();
+				mesh->bindIAVertexBuffers();
 
-	_drawList[mesh->technique].push_back(mesh);
+				_drawList[mesh->technique].push_back({mesh, id});
+			}
 }
 void VulkanRenderer::frame() {
 	vk::ResultValue<uint32_t> rv = _device.acquireNextImageKHR(_swapChain, std::numeric_limits<uint64_t>::max(), _imageAvailableSemaphore, vk::Fence());
@@ -301,15 +306,18 @@ void VulkanRenderer::frame() {
 	// printf("\tBinding draw\n");
 	for (auto& work : _drawList) {
 		TechniqueVK* technique = static_cast<TechniqueVK*>(const_cast<Technique*>(work.first));
-		technique->enable(work.second[0]);
+		technique->enable(work.second[0].mesh);
 		_commandBuffers[_currentImageIndex].bindPipeline(vk::PipelineBindPoint::eGraphics, technique->_graphicsPipeline);
 		 
 		// TODO: implement instance renderering
-		for (auto mesh : work.second) {
-			size_t numberOfElements = mesh->geometryBuffers[_currentImageIndex].numElements;
+		for (auto xxx : work.second) {
+			auto& mesh = xxx.mesh;
+			auto& id = xxx.id;
+			
+			size_t numberOfElements = mesh->geometryBuffers[INDEX].numElements;
 			_commandBuffers[_currentImageIndex].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, technique->_pipelineLayout, 0,
 			                                                       (uint32_t)mesh->descriptorSets.size(), mesh->descriptorSets.data(), 0, nullptr);
-			_commandBuffers[_currentImageIndex].draw(numberOfElements, 1, 0, 0);
+			_commandBuffers[_currentImageIndex].draw(numberOfElements, 1, 0, id);
 		}
 	}
 
@@ -826,9 +834,10 @@ bool VulkanRenderer::_createVulkanPipeline() {
 		vk::DescriptorSetLayoutCreateInfo layoutInfo;
 		layoutInfo.bindingCount = 1;
 		layoutInfo.pBindings = &layoutBinding;
-		{ // Translation.
-			layoutBinding.binding = TRANSLATION;
-			layoutBinding.descriptorType = vk::DescriptorType::eUniformBuffer;
+
+		{ // Position
+			layoutBinding.binding = POSITION;
+			layoutBinding.descriptorType = vk::DescriptorType::eStorageBuffer;
 			layoutBinding.descriptorCount = 1;
 			layoutBinding.stageFlags = vk::ShaderStageFlagBits::eVertex;
 			layoutBinding.pImmutableSamplers = nullptr;
@@ -837,11 +846,22 @@ bool VulkanRenderer::_createVulkanPipeline() {
 			EXPECT(_descriptorSetLayouts.back(), "Descriptor set layout is invalid!\n");
 		}
 
-		{ // Diffuse tint.
-			layoutBinding.binding = DIFFUSE_TINT;
-			layoutBinding.descriptorType = vk::DescriptorType::eUniformBuffer;
+		{ // Index
+			layoutBinding.binding = INDEX;
+			layoutBinding.descriptorType = vk::DescriptorType::eStorageBuffer;
 			layoutBinding.descriptorCount = 1;
-			layoutBinding.stageFlags = vk::ShaderStageFlagBits::eFragment;
+			layoutBinding.stageFlags = vk::ShaderStageFlagBits::eVertex;
+			layoutBinding.pImmutableSamplers = nullptr;
+
+			_descriptorSetLayouts.push_back(_device.createDescriptorSetLayout(layoutInfo));
+			EXPECT(_descriptorSetLayouts.back(), "Descriptor set layout is invalid!\n");
+		}
+
+		{ // Model.
+			layoutBinding.binding = MODEL;
+			layoutBinding.descriptorType = vk::DescriptorType::eStorageBuffer;
+			layoutBinding.descriptorCount = 1;
+			layoutBinding.stageFlags = vk::ShaderStageFlagBits::eVertex;
 			layoutBinding.pImmutableSamplers = nullptr;
 
 			_descriptorSetLayouts.push_back(_device.createDescriptorSetLayout(layoutInfo));
@@ -857,51 +877,6 @@ bool VulkanRenderer::_createVulkanPipeline() {
 
 			_descriptorSetLayouts.push_back(_device.createDescriptorSetLayout(layoutInfo));
 			EXPECT(_descriptorSetLayouts.back(), "Descriptor set layout is invalid!\n");
-		}
-
-		{ // Position
-			layoutBinding.binding = POSITION;
-			layoutBinding.descriptorType = vk::DescriptorType::eStorageBuffer;
-			layoutBinding.descriptorCount = 1;
-			layoutBinding.stageFlags = vk::ShaderStageFlagBits::eVertex;
-			layoutBinding.pImmutableSamplers = nullptr;
-
-			_descriptorSetLayouts.push_back(_device.createDescriptorSetLayout(layoutInfo));
-			EXPECT(_descriptorSetLayouts.back(), "Descriptor set layout is invalid!\n");
-		}
-
-		{ // Normal
-			layoutBinding.binding = NORMAL;
-			layoutBinding.descriptorType = vk::DescriptorType::eStorageBuffer;
-			layoutBinding.descriptorCount = 1;
-			layoutBinding.stageFlags = vk::ShaderStageFlagBits::eVertex;
-			layoutBinding.pImmutableSamplers = nullptr;
-
-			_descriptorSetLayouts.push_back(_device.createDescriptorSetLayout(layoutInfo));
-			EXPECT(_descriptorSetLayouts.back(), "Descriptor set layout is invalid!\n");
-		}
-
-		{ // UV
-			layoutBinding.binding = TEXTCOORD;
-			layoutBinding.descriptorType = vk::DescriptorType::eStorageBuffer;
-			layoutBinding.descriptorCount = 1;
-			layoutBinding.stageFlags = vk::ShaderStageFlagBits::eVertex;
-			layoutBinding.pImmutableSamplers = nullptr;
-
-			_descriptorSetLayouts.push_back(_device.createDescriptorSetLayout(layoutInfo));
-			EXPECT(_descriptorSetLayouts.back(), "Descriptor set layout is invalid!\n");
-		}
-
-		_descriptorTextureSetLayouts = _descriptorSetLayouts;
-		{
-			layoutBinding.binding = DIFFUSE_SLOT;
-			layoutBinding.descriptorType = vk::DescriptorType::eCombinedImageSampler;
-			layoutBinding.descriptorCount = 1;
-			layoutBinding.stageFlags = vk::ShaderStageFlagBits::eFragment;
-			layoutBinding.pImmutableSamplers = nullptr;
-
-			_descriptorTextureSetLayouts.push_back(_device.createDescriptorSetLayout(layoutInfo));
-			EXPECT(_descriptorTextureSetLayouts.back(), "Descriptor set layout is invalid!\n");
 		}
 	}
 
@@ -927,20 +902,18 @@ bool VulkanRenderer::_createVulkanPipeline() {
 
 bool VulkanRenderer::_createDescriptorPool() {
 	// Creates two pool sizes, one for the uniform buffers and one for the SSBOs.
-	constexpr int MAX_AMOUNT = 20000; // TODO: Get better multiplier, idk how to do this. Let's hope no-one breaks it!!!!
+	constexpr int MAX_AMOUNT = 1024; // TODO: Get better multiplier, idk how to do this. Let's hope no-one breaks it!!!!
 
-	vk::DescriptorPoolSize poolSize[3];
+	vk::DescriptorPoolSize poolSize[2];
 	poolSize[0].type = vk::DescriptorType::eUniformBuffer;
 	poolSize[0].descriptorCount = 2 * MAX_AMOUNT; // Three uniform buffer descriptor sets.
 	poolSize[1].type = vk::DescriptorType::eStorageBuffer;
 	poolSize[1].descriptorCount = 2 * MAX_AMOUNT; // Three storage buffer descriptor sets.
-	poolSize[2].type = vk::DescriptorType::eCombinedImageSampler;
-	poolSize[2].descriptorCount = 1 * MAX_AMOUNT;
 
 	vk::DescriptorPoolCreateInfo poolInfo;
 	poolInfo.poolSizeCount = sizeof(poolSize) / sizeof(*poolSize);
 	poolInfo.pPoolSizes = poolSize;
-	poolInfo.maxSets = MAX_AMOUNT; //(uint32_t)_descriptorSetLayouts.size() * 1000;
+	poolInfo.maxSets = 2 * MAX_AMOUNT; //(uint32_t)_descriptorSetLayouts.size() * 1000;
 
 	_descriptorPool = _device.createDescriptorPool(poolInfo);
 	EXPECT(_descriptorPool, "Failed to create descriptor pool!\n");

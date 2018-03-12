@@ -27,6 +27,8 @@ public:
 		size_t sizeElement, numElements, offset;
 		VertexBuffer* buffer;
 	};
+
+	virtual void finalize() {}
 	
 	void addTexture(Texture2D* texture, unsigned int slot);
 

@@ -18,7 +18,7 @@ public:
 	}
 	
 	void updatePosition(glm::vec3 dir);
-private:
+
 	ViewProjection _matrices;
 	glm::vec3 _position;
 	glm::vec3 _direction;

@@ -41,7 +41,7 @@ public:
 	void clearBuffer(unsigned int);
 //	void setRenderTarget(RenderTarget* rt); // complete parameters
 	void setRenderState(RenderState* ps);
-	void submit(Mesh* mesh);
+	void submit();
 	void frame();
 	void present();
 
@@ -49,9 +49,12 @@ private:
 	SDL_Window* window;
 	SDL_GLContext context;
 
-	std::vector<Mesh*> drawList;
-	std::unordered_map<Technique*, std::vector<Mesh*>> drawList2;
-	
+	struct DrawInfo {
+		Mesh* mesh;
+		int id;
+	};
+	std::unordered_map<Technique*, std::vector<DrawInfo>> drawList2;
+
 	bool globalWireframeMode = false;
 
 	//int initializeOpenGL(int major, int minor, unsigned int width, unsigned int height);

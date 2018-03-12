@@ -95,7 +95,7 @@ public:
 	void clearBuffer(unsigned int) final;
 	// void setRenderTarget(RenderTarget* rt); // complete parameters
 	void setRenderState(RenderState* ps) final;
-	void submit(Mesh* mesh) final;
+	void submit() final;
 	void frame() final;
 	void present() final;
 
@@ -157,7 +157,6 @@ private:
 
 	vk::RenderPass _renderPass;
 	std::vector<vk::DescriptorSetLayout> _descriptorSetLayouts;
-	std::vector<vk::DescriptorSetLayout> _descriptorTextureSetLayouts;
 	vk::DescriptorPool _descriptorPool;
 
 	struct BasePipelineInfo {
@@ -184,7 +183,11 @@ private:
 	vk::Semaphore _imageAvailableSemaphore;
 	vk::Semaphore _renderFinishedSemaphore;
 
-	std::unordered_map<Technique*, std::vector<MeshVK*>> _drawList;
+	struct DrawInfo {
+		MeshVK* mesh;
+		int id;
+	};
+	std::unordered_map<Technique*, std::vector<DrawInfo>> _drawList;
 
 	bool _globalWireframeMode = false;
 	float _clearColor[4] = {0, 0, 0, 0};

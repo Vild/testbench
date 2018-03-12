@@ -41,10 +41,8 @@ void ConstantBufferVK::bind(Material* material) {
 }
 
 void ConstantBufferVK::bindDescriptors(MeshVK* mesh) {
-	if (_descriptorWrite.dstBinding == TRANSLATION)
-		_descriptorWrite.dstSet = mesh->getDescriptorSet(DescriptorType::translation);
-	else if (_descriptorWrite.dstBinding == DIFFUSE_TINT)
-		_descriptorWrite.dstSet = mesh->getDescriptorSet(DescriptorType::diffuseTint);
+	if (_descriptorWrite.dstBinding == MODEL)
+		_descriptorWrite.dstSet = mesh->getDescriptorSet(DescriptorType::model);
 	else if (_descriptorWrite.dstBinding == CAMERA_VIEW_PROJECTION)
 		_descriptorWrite.dstSet = mesh->getDescriptorSet(DescriptorType::cameraViewProjection);
 

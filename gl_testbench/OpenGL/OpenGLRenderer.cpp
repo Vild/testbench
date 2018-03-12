@@ -131,14 +131,15 @@ int OpenGLRenderer::initialize(unsigned int width, unsigned int height) {
  TODO.
 */
 
-int perMat = 1;
-void OpenGLRenderer::submit(Mesh* mesh) 
+void OpenGLRenderer::submit() 
 {
-	if (perMat) {
-		drawList2[mesh->technique].push_back(mesh);
-	}
-	else
-		drawList.push_back(mesh);
+	printf("roomX: %d, roomY: %d\n", roomX, roomY);
+	for (auto& xy : map->rooms[roomY][roomX].canSee)
+		for (auto m : map->rooms[xy.y][xy.x].meshes)
+			for (int id : m.second) {
+				auto mesh = static_cast<Mesh*>(map->meshes[m.first].mesh);
+				drawList2[mesh->technique].push_back({mesh, id});
+			}
 };
 
 /*
@@ -147,53 +148,32 @@ void OpenGLRenderer::submit(Mesh* mesh)
 */
 void OpenGLRenderer::frame() 
 {
-	if (perMat!=1) {
-
-		for (auto mesh : drawList)
-		{
-			mesh->technique->enable(this);
-			size_t numberElements = mesh->geometryBuffers[0].numElements;
-			glBindTexture(GL_TEXTURE_2D, 0);
-			for (auto t : mesh->textures)
-			{
-				// we do not really know here if the sampler has been
-				// defined in the shader.
-				t.second->bind(t.first);
-			}
-			for (auto element : mesh->geometryBuffers) {
-				mesh->bindIAVertexBuffer(element.first);
-			}
-			mesh->txBuffer->bind(mesh->technique->getMaterial());
-			mesh->cameraVPBuffer->bind(mesh->technique->getMaterial());
-			glDrawArrays(GL_TRIANGLES, 0, numberElements);
-		}
-		drawList.clear();
-	}
-	else 
-	{
-		for (auto work : drawList2)
+	for (auto work : drawList2)
 		{
 			work.first->enable(this);
-			for (auto mesh : work.second)
-			{
-				size_t numberElements = mesh->geometryBuffers[0].numElements;
-				glBindTexture(GL_TEXTURE_2D, 0);
-				for (auto t : mesh->textures)
+			for (auto xxx : work.second)
 				{
-					// we do not really know here if the sampler has been
-					// defined in the shader.
-					t.second->bind(t.first);
+					auto& mesh = xxx.mesh;
+					auto& id = xxx.id;
+					size_t numberElements = mesh->geometryBuffers[INDEX].numElements;
+					glBindTexture(GL_TEXTURE_2D, 0);
+					for (auto t : mesh->textures)
+						{
+							// we do not really know here if the sampler has been
+							// defined in the shader.
+							t.second->bind(t.first);
+						}
+					for (auto element : mesh->geometryBuffers) {
+						mesh->bindIAVertexBuffer(element.first);
+					}
+					if (mesh->txBuffer)
+						mesh->txBuffer->bind(work.first->getMaterial());
+					mesh->cameraVPBuffer->bind(mesh->technique->getMaterial());
+					//glDrawArrays(GL_TRIANGLES, 0, numberElements);
+					glDrawArraysInstancedBaseInstance(GL_TRIANGLES, 0, numberElements, 1, id);
 				}
-				for (auto element : mesh->geometryBuffers) {
-					mesh->bindIAVertexBuffer(element.first);
-				}
-				mesh->txBuffer->bind(work.first->getMaterial());
-				mesh->cameraVPBuffer->bind(mesh->technique->getMaterial());
-				glDrawArrays(GL_TRIANGLES, 0, numberElements);
-			}
 		}
-		drawList2.clear();
-	}
+	drawList2.clear();
 };
 
 void OpenGLRenderer::present()
