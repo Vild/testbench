@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/transform.hpp>
 
 class Camera
@@ -12,14 +13,17 @@ public:
 	Camera();
 	virtual ~Camera();
 	ViewProjection& getMatrices() {
-		_matrices.view = glm::lookAt(_position, _position + _direction, glm::vec3(0, 1, 0));
+		_matrices.view = glm::translate(glm::mat4_cast(_rotation), -_position);
 		_matrices.proj = glm::perspective(90.f, 4/3.0f, 0.1f, 100.f);
 		return _matrices;
 	}
-	
-	void updatePosition(glm::vec3 dir);
+
+	void updatePosition(glm::vec3 dir, glm::vec2 newRot);
 
 	ViewProjection _matrices;
 	glm::vec3 _position;
-	glm::vec3 _direction;
+	glm::quat _rotation;
+
+	float _pitch = 0;
+	float _yaw = 0;
 };

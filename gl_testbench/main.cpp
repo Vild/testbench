@@ -34,8 +34,10 @@
 #endif
 
 #ifdef _WIN32
-#define ASSETS_FOLDER "../assets"
+#define ASSETS_FOLDER_PREFIX "../"
+#define ASSETS_FOLDER ASSETS_FOLDER_PREFIX "assets"
 #else
+#define ASSETS_FOLDER_PREFIX ""
 #define ASSETS_FOLDER "assets"
 #endif
 
@@ -83,12 +85,7 @@ Mesh* loadModel(std::string filepath, Technique* technique, const std::vector<gl
 
 	int nrOfMeshes = 0;
 	in.read(reinterpret_cast<char*>(&nrOfMeshes), sizeof(int));
-	if (nrOfMeshes != 1) {
-		fprintf(stderr, "nrOfMeshes != 1\n");
-		//exit(-1);
-	}
-
-	{
+	while (nrOfMeshes--) {
 		//std::string name = "";
 		int nrOfChars = 0;
 
@@ -174,15 +171,8 @@ void loadMap(Technique* technique) {
 				fread(models.data(), sizeof(FileModel), modelsLength, fp);
 				for (const FileModel& m : models) {
 					CachedMesh& cm = map.meshes[std::string{m.meshFile}];
-					glm::vec3 scale;
-					glm::quat rot;
-					glm::vec3 trans;
-					glm::vec3 skew;
-					glm::vec4 pers;
-					glm::decompose(m.t, scale, rot, trans, skew, pers);
 
-					//cm.modelMatrices.push_back(m.t);
-					cm.modelMatrices.push_back(glm::translate(trans) * glm::scale(glm::vec3(1)));
+					cm.modelMatrices.push_back(m.t);
 					r.meshes[std::string{m.meshFile}].push_back(cm.modelMatrices.size() - 1);
 				}
 				models.clear();
@@ -198,7 +188,7 @@ void loadMap(Technique* technique) {
 
 	for (auto& cm : map.meshes) {
 		printf("Name: %s, Used: %zu\n", cm.first.c_str(), cm.second.modelMatrices.size());
-		cm.second.mesh = loadModel("../" + cm.first, technique, cm.second.modelMatrices);
+		cm.second.mesh = loadModel(ASSETS_FOLDER_PREFIX + cm.first, technique, cm.second.modelMatrices);
 		cm.second.mesh->finalize();
 	}
 }
@@ -246,7 +236,7 @@ void run() {
 		{
 			if (windowEvent.type == SDL_QUIT) return;
 			if (windowEvent.type == SDL_KEYUP && windowEvent.key.keysym.sym == SDLK_ESCAPE) return;
-			if (windowEvent.type == SDL_KEYDOWN)
+			/*if (windowEvent.type == SDL_KEYDOWN)
 				switch (windowEvent.key.keysym.sym) {
 				case SDLK_w:
 					camera.updatePosition(glm::vec3(0, 0, 1));
@@ -262,14 +252,42 @@ void run() {
 					break;
 				case SDLK_SPACE:
 					camera.updatePosition(glm::vec3(0, 1, 0));
-					break;
+1					break;
 				case SDLK_LCTRL:
 					camera.updatePosition(glm::vec3(0, -1, 0));
 					break;
 				default:
 					break;
-				}
+				}*/
 		}
+
+		glm::vec3 vel;
+		glm::vec2 yawPitch;
+		float speed = 8;
+		float lookSpeed = M_PI;
+
+		const Uint8* kb = SDL_GetKeyboardState(nullptr);
+
+		yawPitch.x += !!kb[SDL_SCANCODE_DOWN] * 1.0f;
+		yawPitch.x -= !!kb[SDL_SCANCODE_UP] * 1.0f;
+		yawPitch.y += !!kb[SDL_SCANCODE_RIGHT] * 1.0f;
+		yawPitch.y -= !!kb[SDL_SCANCODE_LEFT] * 1.0f;
+
+		camera.updatePosition(glm::vec3(0), yawPitch * glm::vec2(lookSpeed * (gLastDelta / 1000.0f)));
+
+		vel.x -= !!kb[SDL_SCANCODE_A] * 1.0f;
+		vel.x += !!kb[SDL_SCANCODE_D] * 1.0f;
+		vel.y += !!kb[SDL_SCANCODE_SPACE] * 1.0f;
+		vel.y -= !!kb[SDL_SCANCODE_LCTRL] * 1.0f;
+		vel.z -= !!kb[SDL_SCANCODE_W] * 1.0f;
+		vel.z += !!kb[SDL_SCANCODE_S] * 1.0f;
+
+		if (kb[SDL_SCANCODE_LSHIFT])
+			speed *= 2;
+
+		vel = glm::vec3(glm::vec4(vel, 1) * camera.getMatrices().view);
+		camera.updatePosition(vel * glm::vec3(speed * (gLastDelta / 1000.0f)), glm::vec2(0));
+
 		updateScene();
 		renderScene();
 	}
@@ -291,7 +309,12 @@ void updateScene()
 void renderScene()
 {
 	renderer->clearBuffer(CLEAR_BUFFER_FLAGS::COLOR | CLEAR_BUFFER_FLAGS::DEPTH);
-	renderer->submitPosition((int)camera._position.x / ROOM_UNIT_SIZE, (int)camera._position.z / ROOM_UNIT_SIZE);
+	int roomX = (int)(camera._position.x) / MAP_ROOM_SIZE;
+	int roomY = (int)(camera._position.z) / MAP_ROOM_SIZE;
+	roomX = std::min(std::max(roomX, 0), ROOM_COUNT);
+	roomY = std::min(std::max(roomY, 0), ROOM_COUNT);
+	renderer->submitPosition(roomX, roomY);
+	printf("Camera: [%.2f, %.2f] Room: [%d, %d]\n", camera._position.x, camera._position.z, roomX, roomY);
 	renderer->submit();
 	/*for (int y = 0; y < ROOM_COUNT; y++)
 			for (int x = 0; x < ROOM_COUNT; x++)
@@ -416,7 +439,7 @@ int main(int argc, char *argv[])
 	renderer = Renderer::makeRenderer(rendererType);
 	if (renderer->initialize(800, 600))
 		return -1;
-	//camera._position = glm::vec3(MAP_PIXEL_SIZE/2, 0, MAP_PIXEL_SIZE/2);
+	camera._position = glm::vec3((1 + ROOM_COUNT)*MAP_ROOM_SIZE*0.5f, 1.5, (1 + ROOM_COUNT)*MAP_ROOM_SIZE*0.5f);
 	renderer->submitMap(&map);
 	renderer->setWinTitle(RENDERER_TYPES[static_cast<int>(rendererType)]);
 	renderer->setClearColor(0.0, 0.1, 0.1, 1.0);

@@ -131,9 +131,8 @@ int OpenGLRenderer::initialize(unsigned int width, unsigned int height) {
  TODO.
 */
 
-void OpenGLRenderer::submit() 
+void OpenGLRenderer::submit()
 {
-	printf("roomX: %d, roomY: %d\n", roomX, roomY);
 	for (auto& xy : map->rooms[roomY][roomX].canSee)
 		for (auto m : map->rooms[xy.y][xy.x].meshes)
 			for (int id : m.second) {

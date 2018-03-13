@@ -265,7 +265,6 @@ void VulkanRenderer::setRenderState(RenderState* ps) {
 	ps->set();
 }
 void VulkanRenderer::submit() {
-	printf("roomX: %d, roomY: %d\n", roomX, roomY);
 	for (auto& xy : map->rooms[roomY][roomX].canSee)
 		for (auto m : map->rooms[xy.y][xy.x].meshes)
 			for (int id : m.second) {

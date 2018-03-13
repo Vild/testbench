@@ -8,12 +8,15 @@ import std.math;
 import std.process;
 import std.conv;
 
-import gl3n.linalg : vec2, vec3, vec4, vec2i;
+import gfm.math.vector : vec3 = vec3f, vec4 = vec4f, vec2i;
+import gfm.math.matrix : mat4 = mat4f;
+import gfm.math.quaternion : quat = quatf;
 import asdf;
 
 enum int ROOM_UNIT_SIZE = 32;
+enum int MAP_ROOM_SIZE = 32;
 enum int ROOM_COUNT = 64;
-enum MAP_PIXEL_SIZE = ROOM_UNIT_SIZE * ROOM_COUNT;
+enum MAP_PIXEL_SIZE = MAP_ROOM_SIZE * ROOM_COUNT;
 
 /*T getDefault(T, K)(ref T[K] aa, K key, T def = T.init)
 {
@@ -28,13 +31,10 @@ struct GenerateMap
 
 	void updatePosition()
 	{
-		foreach (y, ref Room[ROOM_COUNT] row; rooms)
-			foreach (x, ref Room r; row)
-				foreach (ref Model m; r.models)
-				{
-					m.t[3][0] += x * ROOM_UNIT_SIZE;
-					m.t[3][1] += y * ROOM_UNIT_SIZE;
-				}
+		foreach (int y, ref Room[ROOM_COUNT] row; rooms)
+			foreach (int x, ref Room r; row)
+				if (r.entities.length)
+					r.entities[0].pos = vec3((0.5f + x) * ROOM_UNIT_SIZE, 0.0f, (0.5f + y) * ROOM_UNIT_SIZE);
 	}
 
 	void doGeneration(ref Room[] roomTemplates)
@@ -140,24 +140,23 @@ Direction next(Direction d, int amount)
 struct Room
 {
 	int id;
-	Model[] models;
+	Entity[] entities;
 	bool[Direction] isWall;
 	int[2][] canSee;
 
-	bool[ROOM_UNIT_SIZE][ROOM_UNIT_SIZE] layoutMap; // WILL NEVER ROTATE!!!!!!!!!!!!!
+	float rotationAngle = 0;
+
+	bool[MAP_ROOM_SIZE][MAP_ROOM_SIZE] layoutMap;
 
 	this(this)
 	{
-		models = models.dup;
+		entities = entities.dup;
 		isWall = isWall.dup;
 	}
 
 	void rotate(int rotation)
 	{
-		float angle = rotation * 90f;
-		foreach (ref Model m; models)
-			m.t *= mat4(vec4(0, sin(angle / 2), 0, cos(angle / 2)));
-
+		entities[0].rot = quat.fromAxis(vec3(0, 1, 0), rotation * PI / 2);
 		{
 			auto copy = isWall.dup;
 			foreach (Direction d; EnumMembers!Direction)
@@ -170,28 +169,28 @@ struct Room
 		switch (rotation)
 		{
 		case 0:
-			foreach (int localX; 0 .. ROOM_UNIT_SIZE)
-				foreach (int localY; 0 .. ROOM_UNIT_SIZE)
-					layoutMap[localY + y * ROOM_UNIT_SIZE][localX + x * ROOM_UNIT_SIZE] = this
+			foreach (int localX; 0 .. MAP_ROOM_SIZE)
+				foreach (int localY; 0 .. MAP_ROOM_SIZE)
+					layoutMap[localY + y * MAP_ROOM_SIZE][localX + x * MAP_ROOM_SIZE] = this
 						.layoutMap[localY][localX];
 			break;
 		case 1:
-			foreach (int localX; 0 .. ROOM_UNIT_SIZE)
-				foreach (int localY; 0 .. ROOM_UNIT_SIZE)
-					layoutMap[localY + y * ROOM_UNIT_SIZE][localX + x * ROOM_UNIT_SIZE] = this
-						.layoutMap[localX][ROOM_UNIT_SIZE - 1 - localY];
+			foreach (int localX; 0 .. MAP_ROOM_SIZE)
+				foreach (int localY; 0 .. MAP_ROOM_SIZE)
+					layoutMap[localY + y * MAP_ROOM_SIZE][localX + x * MAP_ROOM_SIZE] = this
+						.layoutMap[localX][MAP_ROOM_SIZE - 1 - localY];
 			break;
 		case 2:
-			foreach (int localX; 0 .. ROOM_UNIT_SIZE)
-				foreach (int localY; 0 .. ROOM_UNIT_SIZE)
-					layoutMap[localY + y * ROOM_UNIT_SIZE][localX + x * ROOM_UNIT_SIZE] = this
-						.layoutMap[ROOM_UNIT_SIZE - 1 - localY][ROOM_UNIT_SIZE - 1 - localX];
+			foreach (int localX; 0 .. MAP_ROOM_SIZE)
+				foreach (int localY; 0 .. MAP_ROOM_SIZE)
+					layoutMap[localY + y * MAP_ROOM_SIZE][localX + x * MAP_ROOM_SIZE] = this
+						.layoutMap[MAP_ROOM_SIZE - 1 - localY][MAP_ROOM_SIZE - 1 - localX];
 			break;
 		case 3:
-			foreach (int localX; 0 .. ROOM_UNIT_SIZE)
-				foreach (int localY; 0 .. ROOM_UNIT_SIZE)
-					layoutMap[localY + y * ROOM_UNIT_SIZE][localX + x * ROOM_UNIT_SIZE] = this
-						.layoutMap[ROOM_UNIT_SIZE - 1 - localX][localY];
+			foreach (int localX; 0 .. MAP_ROOM_SIZE)
+				foreach (int localY; 0 .. MAP_ROOM_SIZE)
+					layoutMap[localY + y * MAP_ROOM_SIZE][localX + x * MAP_ROOM_SIZE] = this
+						.layoutMap[MAP_ROOM_SIZE - 1 - localX][localY];
 			break;
 		default:
 			assert(0);
@@ -199,123 +198,59 @@ struct Room
 	}
 }
 
-struct Model
+struct Entity
 {
-	mat4 t;
+	bool isMesh;
 	char[64] meshFile;
+	bool hasTransform;
+	vec3 pos = vec3(0);
+	vec3 scale = vec3(1);
+	quat rot = quat(1, 0, 0, 0);
 
-	this(mat4 t, string meshFile)
-	in
+	size_t parentIdx = size_t.max;
+
+	mat4 getTransform(ref Room r)
 	{
-		assert(meshFile.length <= this.meshFile.length);
-	}
-	do
-	{
-		this.t = t;
-		copy(cast(char[]) meshFile, this.meshFile[]);
-		foreach (ref ch; this.meshFile[meshFile.length .. $])
-			ch = '\0';
-	}
-}
-
-align(1) struct mat4
-{
-align(1):
-	float[4][4] data = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]];
-	alias data this;
-
-	this(float[4][4] d)
-	{
-		data = d;
-	}
-
-	this(vec4 rotation)
-	{
-		this(vec3(0, 0, 0), vec3(1, 1, 1), rotation);
-	}
-
-	this(vec3 pos, vec3 scale, vec4 rotation)
-	{
-		data[0][0] = scale.x;
-		data[1][1] = scale.y;
-		data[2][2] = scale.z;
-		data[3][3] = 1;
-
-		data[3][0] = pos.x;
-		data[3][1] = pos.y;
-		data[3][2] = pos.z;
-
-		const float q00 = rotation.x * rotation.x;
-		const float q11 = rotation.y * rotation.y;
-		const float q22 = rotation.z * rotation.z;
-		const float q02 = rotation.x * rotation.z;
-		const float q01 = rotation.x * rotation.y;
-		const float q12 = rotation.y * rotation.z;
-		const float q30 = rotation.w * rotation.x;
-		const float q31 = rotation.w * rotation.y;
-		const float q32 = rotation.w * rotation.z;
-
-		data[0][0] *= 1.0f - 2.0f * (q11 + q22);
-		data[0][1] *= 2.0f * (q01 + q32);
-		data[0][2] *= 2.0f * (q02 - q31);
-
-		data[1][0] *= 2.0f * (q01 - q32);
-		data[1][1] *= 1.0f - 2.0f * (q00 + q22);
-		data[1][2] *= 2.0f * (q12 + q30);
-
-		data[2][0] *= 2.0f * (q02 + q31);
-		data[2][1] *= 2.0f * (q12 - q30);
-		data[2][2] *= 1.0f - 2.0f * (q00 + q11);
-	}
-
-	mat4 opBinary(string op : "*")(mat4 rhs)
-	{
-		float[4][4] x;
-		foreach (c; 0 .. 4)
-			foreach (r; 0 .. 4)
-				x[c][r] = data[c][0] * rhs[0][r] + data[c][1] * rhs[1][r] + data[c][2]
-					* rhs[2][r] + data[c][3] * rhs[3][r];
-
-		return mat4(x);
-	}
-
-	void opOpAssign(string op : "*")(mat4 rhs)
-	{
-		this = this * rhs;
+		mat4 parentM = (parentIdx != size_t.max && r.entities[parentIdx].hasTransform) ? r.entities[parentIdx].getTransform(
+				r) : mat4.identity;
+		return parentM * (mat4.translation(pos) * cast(mat4) rot * mat4.scaling(scale));
 	}
 }
 
-void doEntity(ref Room room, Asdf e, mat4 parentTransform)
+void doEntity(ref Room room, Asdf j, size_t parentIdx)
 {
-	mat4 transform = parentTransform;
-	string meshFile;
-
-	foreach (component; e["components"].byKeyValue)
+	Entity e;
+	e.parentIdx = parentIdx;
+	foreach (component; j["components"].byKeyValue)
 	{
 		switch (component.key)
 		{
 		case "TransformComponent":
-			transform *= mat4(vec3(component.value["position"].byElement()
-					.map!"a.get!float(0)".array), vec3(component.value["scale"].byElement()
-					.map!"a.get!float(0)".array), vec4(component.value["rotation"].byElement()
-					.map!"a.get!float(0)".array));
+			e.hasTransform = true;
+			auto p = component.value["position"].byElement().map!"a.get!float(0)".array;
+			auto s = component.value["scale"].byElement().map!"a.get!float(0)".array;
+			auto r = component.value["rotation"].byElement().map!"a.get!float(0)".array;
+			e.pos = vec3(p[0], p[1], p[2]);
+			e.scale = vec3(s[0], s[1], s[2]);
+			e.rot = quat(r[3], r[0], r[1], r[2]);
 			break;
 		case "MeshComponent":
-			meshFile = component.value["meshFile"].get!string(null);
+			auto meshFile = component.value["meshFile"].get!string(null);
+			copy(cast(char[]) meshFile, e.meshFile[]);
+			foreach (ref ch; e.meshFile[meshFile.length .. $])
+				ch = '\0';
+			e.isMesh = true;
 			break;
 		default:
 			break;
 		}
 	}
 
-	if (meshFile)
-	{
-		writeln("\tTransform: ", transform, "\tMesh: ", meshFile);
-		room.models ~= Model(transform, meshFile);
-	}
+	room.entities ~= e;
 
-	foreach (child; e["children"].byElement)
-		doEntity(room, child, transform);
+	size_t myID = room.entities.length - 1;
+	foreach (child; j["children"].byElement)
+		doEntity(room, child, myID);
 }
 
 int main(string[] args)
@@ -340,13 +275,14 @@ int main(string[] args)
 		names ~= file.name;
 		room.id = idCounter++;
 
+		room.entities ~= Entity(false, "", true, vec3(0), vec3(1), quat.fromAxis(vec3(0, 1, 0), 0));
+
 		{
 			auto roomC = j["data"]["components"]["RoomComponent"];
 			room.isWall[Direction.north] = !roomC["doorsN"].get!bool(false);
 			room.isWall[Direction.east] = !roomC["doorsE"].get!bool(false);
 			room.isWall[Direction.south] = !roomC["doorsS"].get!bool(false);
 			room.isWall[Direction.west] = !roomC["doorsW"].get!bool(false);
-
 			int y;
 			foreach (row; roomC["map"].byElement)
 			{
@@ -357,13 +293,11 @@ int main(string[] args)
 			}
 		}
 
-		doEntity(room, j["data"], mat4());
-
+		doEntity(room, j["data"], 0);
 		rooms ~= room;
 	}
 
 	static GenerateMap gm;
-
 	foreach (const ref Room r; rooms)
 	{
 		assert(r.id);
@@ -371,12 +305,11 @@ int main(string[] args)
 		assert(Direction.east in r.isWall);
 		assert(Direction.south in r.isWall);
 		assert(Direction.west in r.isWall);
-		assert(r.models.length);
+		assert(r.entities.length > 1);
 	}
 
 	gm.doGeneration(rooms);
 	gm.updatePosition();
-
 	writeln();
 	foreach (int id, string name; names)
 		writeln(id + 1, ": ", name, "\t", rooms[id].isWall.get(Direction.north,
@@ -402,7 +335,6 @@ int main(string[] args)
 	}
 	writeln("#####################################################");
 	writeln();
-
 	writeMap(gm);
 
 	{
@@ -415,7 +347,6 @@ int main(string[] args)
 		}
 		else
 			writeln(p.output);
-
 		Asdf pvs = readText("map.pvs").parseJson;
 
 		foreach (entry; pvs.byKeyValue)
@@ -423,7 +354,6 @@ int main(string[] args)
 			int id = entry.key.to!int;
 			int x = id % ROOM_COUNT;
 			int y = id / ROOM_COUNT;
-
 			with (gm.rooms[y][x])
 			{
 				canSee ~= [x, y];
@@ -441,14 +371,20 @@ int main(string[] args)
 	File f = File("map.cmf", "wb"); // Compiled Map Format
 	scope (exit)
 		f.close();
-
 	foreach (y, ref Room[ROOM_COUNT] row; gm.rooms)
 		foreach (x, ref Room r; row)
 		{
-			uint a = cast(uint) r.models.length;
+			import std.algorithm : filter, count;
+
+			auto models = r.entities.filter!(x => x.isMesh);
+			uint a = cast(uint) models.count;
 			f.rawWrite(cast(ubyte[])(&a)[0 .. 1]);
-			foreach (ref Model m; r.models)
-				f.rawWrite(cast(ubyte[])(&m)[0 .. 1]);
+			foreach (ref Entity m; models)
+			{
+				auto t = m.getTransform(r).transposed;
+				f.rawWrite(cast(ubyte[])(t.ptr[0 .. 4 * 4]));
+				f.rawWrite(cast(ubyte[])(m.meshFile));
+			}
 
 			a = cast(uint) r.canSee.length;
 			f.rawWrite(cast(ubyte[])(&a)[0 .. 1]);
@@ -482,7 +418,6 @@ void writeMap(ref GenerateMap gm)
 	foreach (ref row; pixMap)
 		foreach (ref p; row)
 			p = Tile.Void;
-
 	foreach (int y; 0 .. ROOM_COUNT)
 	{
 		foreach (int x; 0 .. ROOM_COUNT)
@@ -503,27 +438,24 @@ void writeMap(ref GenerateMap gm)
 						color = Tile.RoomContent;
 					pixMap[y][x] = color;
 				};
+				foreach (int i; 0 .. MAP_ROOM_SIZE)
+					drawWallPixel(x * MAP_ROOM_SIZE + i, y * MAP_ROOM_SIZE);
+				foreach (int i; 0 .. MAP_ROOM_SIZE)
+					drawWallPixel(x * MAP_ROOM_SIZE + i, (y + 1) * MAP_ROOM_SIZE - 1);
 
-				foreach (int i; 0 .. ROOM_UNIT_SIZE)
-					drawWallPixel(x * ROOM_UNIT_SIZE + i, y * ROOM_UNIT_SIZE);
+				foreach (int i; 0 .. MAP_ROOM_SIZE)
+					drawWallPixel(x * MAP_ROOM_SIZE, y * MAP_ROOM_SIZE + i);
 
-				foreach (int i; 0 .. ROOM_UNIT_SIZE)
-					drawWallPixel(x * ROOM_UNIT_SIZE + i, (y + 1) * ROOM_UNIT_SIZE - 1);
-
-				foreach (int i; 0 .. ROOM_UNIT_SIZE)
-					drawWallPixel(x * ROOM_UNIT_SIZE, y * ROOM_UNIT_SIZE + i);
-
-				foreach (int i; 0 .. ROOM_UNIT_SIZE)
-					drawWallPixel((x + 1) * ROOM_UNIT_SIZE - 1, y * ROOM_UNIT_SIZE + i);
+				foreach (int i; 0 .. MAP_ROOM_SIZE)
+					drawWallPixel((x + 1) * MAP_ROOM_SIZE - 1, y * MAP_ROOM_SIZE + i);
 
 				// Center of room
-				foreach (yy; 0 .. ROOM_UNIT_SIZE - 2)
-					foreach (xx; 0 .. ROOM_UNIT_SIZE - 2)
-						pixMap[yy + y * ROOM_UNIT_SIZE + 1][xx + x * ROOM_UNIT_SIZE + 1] = Tile.Air;
-
-				foreach (int i; 1 .. ROOM_UNIT_SIZE - 1)
-					foreach (int j; 1 .. ROOM_UNIT_SIZE - 1)
-						drawRoomPixel(x * ROOM_UNIT_SIZE + i, y * ROOM_UNIT_SIZE + j);
+				foreach (yy; 0 .. MAP_ROOM_SIZE - 2)
+					foreach (xx; 0 .. MAP_ROOM_SIZE - 2)
+						pixMap[yy + y * MAP_ROOM_SIZE + 1][xx + x * MAP_ROOM_SIZE + 1] = Tile.Air;
+				foreach (int i; 1 .. MAP_ROOM_SIZE - 1)
+					foreach (int j; 1 .. MAP_ROOM_SIZE - 1)
+						drawRoomPixel(x * MAP_ROOM_SIZE + i, y * MAP_ROOM_SIZE + j);
 			}
 		}
 	}

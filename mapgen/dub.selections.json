@@ -2,6 +2,7 @@
 	"fileVersion": 1,
 	"versions": {
 		"asdf": "0.1.8",
+		"gfm": "6.2.13",
 		"gl3n": "1.3.1",
 		"imageformats": "6.1.2"
 	}

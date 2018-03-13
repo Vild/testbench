@@ -26,9 +26,10 @@ namespace CLEAR_BUFFER_FLAGS {
 	static const int STENCIL = 4;
 };
 
-constexpr int ROOM_UNIT_SIZE = 32;
 constexpr int ROOM_COUNT = 64;
-constexpr int MAP_PIXEL_SIZE = ROOM_UNIT_SIZE * ROOM_COUNT;
+constexpr int ROOM_UNIT_SIZE = 34;
+constexpr int MAP_ROOM_SIZE = 32;
+constexpr int MAP_PIXEL_SIZE = MAP_ROOM_SIZE * ROOM_COUNT;
 
 struct EngineRoom {
 	std::map<std::string, std::vector<int> /* Model matrix index */> meshes;
