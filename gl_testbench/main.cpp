@@ -18,6 +18,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 #include <fstream>
 #include <ctime>
@@ -62,7 +64,7 @@ double gLastDelta = 0.0;
 
 std::ofstream file;
 
-Renderer::BACKEND rendererType = Renderer::BACKEND::VULKAN;
+Renderer::BACKEND rendererType = Renderer::BACKEND::GL45;
 const char* RENDERER_TYPES[4] = { "GL45", "Vulkan", "DX11", "DX12" };
 
 Mesh* loadModel(std::string filepath, Technique* technique, const std::vector<glm::mat4>& modelMatrices) {
@@ -75,7 +77,7 @@ Mesh* loadModel(std::string filepath, Technique* technique, const std::vector<gl
 	std::ifstream in(filepath, std::ios::binary);
 	if(!in.good()) {
 		fprintf(stderr, "Failed to load file: %s\n", filepath.c_str());
-		exit(-1);
+		//exit(-1);
 	}
 
 
@@ -83,7 +85,7 @@ Mesh* loadModel(std::string filepath, Technique* technique, const std::vector<gl
 	in.read(reinterpret_cast<char*>(&nrOfMeshes), sizeof(int));
 	if (nrOfMeshes != 1) {
 		fprintf(stderr, "nrOfMeshes != 1\n");
-		exit(-1);
+		//exit(-1);
 	}
 
 	{
@@ -172,8 +174,15 @@ void loadMap(Technique* technique) {
 				fread(models.data(), sizeof(FileModel), modelsLength, fp);
 				for (const FileModel& m : models) {
 					CachedMesh& cm = map.meshes[std::string{m.meshFile}];
+					glm::vec3 scale;
+					glm::quat rot;
+					glm::vec3 trans;
+					glm::vec3 skew;
+					glm::vec4 pers;
+					glm::decompose(m.t, scale, rot, trans, skew, pers);
 
-					cm.modelMatrices.push_back(m.t);
+					//cm.modelMatrices.push_back(m.t);
+					cm.modelMatrices.push_back(glm::translate(trans) * glm::scale(glm::vec3(1)));
 					r.meshes[std::string{m.meshFile}].push_back(cm.modelMatrices.size() - 1);
 				}
 				models.clear();
@@ -189,7 +198,7 @@ void loadMap(Technique* technique) {
 
 	for (auto& cm : map.meshes) {
 		printf("Name: %s, Used: %zu\n", cm.first.c_str(), cm.second.modelMatrices.size());
-		cm.second.mesh = loadModel(cm.first, technique, cm.second.modelMatrices);
+		cm.second.mesh = loadModel("../" + cm.first, technique, cm.second.modelMatrices);
 		cm.second.mesh->finalize();
 	}
 }
@@ -250,6 +259,12 @@ void run() {
 					break;
 				case SDLK_a:
 					camera.updatePosition(glm::vec3(1, 0, 0));
+					break;
+				case SDLK_SPACE:
+					camera.updatePosition(glm::vec3(0, 1, 0));
+					break;
+				case SDLK_LCTRL:
+					camera.updatePosition(glm::vec3(0, -1, 0));
 					break;
 				default:
 					break;
@@ -401,7 +416,7 @@ int main(int argc, char *argv[])
 	renderer = Renderer::makeRenderer(rendererType);
 	if (renderer->initialize(800, 600))
 		return -1;
-	camera._position = glm::vec3(MAP_PIXEL_SIZE/2, 0, MAP_PIXEL_SIZE/2);
+	//camera._position = glm::vec3(MAP_PIXEL_SIZE/2, 0, MAP_PIXEL_SIZE/2);
 	renderer->submitMap(&map);
 	renderer->setWinTitle(RENDERER_TYPES[static_cast<int>(rendererType)]);
 	renderer->setClearColor(0.0, 0.1, 0.1, 1.0);

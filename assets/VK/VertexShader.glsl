@@ -21,7 +21,7 @@ const vec3 colors[4] = {
 
 void main() {
 	int vertexID = index_in[gl_VertexIndex];
-	vec4 wPos = model[gl_InstanceIndex] * position_in[vertexID];
+	vec4 wPos = model[gl_InstanceIndex] * vec4(position_in[vertexID].xyz, 1);
 	wColor = colors[gl_VertexIndex % 4];
 	gl_Position = proj * view * wPos;
 	gl_Position.y = -gl_Position.y;
