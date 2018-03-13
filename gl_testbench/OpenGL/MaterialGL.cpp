@@ -54,7 +54,7 @@ std::vector<std::string> MaterialGL::expandShaderText(std::string& shaderSource,
 	//std::ifstream includeFile("IA.h");
 	//std::string includeFileString((std::istreambuf_iterator<char>(includeFile)), std::istreambuf_iterator<char>());
 	//includeFile.close();
-	std::vector<std::string> result{ "\n\n #version 460\n\0" };
+	std::vector<std::string> result{ "\n\n #version 460 core\n\0" };
 	for (auto define : shaderDefines[type])
 		result.push_back(define);
 	result.push_back(shaderSource);

@@ -1,8 +1,8 @@
-layout(binding=POSITION) buffer pos { vec4 position_in[]; };
-layout(binding=INDEX) buffer idx { int index_in[]; };
-layout(binding=MODEL) buffer m { mat4 model[]; };
+layout(set = 0, binding=POSITION) buffer pos { vec4 position_in[]; };
+layout(set = 1, binding=INDEX) buffer idx { int index_in[]; };
+layout(set = 2, binding=MODEL) buffer m { mat4 model[]; };
 
-layout(binding=CAMERA_VIEW_PROJECTION) uniform CAMERA_VIEW_PROJECTION_NAME {
+layout(set = 3, binding=CAMERA_VIEW_PROJECTION) uniform CAMERA_VIEW_PROJECTION_NAME {
 	mat4 view;
 	mat4 proj;
 };

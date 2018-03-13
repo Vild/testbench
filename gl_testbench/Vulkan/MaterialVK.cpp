@@ -96,7 +96,7 @@ void MaterialVK::addConstantBuffer(std::string name, unsigned int location) {
 }
 
 std::vector<std::string> MaterialVK::_expandShaderText(std::string& shaderSource, ShaderType type) {
-	std::vector<std::string> result{"#version 460\n#extension GL_ARB_separate_shader_objects : enable\n\0"};
+	std::vector<std::string> result{"#version 460 core\n#extension GL_ARB_separate_shader_objects : enable\n\0"};
 	for (auto define : shaderDefines[type])
 		result.push_back(define);
 	result.push_back(shaderSource);
