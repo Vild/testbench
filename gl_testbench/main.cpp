@@ -236,29 +236,6 @@ void run() {
 		{
 			if (windowEvent.type == SDL_QUIT) return;
 			if (windowEvent.type == SDL_KEYUP && windowEvent.key.keysym.sym == SDLK_ESCAPE) return;
-			/*if (windowEvent.type == SDL_KEYDOWN)
-				switch (windowEvent.key.keysym.sym) {
-				case SDLK_w:
-					camera.updatePosition(glm::vec3(0, 0, 1));
-					break;
-				case SDLK_d:
-					camera.updatePosition(glm::vec3(-1, 0, 0));
-					break;
-				case SDLK_s:
-					camera.updatePosition(glm::vec3(0, 0, -1));
-					break;
-				case SDLK_a:
-					camera.updatePosition(glm::vec3(1, 0, 0));
-					break;
-				case SDLK_SPACE:
-					camera.updatePosition(glm::vec3(0, 1, 0));
-1					break;
-				case SDLK_LCTRL:
-					camera.updatePosition(glm::vec3(0, -1, 0));
-					break;
-				default:
-					break;
-				}*/
 		}
 
 		glm::vec3 vel;
@@ -314,7 +291,7 @@ void renderScene()
 	roomX = std::min(std::max(roomX, 0), ROOM_COUNT);
 	roomY = std::min(std::max(roomY, 0), ROOM_COUNT);
 	renderer->submitPosition(roomX, roomY);
-	printf("Camera: [%.2f, %.2f] Room: [%d, %d]\n", camera._position.x, camera._position.z, roomX, roomY);
+	//printf("Camera: [%.2f, %.2f] Room: [%d, %d]\n", camera._position.x, camera._position.z, roomX, roomY);
 	renderer->submit();
 	/*for (int y = 0; y < ROOM_COUNT; y++)
 			for (int x = 0; x < ROOM_COUNT; x++)
@@ -326,7 +303,7 @@ void renderScene()
 	renderer->frame();
 	renderer->present();
 	updateDelta();
-	sprintf(gTitleBuff, "%s - %3.1lffps (%3.1lfms)", RENDERER_TYPES[static_cast<int>(rendererType)], 1000.0 / gLastDelta, gLastDelta);
+	sprintf(gTitleBuff, "%s - %3.2lffps (%3.2lfms)", RENDERER_TYPES[static_cast<int>(rendererType)], 1000.0 / gLastDelta, gLastDelta);
 	renderer->setWinTitle(gTitleBuff);
 }
 
@@ -437,12 +414,13 @@ int main(int argc, char *argv[])
 			rendererType = Renderer::BACKEND::VULKAN;
 
 	renderer = Renderer::makeRenderer(rendererType);
-	if (renderer->initialize(800, 600))
+	if (renderer->initialize(1280, 720))
 		return -1;
 	camera._position = glm::vec3((1 + ROOM_COUNT)*MAP_ROOM_SIZE*0.5f, 1.5, (1 + ROOM_COUNT)*MAP_ROOM_SIZE*0.5f);
 	renderer->setWinTitle(RENDERER_TYPES[static_cast<int>(rendererType)]);
 	renderer->setClearColor(0.0, 0.1, 0.1, 1.0);
 	initialiseTestbench();
+	updateScene();
 	renderer->submitMap(&map);
 	run();
 	shutdown();

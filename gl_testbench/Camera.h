@@ -14,7 +14,7 @@ public:
 	virtual ~Camera();
 	ViewProjection& getMatrices() {
 		_matrices.view = glm::translate(glm::mat4_cast(_rotation), -_position);
-		_matrices.proj = glm::perspective(90.f, 4/3.0f, 0.1f, 100.f);
+		_matrices.proj = glm::perspective(90.f, 4/3.0f, 0.1f, 1000.f);
 		return _matrices;
 	}
 

@@ -337,6 +337,9 @@ int main(string[] args)
 	writeln();
 	writeMap(gm);
 
+	import std.range;
+
+	int[2][][ROOM_COUNT][ROOM_COUNT] canSeeCache;
 	{
 		auto p = execute(["../../PVSTest/bin/PVSTest", "-f", "./map.bmp", "-s",
 				"32", "-o", "./map.pvs"]);
@@ -364,9 +367,23 @@ int main(string[] args)
 					int oY = oID / ROOM_COUNT;
 					canSee ~= [oX, oY];
 				}
+				canSeeCache[y][x] = canSee.sort.array;
 			}
 		}
 	}
+
+	foreach (y, ref row; gm.rooms)
+		foreach (x, ref Room r; row)
+		{
+			int[2][] canSeeLists;
+			foreach (yy; -1 .. 2)
+				if (y + yy > 0 && y + yy < ROOM_COUNT)
+					foreach (xx; -1 .. 2)
+						if (x + xx > 0 && x + xx < ROOM_COUNT)
+							foreach (see; canSeeCache[y + yy][x + xx])
+								canSeeLists ~= see;
+			r.canSee = canSeeLists.sort.uniq.array;
+		}
 
 	File f = File("map.cmf", "wb"); // Compiled Map Format
 	scope (exit)

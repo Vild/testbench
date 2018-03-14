@@ -322,6 +322,7 @@ void VulkanRenderer::submitMap(EngineMap* map) {
 			//inheritanceInfo.pipelineStatistics;
 			vk::CommandBufferBeginInfo beginInfo{vk::CommandBufferUsageFlagBits::eRenderPassContinue | vk::CommandBufferUsageFlagBits::eSimultaneousUse, &inheritanceInfo};
 			cb.begin(beginInfo);
+			cb.bindPipeline(vk::PipelineBindPoint::eGraphics, _graphicsPipeline);
 
 			for (auto& m : r.meshes)
 				for (int id : m.second) {
@@ -349,7 +350,7 @@ void VulkanRenderer::submitMap(EngineMap* map) {
 				cb.beginRenderPass(renderPassInfo, vk::SubpassContents::eSecondaryCommandBuffers);
 
 				technique->enable();
-				cb.bindPipeline(vk::PipelineBindPoint::eGraphics, _graphicsPipeline);
+				//cb.bindPipeline(vk::PipelineBindPoint::eGraphics, _graphicsPipeline);
 
 				std::vector<vk::CommandBuffer> toRender;
 				for (auto& xy : r.canSee)
@@ -1042,9 +1043,8 @@ bool VulkanRenderer::_createVulkanDepthResources() {
 }
 
 bool VulkanRenderer::_createVulkanCommandBuffers() {
-	// [PI] swapChainFramebuffers.size()       + [S] 64² =  4,104
 	// [P ] swapChainFramebuffers.size() * 64² + [S] 64² = 36,864
-	vk::CommandBufferAllocateInfo allocInfoPrimary{_commandPool, vk::CommandBufferLevel::ePrimary, (uint32_t)(_swapChainFramebuffers.size() * 64 * 6)};
+	vk::CommandBufferAllocateInfo allocInfoPrimary{_commandPool, vk::CommandBufferLevel::ePrimary, (uint32_t)(_swapChainFramebuffers.size() * 64 * 64)};
 	vk::CommandBufferAllocateInfo allocInfoSecondary{_commandPool, vk::CommandBufferLevel::eSecondary, 64 * 64};
 
 	_primaryCommandBuffers = _device.allocateCommandBuffers(allocInfoPrimary);
