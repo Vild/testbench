@@ -440,10 +440,10 @@ int main(int argc, char *argv[])
 	if (renderer->initialize(800, 600))
 		return -1;
 	camera._position = glm::vec3((1 + ROOM_COUNT)*MAP_ROOM_SIZE*0.5f, 1.5, (1 + ROOM_COUNT)*MAP_ROOM_SIZE*0.5f);
-	renderer->submitMap(&map);
 	renderer->setWinTitle(RENDERER_TYPES[static_cast<int>(rendererType)]);
 	renderer->setClearColor(0.0, 0.1, 0.1, 1.0);
 	initialiseTestbench();
+	renderer->submitMap(&map);
 	run();
 	shutdown();
 	return 0;

@@ -13,13 +13,11 @@ public:
 	TechniqueVK(VulkanRenderer* renderer, Material* m, RenderState* r);
 	virtual ~TechniqueVK();
 
-	void enable(MeshVK* mesh);
+	void enable();
 
 private:
 	VulkanRenderer* _renderer;
 	vk::Device _device;
-	vk::PipelineLayout _pipelineLayout;
-	vk::Pipeline _graphicsPipeline;
 
 	void enable(Renderer* renderer) final {}
 };

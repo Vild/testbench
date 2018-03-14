@@ -95,6 +95,7 @@ public:
 	void clearBuffer(unsigned int) final;
 	// void setRenderTarget(RenderTarget* rt); // complete parameters
 	void setRenderState(RenderState* ps) final;
+	void submitMap(EngineMap* map) final;
 	void submit() final;
 	void frame() final;
 	void present() final;
@@ -123,7 +124,7 @@ private:
 		uint32_t graphics = -1;
 		uint32_t present = -1;
 
-		inline bool completed() { return graphics != -1UL && present != -1UL; }
+		inline bool completed() { return graphics != (uint32_t)-1UL && present != (uint32_t)-1UL; }
 	};
 	struct SwapChainInformation {
 		vk::SurfaceCapabilitiesKHR capabilities;
@@ -175,9 +176,13 @@ private:
 	};
 	BasePipelineInfo _basePipelineInfo;
 
+	vk::PipelineLayout _pipelineLayout;
+	vk::Pipeline _graphicsPipeline;
+
 	std::vector<vk::Framebuffer> _swapChainFramebuffers;
 	vk::CommandPool _commandPool;
-	std::vector<vk::CommandBuffer> _commandBuffers;
+	std::vector<vk::CommandBuffer> _primaryCommandBuffers;
+	std::vector<vk::CommandBuffer> _secondaryCommandBuffers;
 
 	uint32_t _currentImageIndex;
 	vk::Semaphore _imageAvailableSemaphore;

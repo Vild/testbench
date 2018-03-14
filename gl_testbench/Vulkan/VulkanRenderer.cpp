@@ -241,6 +241,9 @@ int VulkanRenderer::shutdown() {
 
 	_device.destroyDescriptorPool(_descriptorPool);
 
+	_device.destroyPipelineLayout(_pipelineLayout);
+	_device.destroyPipeline(_graphicsPipeline);
+
 	_device.destroy();
 	DestroyDebugReportCallbackEXT(_instance, _debugCallback, nullptr);
 	_instance.destroy();
@@ -264,23 +267,102 @@ void VulkanRenderer::clearBuffer(unsigned int) {
 void VulkanRenderer::setRenderState(RenderState* ps) {
 	ps->set();
 }
-void VulkanRenderer::submit() {
-	for (auto& xy : map->rooms[roomY][roomX].canSee)
-		for (auto m : map->rooms[xy.y][xy.x].meshes)
-			for (int id : m.second) {
-				auto mesh = static_cast<MeshVK*>(map->meshes[m.first].mesh);
 
-				for (auto& cb : static_cast<MaterialVK*>(mesh->technique->getMaterial())->constantBuffers)
-					cb.second->bindDescriptors(mesh);
-				if (mesh->txBuffer)
-					static_cast<ConstantBufferVK*>(mesh->txBuffer)->bindDescriptors(mesh);
-				static_cast<ConstantBufferVK*>(mesh->cameraVPBuffer)->bindDescriptors(mesh);
+void VulkanRenderer::submitMap(EngineMap* map) {
+	Renderer::submitMap(map);
 
-				mesh->bindTextures();
-				mesh->bindIAVertexBuffers();
+	auto technique = static_cast<TechniqueVK*>(static_cast<MeshVK*>(map->meshes.begin()->second.mesh)->technique);
+	auto material = static_cast<MaterialVK*>(technique->getMaterial());
 
-				_drawList[mesh->technique].push_back({mesh, id});
+	auto& bpi = _basePipelineInfo;
+	auto& descriptorSetLayouts = _descriptorSetLayouts;
+
+	vk::PipelineLayoutCreateInfo pipelineLayoutInfo;
+	pipelineLayoutInfo.setLayoutCount = (uint32_t)descriptorSetLayouts.size();
+	pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
+
+	_pipelineLayout = _device.createPipelineLayout(pipelineLayoutInfo);
+	EXPECT_ASSERT(_pipelineLayout, "Pipeline Layout is null!");
+
+	bpi.pipelineInfo.stageCount = (uint32_t) static_cast<MaterialVK*>(material)->_program.size();
+	bpi.pipelineInfo.pStages = static_cast<MaterialVK*>(material)->_program.data();
+	bpi.rasterizer.polygonMode = vk::PolygonMode::eFill;
+	bpi.pipelineInfo.layout = _pipelineLayout;
+
+	_graphicsPipeline = _device.createGraphicsPipeline(vk::PipelineCache(), bpi.pipelineInfo);
+	EXPECT_ASSERT(_graphicsPipeline, "Can't create Graphics pipeline!");
+
+	for (auto& it : map->meshes) {
+		auto mesh = static_cast<MeshVK*>(it.second.mesh);
+
+		auto technique = static_cast<TechniqueVK*>(mesh->technique);
+		technique->enable();
+		for (auto& cb : static_cast<MaterialVK*>(technique->getMaterial())->constantBuffers)
+			cb.second->bindDescriptors(mesh);
+		if (mesh->txBuffer)
+			static_cast<ConstantBufferVK*>(mesh->txBuffer)->bindDescriptors(mesh);
+		static_cast<ConstantBufferVK*>(mesh->cameraVPBuffer)->bindDescriptors(mesh);
+
+		mesh->bindTextures();
+		mesh->bindIAVertexBuffers();
+	}
+
+	// For each secondary commandbuffer
+	for (int y = 0; y < ROOM_COUNT; y++)
+		for (int x = 0; x < ROOM_COUNT; x++) {
+			EngineRoom& r = map->rooms[y][x];
+			vk::CommandBuffer& cb = _secondaryCommandBuffers[y * ROOM_COUNT + x];
+
+			vk::CommandBufferInheritanceInfo inheritanceInfo{};
+			inheritanceInfo.renderPass = _renderPass;
+			//inheritanceInfo.subpass;
+			//inheritanceInfo.framebuffer;
+			inheritanceInfo.occlusionQueryEnable = false;
+			//inheritanceInfo.queryFlags;
+			//inheritanceInfo.pipelineStatistics;
+			vk::CommandBufferBeginInfo beginInfo{vk::CommandBufferUsageFlagBits::eRenderPassContinue | vk::CommandBufferUsageFlagBits::eSimultaneousUse, &inheritanceInfo};
+			cb.begin(beginInfo);
+
+			for (auto& m : r.meshes)
+				for (int id : m.second) {
+					auto mesh = static_cast<MeshVK*>(map->meshes[m.first].mesh);
+
+					size_t numberOfElements = mesh->geometryBuffers[INDEX].numElements;
+					cb.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, _pipelineLayout, 0, (uint32_t)mesh->descriptorSets.size(), mesh->descriptorSets.data(), 0, nullptr);
+					cb.draw(numberOfElements, 1, 0, id);
+				}
+
+			cb.end();
+		}
+
+	for (size_t frame = 0; frame < _swapChainFramebuffers.size(); frame++)
+		for (int y = 0; y < ROOM_COUNT; y++)
+			for (int x = 0; x < ROOM_COUNT; x++) {
+				EngineRoom& r = map->rooms[y][x];
+				vk::CommandBuffer& cb = _primaryCommandBuffers[frame * ROOM_COUNT * ROOM_COUNT + y * ROOM_COUNT + x];
+
+				vk::CommandBufferBeginInfo beginInfo{vk::CommandBufferUsageFlagBits()};
+				cb.begin(beginInfo);
+				vk::ClearValue clearColor[2] = {vk::ClearColorValue{std::array<float, 4>{{_clearColor[0], _clearColor[1], _clearColor[2], _clearColor[3]}}}, vk::ClearDepthStencilValue{1.0f, 0}};
+				vk::RenderPassBeginInfo renderPassInfo = {_renderPass, _swapChainFramebuffers[frame], {{0, 0}, _swapChainExtent}, 2, clearColor};
+
+				cb.beginRenderPass(renderPassInfo, vk::SubpassContents::eSecondaryCommandBuffers);
+
+				technique->enable();
+				cb.bindPipeline(vk::PipelineBindPoint::eGraphics, _graphicsPipeline);
+
+				std::vector<vk::CommandBuffer> toRender;
+				for (auto& xy : r.canSee)
+					toRender.push_back(_secondaryCommandBuffers[xy.y*ROOM_COUNT + xy.x]);
+
+				cb.executeCommands(toRender);
+
+				cb.endRenderPass();
+				cb.end();
 			}
+}
+
+void VulkanRenderer::submit() {
 }
 void VulkanRenderer::frame() {
 	vk::ResultValue<uint32_t> rv = _device.acquireNextImageKHR(_swapChain, std::numeric_limits<uint64_t>::max(), _imageAvailableSemaphore, vk::Fence());
@@ -291,42 +373,10 @@ void VulkanRenderer::frame() {
 	EXPECT_ASSERT(rv.result == vk::Result::eSuccess || rv.result == vk::Result::eSuboptimalKHR, "Failed to acquire new image");
 	_currentImageIndex = rv.value;
 
-	vk::CommandBufferBeginInfo beginInfo{vk::CommandBufferUsageFlagBits::eOneTimeSubmit};
-	_commandBuffers[_currentImageIndex].begin(beginInfo);
-
-	vk::ClearValue clearColor[2] = {vk::ClearColorValue{std::array<float, 4>{{_clearColor[0], _clearColor[1], _clearColor[2], _clearColor[3]}}},
-	                                vk::ClearDepthStencilValue{1.0f, 0}};
-	vk::RenderPassBeginInfo renderPassInfo = {_renderPass, _swapChainFramebuffers[_currentImageIndex], {{0, 0}, _swapChainExtent}, 2, clearColor};
-
-	// printf("drawList.size: %zu\n", _drawList.size());
-
-	_commandBuffers[_currentImageIndex].beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
-
-	// printf("\tBinding draw\n");
-	for (auto& work : _drawList) {
-		TechniqueVK* technique = static_cast<TechniqueVK*>(const_cast<Technique*>(work.first));
-		technique->enable(work.second[0].mesh);
-		_commandBuffers[_currentImageIndex].bindPipeline(vk::PipelineBindPoint::eGraphics, technique->_graphicsPipeline);
-		 
-		// TODO: implement instance renderering
-		for (auto xxx : work.second) {
-			auto& mesh = xxx.mesh;
-			auto& id = xxx.id;
-			
-			size_t numberOfElements = mesh->geometryBuffers[INDEX].numElements;
-			_commandBuffers[_currentImageIndex].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, technique->_pipelineLayout, 0,
-			                                                       (uint32_t)mesh->descriptorSets.size(), mesh->descriptorSets.data(), 0, nullptr);
-			_commandBuffers[_currentImageIndex].draw(numberOfElements, 1, 0, id);
-		}
-	}
-
-	_commandBuffers[_currentImageIndex].endRenderPass();
-	_commandBuffers[_currentImageIndex].end();
-
 	vk::Semaphore waitSemaphores[] = {_imageAvailableSemaphore};
 	vk::PipelineStageFlags waitStages[] = {vk::PipelineStageFlagBits::eColorAttachmentOutput};
 	vk::Semaphore signalSemaphores[] = {_renderFinishedSemaphore};
-	vk::SubmitInfo submitInfo{1, waitSemaphores, waitStages, 1, &_commandBuffers[_currentImageIndex], 1, signalSemaphores};
+	vk::SubmitInfo submitInfo{1, waitSemaphores, waitStages, 1, &_primaryCommandBuffers[_currentImageIndex * ROOM_COUNT*ROOM_COUNT + roomY * ROOM_COUNT + roomX], 1, signalSemaphores};
 	_graphicsQueue.submit(1, &submitInfo, vk::Fence());
 
 	_drawList.clear();
@@ -430,7 +480,8 @@ void VulkanRenderer::_cleanupSwapChain() {
 	for (auto framebuffer : _swapChainFramebuffers)
 		_device.destroyFramebuffer(framebuffer);
 
-	_device.freeCommandBuffers(_commandPool, (uint32_t)_commandBuffers.size(), _commandBuffers.data());
+	_device.freeCommandBuffers(_commandPool, (uint32_t)_secondaryCommandBuffers.size(), _secondaryCommandBuffers.data());
+	_device.freeCommandBuffers(_commandPool, (uint32_t)_primaryCommandBuffers.size(), _primaryCommandBuffers.data());
 
 	_device.destroyRenderPass(_renderPass);
 
@@ -991,10 +1042,15 @@ bool VulkanRenderer::_createVulkanDepthResources() {
 }
 
 bool VulkanRenderer::_createVulkanCommandBuffers() {
-	vk::CommandBufferAllocateInfo allocInfo{_commandPool, vk::CommandBufferLevel::ePrimary, (uint32_t)_swapChainFramebuffers.size()};
+	// [PI] swapChainFramebuffers.size()       + [S] 64² =  4,104
+	// [P ] swapChainFramebuffers.size() * 64² + [S] 64² = 36,864
+	vk::CommandBufferAllocateInfo allocInfoPrimary{_commandPool, vk::CommandBufferLevel::ePrimary, (uint32_t)(_swapChainFramebuffers.size() * 64 * 6)};
+	vk::CommandBufferAllocateInfo allocInfoSecondary{_commandPool, vk::CommandBufferLevel::eSecondary, 64 * 64};
 
-	_commandBuffers = _device.allocateCommandBuffers(allocInfo);
-	EXPECT(_commandBuffers.size(), "Failed to allocate command buffers");
+	_primaryCommandBuffers = _device.allocateCommandBuffers(allocInfoPrimary);
+	EXPECT(_primaryCommandBuffers.size(), "Failed to allocate command buffers");
+	_secondaryCommandBuffers = _device.allocateCommandBuffers(allocInfoSecondary);
+	EXPECT(_secondaryCommandBuffers.size(), "Failed to allocate command buffers");
 
 	return true;
 }

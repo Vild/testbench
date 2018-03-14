@@ -79,7 +79,7 @@ public:
 	// can be partially overriden by a specific Technique.
 	virtual void setRenderState(RenderState* ps) = 0;
 	// submit work (to render) to the renderer.
-	inline void submitMap(EngineMap* map) { this->map = map; }
+	virtual void submitMap(EngineMap* map) { this->map = map; }
 	inline void submitPosition(int roomX, int roomY) { this->roomX = roomX; this->roomY = roomY; }
 	virtual void submit() = 0;
 	virtual void frame() = 0;
