@@ -41,6 +41,23 @@
 #define ASSETS_FOLDER "assets"
 #endif
 
+
+struct Waypoint {
+	glm::vec3 pos;
+	float timepoint;
+};
+
+float counter = -5;
+bool waypointsDone = false;
+std::vector<Waypoint> waypoints {
+	Waypoint{{0, 1.5, 0}, 0},
+	Waypoint{{(1 + ROOM_COUNT)*MAP_ROOM_SIZE*0.5f, 1.5, (1 + ROOM_COUNT)*MAP_ROOM_SIZE*0.5f}, 5},
+	Waypoint{{(0.5 + ROOM_COUNT)*MAP_ROOM_SIZE, 1.5, (0.5 + ROOM_COUNT)*MAP_ROOM_SIZE}, 10},
+	Waypoint{{0, 1.5, 0}, 20},
+	Waypoint{{(1 + ROOM_COUNT)*MAP_ROOM_SIZE*0.5f, 1.5, (1 + ROOM_COUNT)*MAP_ROOM_SIZE*0.5f}, 25},
+	Waypoint{{(ROOM_COUNT/4)*MAP_ROOM_SIZE, 1.5, (0.5 + ROOM_COUNT)*MAP_ROOM_SIZE}, 30}
+};
+
 Renderer* renderer;
 Camera camera;
 
@@ -187,7 +204,7 @@ void loadMap(Technique* technique) {
 	fclose(fp);
 
 	for (auto& cm : map.meshes) {
-		printf("Name: %s, Used: %zu\n", cm.first.c_str(), cm.second.modelMatrices.size());
+		//printf("Name: %s, Used: %zu\n", cm.first.c_str(), cm.second.modelMatrices.size());
 		cm.second.mesh = loadModel(ASSETS_FOLDER_PREFIX + cm.first, technique, cm.second.modelMatrices);
 		cm.second.mesh->finalize();
 	}
@@ -211,9 +228,19 @@ void updateDelta()
 	avg[loop] = deltaTime;
 	loop = (loop + 1) % WINDOW_SIZE;
 	gLastDelta = (lastSum / WINDOW_SIZE);
-		
-	file << gLastDelta << "\n";
-	file.flush();
+
+	if (counter >= 0) {
+		static float deltaCounter = 0;
+		static int fps;
+		deltaCounter += gLastDelta;
+		fps++;
+		if (deltaCounter >= 0.25) {
+			file << (deltaCounter / fps) * 4 << "\n";
+			file.flush();
+			deltaCounter = 0;
+			fps = 0;
+		}
+	}
 };
 
 // lissajous points
@@ -267,6 +294,8 @@ void run() {
 
 		updateScene();
 		renderScene();
+		if (waypointsDone)
+			return;
 	}
 }
 
@@ -275,6 +304,29 @@ void run() {
 */
 void updateScene()
 {
+	if (!waypointsDone) {
+		counter += gLastDelta / 1000.0f;
+		//printf("counter: %f", counter);
+
+		if (counter >= 0) {
+			static size_t waypointIdx = 0;
+			while (waypointIdx < waypoints.size() && waypoints[waypointIdx].timepoint < counter) {
+				waypointIdx++;
+				if (waypointIdx >= waypoints.size())
+					waypointsDone = true;
+			}
+
+			if (!waypointsDone) {
+				float between = waypoints[waypointIdx].timepoint - waypoints[waypointIdx - 1].timepoint;
+				//printf("\tbetween: %f", between);
+				camera._position = glm::mix(waypoints[waypointIdx - 1].pos, waypoints[waypointIdx].pos,
+																		1 -  ((waypoints[waypointIdx].timepoint - counter) / between));
+				//printf("\t\tposition: (%.2f, %.2f, %.2f)", camera._position.x, camera._position.y, camera._position.z);
+			}
+		}
+		//printf("\n");
+	}
+
 	{ // Camera update stuffs
 		auto matrices = camera.getMatrices();
 		cameraMatrices->setData(&matrices, sizeof(matrices), nullptr, CAMERA_VIEW_PROJECTION);
@@ -288,8 +340,8 @@ void renderScene()
 	renderer->clearBuffer(CLEAR_BUFFER_FLAGS::COLOR | CLEAR_BUFFER_FLAGS::DEPTH);
 	int roomX = (int)(camera._position.x) / MAP_ROOM_SIZE;
 	int roomY = (int)(camera._position.z) / MAP_ROOM_SIZE;
-	roomX = std::min(std::max(roomX, 0), ROOM_COUNT);
-	roomY = std::min(std::max(roomY, 0), ROOM_COUNT);
+	roomX = std::min(std::max(roomX, 0), ROOM_COUNT - 1);
+	roomY = std::min(std::max(roomY, 0), ROOM_COUNT - 1);
 	renderer->submitPosition(roomX, roomY);
 	//printf("Camera: [%.2f, %.2f] Room: [%d, %d]\n", camera._position.x, camera._position.z, roomX, roomY);
 	renderer->submit();
@@ -357,7 +409,7 @@ int initialiseTestbench()
 	else if (rendererType == ::Renderer::BACKEND::VULKAN)
 		filename = "VK";
 
-	filename += getDateTime() + ".txt";
+	filename += getDateTime() + ".log";
 	file.open(filename.c_str());
 
 	return 0;
@@ -419,8 +471,12 @@ int main(int argc, char *argv[])
 	camera._position = glm::vec3((1 + ROOM_COUNT)*MAP_ROOM_SIZE*0.5f, 1.5, (1 + ROOM_COUNT)*MAP_ROOM_SIZE*0.5f);
 	renderer->setWinTitle(RENDERER_TYPES[static_cast<int>(rendererType)]);
 	renderer->setClearColor(0.0, 0.1, 0.1, 1.0);
+	for (size_t i = 0; i < 100; i++)
+		updateDelta();
 	initialiseTestbench();
+	waypointsDone = true;
 	updateScene();
+	waypointsDone = false;
 	renderer->submitMap(&map);
 	run();
 	shutdown();

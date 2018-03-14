@@ -16,3 +16,7 @@ x64*
 obj
 testbench
 compile_commands.json
+*.log
+plot.m
+plot.svg
+plot.png
