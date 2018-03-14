@@ -83,7 +83,7 @@ double gLastDelta = 0.0;
 
 std::ofstream file;
 
-Renderer::BACKEND rendererType = Renderer::BACKEND::GL45;
+Renderer::BACKEND rendererType = Renderer::BACKEND::VULKAN;
 const char* RENDERER_TYPES[4] = { "GL45", "Vulkan", "DX11", "DX12" };
 
 Mesh* loadModel(std::string filepath, Technique* technique, const std::vector<glm::mat4>& modelMatrices) {
@@ -96,7 +96,7 @@ Mesh* loadModel(std::string filepath, Technique* technique, const std::vector<gl
 	std::ifstream in(filepath, std::ios::binary);
 	if(!in.good()) {
 		fprintf(stderr, "Failed to load file: %s\n", filepath.c_str());
-		//exit(-1);
+		exit(-1);
 	}
 
 

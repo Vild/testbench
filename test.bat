@@ -1,9 +1,11 @@
 @echo off
+set PATH="C:\VulkanSDK\1.1.70.1;%PATH%"
+cd x64
 
-x64\Release\testbench.exe gl45
-x64\Release\testbench.exe gl45
-x64\Release\testbench.exe gl45
+Release\gl_testbench.exe gl45
+Release\gl_testbench.exe gl45
+Release\gl_testbench.exe gl45
 
-x64\Release\testbench.exe vulkan
-x64\Release\testbench.exe vulkan
-x64\Release\testbench.exe vulkan
+Release\gl_testbench.exe vulkan
+Release\gl_testbench.exe vulkan
+Release\gl_testbench.exe vulkan
