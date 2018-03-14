@@ -1,6 +1,8 @@
 #include "Camera.h"
 
 #include <algorithm>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 Camera::Camera() {}
 
@@ -8,7 +10,6 @@ Camera::~Camera() {}
 
 void Camera::updatePosition(glm::vec3 newPos, glm::vec2 newRot) {
 	_position += newPos;
-
 	_pitch = std::max(std::min(_pitch + newRot.x, (float)M_PI/2), (float)-M_PI/2);
 	_yaw = fmod(_yaw + newRot.y, 2 * M_PI);
 

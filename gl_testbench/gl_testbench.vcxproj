@@ -75,8 +75,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\include;..\include-win;..\GLEW\include;..\SDL\include;C:\VulkanSDK\1.0.65.1\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\GLEW\lib\Release\x64;..\SDL\lib\x64;C:\VulkanSDK\1.0.65.1\Lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\include;..\include-win;..\GLEW\include;..\SDL\include;C:\VulkanSDK\1.1.70.0\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\GLEW\lib\Release\x64;..\SDL\lib\x64;C:\VulkanSDK\1.1.70.0\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -84,8 +84,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\include;..\include-win;..\GLEW\include;..\SDL\include;C:\VulkanSDK\1.0.65.1\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\GLEW\lib\Release\x64;..\SDL\lib\x64;C:\VulkanSDK\1.0.65.1\Lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\include;..\include-win;..\GLEW\include;..\SDL\include;C:\VulkanSDK\1.1.70.0\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\GLEW\lib\Release\x64;..\SDL\lib\x64;C:\VulkanSDK\1.1.70.0\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -113,7 +113,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\VulkanSDK\1.0.65.1\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.1.70.0\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -149,6 +149,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.1.70.0\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
