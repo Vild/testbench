@@ -1,9 +1,9 @@
 #!/bin/bash
 
-./testbench gl45
-./testbench gl45
-./testbench gl45
+./testbench gl45 2>&1 >/dev/null
+./testbench gl45 2>&1 >/dev/null
+./testbench gl45 2>&1 >/dev/null
 
-./testbench vulkan
-./testbench vulkan
-./testbench vulkan
+./testbench vulkan 2>&1 >/dev/null
+./testbench vulkan 2>&1 >/dev/null
+./testbench vulkan 2>&1 >/dev/null

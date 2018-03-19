@@ -48,7 +48,7 @@ struct Waypoint {
 	float timepoint;
 };
 
-float counter = -5;
+float counter = -16;
 bool waypointsDone = false;
 std::vector<Waypoint> waypoints {
 	Waypoint{{0, 1.5, 0}, 0},
@@ -211,7 +211,7 @@ void loadMap(Technique* technique) {
 	}
 }
 
-void updateDelta()
+void updateDelta(bool log = true)
 {
 	#define WINDOW_SIZE 10
 	static Uint64 start = 0;
@@ -230,17 +230,21 @@ void updateDelta()
 	loop = (loop + 1) % WINDOW_SIZE;
 	gLastDelta = (lastSum / WINDOW_SIZE);
 
-	if (counter >= 0) {
-		static float deltaCounter = 0;
-		static int fps;
-		deltaCounter += gLastDelta;
-		fps++;
-		if (deltaCounter >= 0.25) {
+	if (!log)
+		return;
+	static float deltaCounter = 0;
+	static int fps = 0;
+	deltaCounter += gLastDelta;
+	fps++;
+	if (deltaCounter >= 0.25) {
+		if (counter >= 0) {
 			file << (deltaCounter / fps) << "\t" << OS_API::getCurrentRSS() << "\t" << OS_API::getPeakRSS() << "\n";
 			file.flush();
-			deltaCounter = 0;
-			fps = 0;
-		}
+		} else
+			counter += 1;
+
+		deltaCounter = 0;
+		fps = 0;
 	}
 };
 
@@ -473,12 +477,14 @@ int main(int argc, char *argv[])
 	renderer->setWinTitle(RENDERER_TYPES[static_cast<int>(rendererType)]);
 	renderer->setClearColor(0.0, 0.1, 0.1, 1.0);
 	for (size_t i = 0; i < 100; i++)
-		updateDelta();
+		updateDelta(false);
 	initialiseTestbench();
 	waypointsDone = true;
 	updateScene();
 	waypointsDone = false;
 	renderer->submitMap(&map);
+	for (size_t i = 0; i < 100; i++)
+		updateDelta(false);
 	run();
 	shutdown();
 	return 0;
