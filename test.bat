@@ -1,5 +1,5 @@
 @echo off
-set PATH="C:\VulkanSDK\1.1.70.1;%PATH%"
+set PATH="C:\VulkanSDK\1.1.70.1\Bin;%PATH%"
 cd x64
 
 Release\gl_testbench.exe gl45

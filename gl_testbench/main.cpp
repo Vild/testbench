@@ -236,7 +236,7 @@ void updateDelta()
 		deltaCounter += gLastDelta;
 		fps++;
 		if (deltaCounter >= 0.25) {
-			file << (deltaCounter / fps) * 4 << "\t" << OS_API::getCurrentRSS() << "\t" << OS_API::getPeakRSS() << "\n";
+			file << (deltaCounter / fps) << "\t" << OS_API::getCurrentRSS() << "\t" << OS_API::getPeakRSS() << "\n";
 			file.flush();
 			deltaCounter = 0;
 			fps = 0;
