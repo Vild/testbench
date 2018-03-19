@@ -22,6 +22,7 @@
 #define ASSETS_FOLDER "assets"
 #endif
 
+#undef NDEBUG
 #ifndef NDEBUG
 #define VK_LAYER_LUNARG_standard_validation "VK_LAYER_LUNARG_standard_validation"
 
@@ -342,7 +343,7 @@ void VulkanRenderer::submitMap(EngineMap* map) {
 				EngineRoom& r = map->rooms[y][x];
 				vk::CommandBuffer& cb = _primaryCommandBuffers[frame * ROOM_COUNT * ROOM_COUNT + y * ROOM_COUNT + x];
 
-				vk::CommandBufferBeginInfo beginInfo{vk::CommandBufferUsageFlagBits()};
+				vk::CommandBufferBeginInfo beginInfo{vk::CommandBufferUsageFlagBits::eSimultaneousUse};
 				cb.begin(beginInfo);
 				vk::ClearValue clearColor[2] = {vk::ClearColorValue{std::array<float, 4>{{_clearColor[0], _clearColor[1], _clearColor[2], _clearColor[3]}}}, vk::ClearDepthStencilValue{1.0f, 0}};
 				vk::RenderPassBeginInfo renderPassInfo = {_renderPass, _swapChainFramebuffers[frame], {{0, 0}, _swapChainExtent}, 2, clearColor};
@@ -539,9 +540,10 @@ bool VulkanRenderer::_createVulkanInstance() {
 		uint32_t count;
 		EXPECT(SDL_Vulkan_GetInstanceExtensions(_window, &count, nullptr), SDL_GetError());
 
-		extensions.resize(count + extensions.size());
+		auto len = extensions.size();
+		extensions.resize(count + len);
 
-		EXPECT(SDL_Vulkan_GetInstanceExtensions(_window, &count, &extensions[1]), SDL_GetError());
+		EXPECT(SDL_Vulkan_GetInstanceExtensions(_window, &count, &extensions[len]), SDL_GetError());
 	}
 
 	vk::ApplicationInfo appInfo;
