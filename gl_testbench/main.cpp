@@ -25,6 +25,7 @@
 #include <ctime>
 
 #include "Camera.h"
+#include "Ram.h"
 
 #if defined(_WIN32) || defined(_WIN64)
 #define snprintf _snprintf
@@ -235,7 +236,7 @@ void updateDelta()
 		deltaCounter += gLastDelta;
 		fps++;
 		if (deltaCounter >= 0.25) {
-			file << (deltaCounter / fps) * 4 << "\n";
+			file << (deltaCounter / fps) * 4 << "\t" << OS_API::getCurrentRSS() << "\t" << OS_API::getPeakRSS() << "\n";
 			file.flush();
 			deltaCounter = 0;
 			fps = 0;
