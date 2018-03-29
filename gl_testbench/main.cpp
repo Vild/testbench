@@ -211,39 +211,35 @@ void loadMap(Technique* technique) {
 	}
 }
 
-void updateDelta(bool log = true)
+void updateDelta(bool log = true, bool forceLog = false)
 {
-	#define WINDOW_SIZE 10
-	static Uint64 start = 0;
-	static Uint64 last = 0;
-	static double avg[WINDOW_SIZE] = { 0.0 };
-	static double lastSum = 10.0;
-	static int loop = 0;
+	static uint64_t lastDT = SDL_GetPerformanceCounter();
+	uint64_t curDT = SDL_GetPerformanceCounter();
 
-	last = start;
-	start = SDL_GetPerformanceCounter();
-	double deltaTime = (double)((start - last) * 1000.0 / SDL_GetPerformanceFrequency());
-	// moving average window of WINDOWS_SIZE
-	lastSum -= avg[loop];
-	lastSum += deltaTime;
-	avg[loop] = deltaTime;
-	loop = (loop + 1) % WINDOW_SIZE;
-	gLastDelta = (lastSum / WINDOW_SIZE);
+	gLastDelta = ((curDT - lastDT) * 1000.0) / SDL_GetPerformanceFrequency();
+	lastDT = curDT;
 
-	if (!log)
-		return;
-	static float deltaCounter = 0;
-	static int fps = 0;
-	deltaCounter += gLastDelta;
-	fps++;
-	if (deltaCounter >= 0.25) {
-		if (counter >= 0) {
-			file << (deltaCounter / fps) << "\t" << OS_API::getCurrentRSS() << "\t" << OS_API::getPeakRSS() << "\n";
-			file.flush();
-		} else
-			counter += 1;
+	{
+		if (!log)
+			return;
+		static int fps = 0;
+		fps++;
 
-		deltaCounter = 0;
+		static uint64_t last = SDL_GetPerformanceCounter();
+		uint64_t cur = SDL_GetPerformanceCounter();
+
+		double diffMS = ((cur - last) * 1000.0) / SDL_GetPerformanceFrequency();
+
+		printf("MS: %-4.3f FPS: %-4.3f\n", (diffMS / fps), 1000.0f / (diffMS / fps));
+		fflush(stdout);
+
+		if (diffMS < 10.0 || forceLog)
+			return;
+
+		file << (diffMS / fps) << "\t" << OS_API::getCurrentRSS() << "\t" << OS_API::getPeakRSS() << "\n";
+		file.flush();
+
+		last = cur;
 		fps = 0;
 	}
 };
@@ -486,6 +482,7 @@ int main(int argc, char *argv[])
 	for (size_t i = 0; i < 100; i++)
 		updateDelta(false);
 	run();
+	updateDelta(true, true);
 	shutdown();
 	return 0;
 };
